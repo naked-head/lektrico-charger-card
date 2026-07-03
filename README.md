@@ -43,7 +43,7 @@ hardware in mind:
 ### HACS (custom repository)
 
 1. HACS → three-dot menu → *Custom repositories*
-2. Add `https://github.com/naked-head/charger-card` with type **Dashboard**
+2. Add `https://github.com/naked-head/lektrico-charger-card` with type **Dashboard**
 3. Install *Lektri.co Charger Card* and reload
 
 ### Manual
