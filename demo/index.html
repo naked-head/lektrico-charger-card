@@ -64,8 +64,9 @@
   <div class="controls">
     <button data-w="420">420px</button>
     <button data-w="330">330px (mobile)</button>
-    <button data-w="280">280px (colonna stretta)</button>
+    <button data-w="280">280px (narrow)</button>
     <button id="themeBtn">☀ / 🌙</button>
+    <button id="langBtn">EN / IT</button>
   </div>
   <div id="holder"></div>
 
@@ -146,8 +147,9 @@
   }
 
   let states = baseStates();
+  let lang = new URLSearchParams(location.search).get('lang') || 'en';
   const hass = () => ({
-    language: 'it',
+    language: lang,
     states,
     entities,
     formatEntityState: (st) => {
@@ -179,42 +181,42 @@
   card.setConfig({
     entity: 'sensor.1p7k_state',
     name: 'Lektri.co',
-    location: 'Tettoia Macchine',
+    location: 'Carport',
     // substatus is derived automatically from the active mode action below
     actions: [
-      { text: 'Costo Zero', icon: 'mdi:currency-eur', entity: 'automation.caricatore_costo_zero', service: 'automation.turn_on' },
-      { text: 'Costo Zero con Spegnimento', icon: 'mdi:currency-eur-off', entity: 'automation.caricatore_costo_zero_con_spegnimento', service: 'automation.turn_on' },
-      { text: 'Modalità Green', icon: 'mdi:leaf', entity: 'automation.caricatore_modalita_green', service: 'automation.turn_on' },
-      { text: 'Green con Spegnimento', icon: 'mdi:leaf-off', entity: 'automation.caricatore_modalita_green_con_spegnimento', service: 'automation.turn_on' },
-      { text: 'Massima Energia 32A', icon: 'mdi:battery-high', service: 'number.set_value', service_data: { entity_id: 'number.1p7k_limite_dinamico', value: 32 } },
-      { text: 'Livello Standard 16A', icon: 'mdi:battery-medium', service: 'number.set_value', service_data: { entity_id: 'number.1p7k_limite_dinamico', value: 16 } },
-      { text: 'Livello Basso 10A', icon: 'mdi:battery-low', service: 'number.set_value', service_data: { entity_id: 'number.1p7k_limite_dinamico', value: 10 } },
+      { text: 'Zero Cost', icon: 'mdi:currency-eur', entity: 'automation.caricatore_costo_zero', service: 'automation.turn_on' },
+      { text: 'Zero Cost + Shutdown', icon: 'mdi:currency-eur-off', entity: 'automation.caricatore_costo_zero_con_spegnimento', service: 'automation.turn_on' },
+      { text: 'Green Mode', icon: 'mdi:leaf', entity: 'automation.caricatore_modalita_green', service: 'automation.turn_on' },
+      { text: 'Green + Shutdown', icon: 'mdi:leaf-off', entity: 'automation.caricatore_modalita_green_con_spegnimento', service: 'automation.turn_on' },
+      { text: 'Max Power 32A', icon: 'mdi:battery-high', service: 'number.set_value', service_data: { entity_id: 'number.1p7k_limite_dinamico', value: 32 } },
+      { text: 'Standard 16A', icon: 'mdi:battery-medium', service: 'number.set_value', service_data: { entity_id: 'number.1p7k_limite_dinamico', value: 16 } },
+      { text: 'Low 10A', icon: 'mdi:battery-low', service: 'number.set_value', service_data: { entity_id: 'number.1p7k_limite_dinamico', value: 10 } },
     ],
   });
   document.getElementById('holder').appendChild(card);
   const refresh = () => { card.hass = hass(); };
 
   const SCENARIOS = {
-    'Scollegato': (s) => { s['sensor.1p7k_state'].state = 'available'; },
-    'Connesso': (s) => { s['sensor.1p7k_state'].state = 'connected'; },
-    'In carica 8A': (s) => {
+    'Unplugged': (s) => { s['sensor.1p7k_state'].state = 'available'; },
+    'Connected': (s) => { s['sensor.1p7k_state'].state = 'connected'; },
+    'Charging 8A': (s) => {
       s['sensor.1p7k_state'].state = 'charging';
       s['sensor.1p7k_corrente'].state = '8';
       s['sensor.1p7k_potenza'].state = '1.8';
       s['sensor.1p7k_energia'].state = '2.4';
       s['sensor.1p7k_charging_time'].state = '4520';
     },
-    'In carica 32A': (s) => {
+    'Charging 32A': (s) => {
       s['sensor.1p7k_state'].state = 'charging';
       s['sensor.1p7k_corrente'].state = '32';
       s['sensor.1p7k_potenza'].state = '7.2';
       s['sensor.1p7k_energia'].state = '6.1';
       s['sensor.1p7k_charging_time'].state = '10930';
     },
-    'In pausa': (s) => { s['sensor.1p7k_state'].state = 'paused'; },
-    'Autenticazione': (s) => { s['sensor.1p7k_state'].state = 'need_auth'; },
-    'Bloccato': (s) => { s['sensor.1p7k_state'].state = 'locked'; },
-    'Errore': (s) => {
+    'Paused': (s) => { s['sensor.1p7k_state'].state = 'paused'; },
+    'Authentication': (s) => { s['sensor.1p7k_state'].state = 'need_auth'; },
+    'Locked': (s) => { s['sensor.1p7k_state'].state = 'locked'; },
+    'Error': (s) => {
       s['sensor.1p7k_state'].state = 'error';
       s['binary_sensor.1p7k_overheating'].state = 'on';
       s['binary_sensor.1p7k_rcd_error'].state = 'on';
@@ -238,6 +240,7 @@
     b.onclick = () => { document.getElementById('holder').style.width = b.dataset.w + 'px'; };
   });
   document.getElementById('themeBtn').onclick = () => document.body.classList.toggle('light');
+  document.getElementById('langBtn').onclick = () => { lang = lang === 'en' ? 'it' : 'en'; refresh(); };
 
   btns.firstChild.click();
 </script>
