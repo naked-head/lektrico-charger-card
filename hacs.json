@@ -1,5 +1,6 @@
 {
   "name": "Lektri.co Charger Card",
   "render_readme": true,
-  "filename": "lektrico-charger-card.js"
+  "filename": "lektrico-charger-card.js",
+  "homeassistant": "2024.1.0"
 }

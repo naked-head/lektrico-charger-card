@@ -1,4 +1,5 @@
 import { LitElement, html, nothing } from 'lit';
+import { bestLanguage, localize } from './translations/index.js';
 
 // GUI editor for the main options. Advanced options (actions, entity
 // overrides, per-state LED colors, ...) remain YAML-only and are kept
@@ -52,35 +53,6 @@ const SCHEMA = [
   { name: 'image', selector: { text: {} } },
 ];
 
-const LABELS = {
-  en: {
-    entity: 'Charger state sensor (required)',
-    name: 'Name',
-    location: 'Location',
-    substatus_entity: 'Substatus entity (optional)',
-    compact: 'Compact view',
-    show_leds: 'Show LEDs',
-    show_stats: 'Show stats',
-    show_quick_actions: 'Show quick actions',
-    show_name: 'Show name',
-    language: 'Language',
-    image: 'Custom image (optional path)',
-  },
-  it: {
-    entity: 'Sensore stato del charger (obbligatorio)',
-    name: 'Nome',
-    location: 'Posizione',
-    substatus_entity: 'Entità sottostato (opzionale)',
-    compact: 'Vista compatta',
-    show_leds: 'Mostra LED',
-    show_stats: 'Mostra statistiche',
-    show_quick_actions: 'Mostra azioni rapide',
-    show_name: 'Mostra nome',
-    language: 'Lingua',
-    image: 'Immagine personalizzata (percorso, opzionale)',
-  },
-};
-
 class LektricoChargerCardEditor extends LitElement {
   static properties = {
     hass: { attribute: false },
@@ -92,12 +64,11 @@ class LektricoChargerCardEditor extends LitElement {
   }
 
   get _lang() {
-    const lang = (this.hass?.language || 'en').split('-')[0];
-    return LABELS[lang] ? lang : 'en';
+    return bestLanguage(this.hass?.language);
   }
 
   _computeLabel = (schema) =>
-    LABELS[this._lang][schema.name] || schema.name;
+    localize(this._lang, 'editor', schema.name);
 
   render() {
     if (!this.hass || !this._config) return nothing;

@@ -1,53 +1,74 @@
+<p align="center">
+  <img src="docs/images/logo.png" width="140" alt="Lektri.co Charger Card" />
+</p>
+
 # Lektri.co Charger Card
 
-A Home Assistant Lovelace card built specifically for **Lektri.co EV chargers**
-(1P7K / One and 3P22K / Tri), on top of the official
+[![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
+[![GitHub Release](https://img.shields.io/github/release/naked-head/lektrico-charger-card.svg)](https://github.com/naked-head/lektrico-charger-card/releases)
+[![Validate](https://github.com/naked-head/lektrico-charger-card/actions/workflows/validate.yml/badge.svg)](https://github.com/naked-head/lektrico-charger-card/actions/workflows/validate.yml)
+[![License](https://img.shields.io/github/license/naked-head/lektrico-charger-card.svg)](https://github.com/naked-head/lektrico-charger-card/blob/main/LICENSE)
+
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=naked-head&repository=lektrico-charger-card&category=plugin)
+
+A Home Assistant Lovelace card built specifically for **Lektri.co EV
+chargers** (1P7K / One and 3P22K / Tri), on top of the official
 [`lektrico`](https://www.home-assistant.io/integrations/lektrico/) core
-integration.
-
-Designed as a rethink of the generic
+integration. Designed as a rethink of the generic
 [charger-card](https://github.com/tmjo/charger-card) with the Lektri.co
-hardware in mind:
+hardware in mind.
 
-- **Fully responsive** — the charger is drawn as an SVG, it scales with the
-  card width and never overlaps the surrounding text, on any device.
-- **Real LED behaviour** — the four LED bars mirror the physical device:
-  - 🟢 green: unplugged / idle
-  - 🔵 blue: EV connected / charge complete
-  - ⚪ white spinning: charging — the spin speed follows the actual charging
-    current, just like the real charger
-  - 🔴 red: error
-- **No overlapping dropdowns** — charging current and LED brightness are
-  sliders with preset chips that wrap on small screens; every value
-  (including 25 A and 32 A) is always reachable. Presets outside the range
-  allowed by the charger (`min`/`max` of the number entity) are hidden
-  automatically.
-- **Auto-discovery** — point the card at the charger's state sensor and every
-  other entity of the device (power, voltage, current, dynamic limit, LED
-  brightness, authentication, lock, start/stop buttons, diagnostic error
-  sensors, firmware) is found automatically through the entity registry.
-  Works with renamed and localized entity ids; everything can be overridden.
-- **Error handling** — when the charger reports an error, a red banner lists
-  the active diagnostic sensors (overheating, RCD, overcurrent, …) with
-  friendly names, and the stats row switches to the error view.
-- **Quick actions** — start / stop charge, authentication and cable lock as
-  one-tap buttons, enabled/disabled based on the charger state.
-- **Custom actions** — your own scripts/automations (solar charging, zero
-  cost, presets…) as chips in a dedicated section. The active mode is shown
-  automatically under the charger status (see *Substatus*).
-- **GUI editor** — the main options are configurable from the dashboard UI;
-  advanced options remain available in YAML.
-- **Localized** — English and Italian out of the box, every text overridable.
-- Light & dark theme aware; works in narrow dashboard columns thanks to CSS
-  container queries.
+## Features
+
+- 📱 **Fully responsive** — the charger is drawn as an SVG, it scales with
+  the card width and never overlaps the surrounding text, on any device.
+- 💡 **Real LED behaviour** — the four LED bars mirror the physical device:
+  green when idle, blue when the EV is connected, white spinning while
+  charging (the spin speed follows the actual charging current), red on
+  error. Colors and animations are overridable per state.
+- 🎚️ **No overlapping dropdowns** — charging current and LED brightness are
+  sliders with preset chips that wrap on small screens; every value is
+  always reachable, and presets outside the charger's allowed range are
+  hidden automatically.
+- 🔍 **Auto-discovery** — point the card at the charger's state sensor and
+  every other entity of the device is found automatically through the
+  entity registry. Works with renamed and localized entity ids; everything
+  can be overridden.
+- 🚨 **Error handling** — on error, a red banner lists the active
+  diagnostic sensors (overheating, RCD, overcurrent, …) with friendly
+  names, and the stats row switches to the error view.
+- ▶️ **Quick actions** — start / stop charge, authentication and cable lock
+  as one-tap buttons, enabled/disabled based on the charger state.
+- ⚡ **Charging modes** — your own automations (solar charging, zero cost,
+  fixed levels…) as chips; the active mode is shown under the status
+  automatically. See [DOCS.md](DOCS.md) for ready-made automations.
+- 🖱️ **GUI editor** — the main options are configurable from the dashboard
+  UI; advanced options remain available in YAML.
+- 🌍 **Localized** — English and Italian out of the box
+  ([add a language](DOCS.md#adding-a-language)), every text overridable.
+- 🌗 Light & dark theme aware; works in narrow dashboard columns thanks to
+  CSS container queries.
+
+## Screenshots
+
+| Charging (dark) | Parameters |
+| :---: | :---: |
+| ![Charging](docs/images/charging.png) | ![Parameters](docs/images/parameters.png) |
+
+| Error state | Charging modes (light) |
+| :---: | :---: |
+| ![Error](docs/images/error.png) | ![Modes](docs/images/light.png) |
 
 ## Installation
 
-### HACS (custom repository)
+### Via HACS (recommended)
 
-1. HACS → three-dot menu → *Custom repositories*
-2. Add `https://github.com/naked-head/lektrico-charger-card` with type **Dashboard**
-3. Install *Lektri.co Charger Card* and reload
+1. HACS → three-dot menu → **Custom repositories**
+2. Add `https://github.com/naked-head/lektrico-charger-card` with type
+   **Dashboard**
+3. Install **Lektri.co Charger Card** and reload
+
+Or click the badge above to open the repository directly in HACS.
 
 ### Manual
 
@@ -55,19 +76,23 @@ hardware in mind:
 2. Add the resource: *Settings → Dashboards → Resources* →
    `/local/lektrico-charger-card.js` (JavaScript module)
 
-## Minimal configuration
+## Configuration
 
-That is really all you need — everything else is discovered from the device:
+The card has a **GUI editor** for the main options (entity, name,
+location, substatus entity, view toggles, language, custom image).
+Minimal YAML — everything else is discovered from the device:
 
 ```yaml
 type: custom:lektrico-charger-card
 entity: sensor.1p7k_state
 ```
 
-## Full example
+### Full example
 
 When an action has an `entity`, that entity is also used as the default
-service target — no need to repeat it in `service_data`.
+service target — no need to repeat it in `service_data`. More modes
+(Zero Cost and the shutdown variants, with the matching automations) are
+in [DOCS.md](DOCS.md).
 
 ```yaml
 type: custom:lektrico-charger-card
@@ -77,28 +102,14 @@ location: Carport
 current_presets: [6, 10, 13, 16, 20, 25, 32]
 brightness_presets: [25, 50, 75, 100]
 actions:
-  - text: Zero Cost
-    icon: mdi:currency-eur
-    entity: automation.charger_zero_cost
-    service: automation.turn_on
-  - text: Zero Cost + Shutdown
-    icon: mdi:currency-eur-off
-    entity: automation.charger_zero_cost_shutdown
-    service: automation.turn_on
   - text: Green Mode
     icon: mdi:leaf
     entity: automation.charger_green_mode
     service: automation.turn_on
-  - text: Green Mode + Shutdown
+  - text: Green + Shutdown
     icon: mdi:leaf-off
     entity: automation.charger_green_mode_shutdown
     service: automation.turn_on
-  - text: Max Power 32A
-    icon: mdi:battery-high
-    service: number.set_value
-    service_data:
-      entity_id: number.1p7k_dynamic_limit
-      value: 32
   - text: Standard 16A
     icon: mdi:battery-medium
     service: number.set_value
@@ -113,7 +124,7 @@ actions:
       value: 10
 ```
 
-## Substatus (active charging mode)
+### Substatus (active charging mode)
 
 The line under the status shows the active charging mode. Two mechanisms,
 in order of precedence:
@@ -123,16 +134,12 @@ in order of precedence:
 2. **Derived from actions** (default) — every action that has an `entity`
    whose state is `on` contributes its `text` (or its `substatus` string).
    This works out of the box when each mode automation *enables itself and
-   disables the sibling modes* (`automation.turn_on` on itself +
-   `automation.turn_off` on the others), so exactly one is `on` at a time.
-   Set `substatus: false` on an action to exclude it, or
-   `substatus_from_actions: false` to disable the mechanism.
+   disables the sibling modes* (see the
+   [mode selector](DOCS.md#the-mode-selector) automation), so exactly one
+   is `on` at a time. Set `substatus: false` on an action to exclude it,
+   or `substatus_from_actions: false` to disable the mechanism.
 
-## Options
-
-The main options (entity, name, location, substatus entity, view toggles,
-language, custom image) can be edited from the **dashboard GUI editor**.
-Everything below is available in YAML.
+### Options
 
 | Option | Type | Default | Description |
 | ------ | ---- | ------- | ----------- |
@@ -159,20 +166,27 @@ Everything below is available in YAML.
 | `entities` | object | auto | Override auto-discovery per role: `entities: {power: sensor.my_power, dynamic_limit: number.my_limit, errors: [binary_sensor.a, …]}`. Roles: `state`, `charging_time`, `session_energy`, `lifetime_energy`, `power`, `voltage`, `current`, `installation_current`, `limit_reason`, `temperature`, `dynamic_limit`, `led_brightness`, `authentication`, `lock`, `charge_start`, `charge_stop`, `update`, `errors`. |
 | `section_titles` | object | localized | Override the accordion titles: `{parameters, info, actions}`. |
 
-## How auto-discovery works
+### How auto-discovery works
 
-The card resolves the device of `entity` through the entity registry and then
-matches each role by, in order:
+The card resolves the device of `entity` through the entity registry and
+then matches each role by, in order:
 
 1. explicit override in `entities:`
 2. the integration's `translation_key` (language independent, survives renames)
-3. entity id suffix (English **and** Italian ids are recognized:
-   `_dynamic_limit`/`_limite_dinamico`, `_voltage`/`_tensione`, …)
+3. entity id (exact prefix + suffix first, then suffix; English **and**
+   Italian ids are recognized: `_dynamic_limit`/`_limite_dinamico`,
+   `_voltage`/`_tensione`, …)
 4. unique device class among the device's entities
 
 So it works even if you renamed the entities or your HA is not in English.
 
-## Development
+## Automations
+
+Ready-made automations for the charging modes (solar Green mode, Zero
+Cost, shutdown variants, fixed levels) and the mode-selector pattern are
+documented in **[DOCS.md](DOCS.md)**.
+
+## Development & testing
 
 ```bash
 npm install
@@ -182,12 +196,23 @@ npm test        # jsdom smoke test
 
 `demo/index.html` renders the card against a fake Home Assistant instance —
 open it with any static file server (`npx serve .`) to try states, LED
-animations and the responsive layout without a running HA.
+animations and the responsive layout without a running HA. Translations
+live in `src/translations/` — see
+[DOCS.md](DOCS.md#adding-a-language) to add a language.
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md).
+
+## License
+
+[MIT](LICENSE)
+
+## Disclaimer
+
+This is an independent project, not affiliated with or endorsed by
+LEKTRI.CO.
 
 ## Acknowledgments
 
 Built with the assistance of [Claude](https://claude.ai) by Anthropic.
-
-## License
-
-MIT

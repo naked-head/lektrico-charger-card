@@ -4,13 +4,11 @@ import { styleMap } from 'lit/directives/style-map.js';
 import styles from './styles.js';
 import { chargerSvg, ledOverlaySvg } from './charger-svg.js';
 import './editor.js';
+import { LANGUAGES, bestLanguage, localize } from './translations/index.js';
 import {
   CARD_VERSION,
   CARD_NAME,
   DEFAULT_LED_STATES,
-  DEFAULT_STATE_TEXT,
-  STRINGS,
-  ERROR_NAMES,
   ENTITY_ROLES,
   ERROR_KEYS,
   DEFAULT_CURRENT_PRESETS,
@@ -74,29 +72,23 @@ class LektricoChargerCard extends LitElement {
   /* ------------------------------------------------------------------ */
 
   get _lang() {
-    const lang = this._config.language || this.hass?.language || 'en';
-    return lang.split('-')[0];
+    return bestLanguage(this._config.language || this.hass?.language);
   }
 
   _t(key) {
-    const lang = STRINGS[this._lang] ? this._lang : 'en';
-    return STRINGS[lang][key] || STRINGS.en[key] || key;
+    return localize(this._lang, 'ui', key);
   }
 
   _stateText(state) {
     const custom = this._config.state_text || {};
     if (custom[state]) return custom[state];
-    const lang = DEFAULT_STATE_TEXT[this._lang] ? this._lang : 'en';
-    return DEFAULT_STATE_TEXT[lang][state] || state;
+    return localize(this._lang, 'states', state);
   }
 
   _errorName(key, stateObj) {
-    const lang = ERROR_NAMES[this._lang] ? this._lang : 'en';
-    return (
-      ERROR_NAMES[lang][key] ||
-      stateObj?.attributes.friendly_name ||
-      key
-    );
+    const name =
+      LANGUAGES[this._lang]?.errors?.[key] ?? LANGUAGES.en.errors?.[key];
+    return name || stateObj?.attributes.friendly_name || key;
   }
 
   /* ------------------------------------------------------------------ */
@@ -415,7 +407,7 @@ class LektricoChargerCard extends LitElement {
     if (!stateObj) return nothing;
     const label =
       conf.label ||
-      (STRINGS.en[conf.entity]
+      (LANGUAGES.en.ui[conf.entity]
         ? this._t(conf.entity)
         : stateObj.attributes.friendly_name);
     // `decimals` forces a fixed number of decimals on numeric states
@@ -833,7 +825,7 @@ class LektricoChargerCard extends LitElement {
         if (!stateObj) return nothing;
         const label =
           conf.label ||
-          (STRINGS.en[conf.entity]
+          (LANGUAGES.en.ui[conf.entity]
             ? this._t(conf.entity)
             : stateObj.attributes.friendly_name);
         return html`
@@ -924,7 +916,7 @@ class LektricoChargerCard extends LitElement {
           if (!stateObj) return nothing;
           const label =
             conf.label ||
-            (STRINGS.en[conf.entity]
+            (LANGUAGES.en.ui[conf.entity]
               ? this._t(conf.entity)
               : stateObj.attributes.friendly_name);
           return html`
