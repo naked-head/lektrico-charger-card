@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>lektrico-charger-card — demo</title>
+<style>
+  :root {
+    --card-background-color: #1c1c1e;
+    --primary-text-color: #e8e8ea;
+    --secondary-text-color: #9a9aa0;
+    --divider-color: rgba(255, 255, 255, 0.14);
+    --primary-color: #03a9f4;
+    --rgb-primary-color: 3, 169, 244;
+    --error-color: #f44336;
+    --text-primary-color: #fff;
+  }
+  body.light {
+    --card-background-color: #ffffff;
+    --primary-text-color: #212121;
+    --secondary-text-color: #727272;
+    --divider-color: rgba(0, 0, 0, 0.12);
+    background: #ececec;
+  }
+  body {
+    margin: 0;
+    background: #101014;
+    font-family: system-ui, Roboto, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 24px 12px;
+    transition: background 0.2s;
+  }
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+  .controls button {
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1px solid #555;
+    background: #26262b;
+    color: #ddd;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  body.light .controls button { background: #fff; color: #333; border-color: #bbb; }
+  .controls button.on { border-color: #03a9f4; color: #03a9f4; }
+  #holder { width: 420px; max-width: 100%; transition: width 0.2s; }
+  ha-card { display: block; border-radius: 14px; background: var(--card-background-color); box-shadow: 0 4px 16px rgba(0,0,0,0.35); }
+  ha-icon { display: inline-flex; align-items: center; justify-content: center; width: var(--mdc-icon-size, 24px); height: var(--mdc-icon-size, 24px); font-size: calc(var(--mdc-icon-size, 24px) * 0.86); font-style: normal; line-height: 1; }
+  ha-switch { display: inline-block; width: 40px; height: 22px; border-radius: 11px; background: #555; position: relative; cursor: pointer; transition: background 0.15s; }
+  ha-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%; background: #ddd; transition: left 0.15s; }
+  ha-switch[checked] { background: var(--primary-color); }
+  ha-switch[checked]::after { left: 20px; }
+</style>
+</head>
+<body>
+  <div class="controls" id="stateBtns"></div>
+  <div class="controls">
+    <button data-w="420">420px</button>
+    <button data-w="330">330px (mobile)</button>
+    <button data-w="280">280px (colonna stretta)</button>
+    <button id="themeBtn">☀ / 🌙</button>
+  </div>
+  <div id="holder"></div>
+
+<script>
+  const GLYPHS = {
+    'mdi:play': '▶', 'mdi:stop': '⏹', 'mdi:fingerprint': '◉',
+    'mdi:lock': '🔒', 'mdi:lock-outline': '🔒', 'mdi:lock-open-outline': '🔓',
+    'mdi:chevron-down': '⌄', 'mdi:alert-circle': '⚠', 'mdi:speedometer': '🕒',
+    'mdi:information-outline': 'ℹ', 'mdi:gesture-tap-button': '☝',
+    'mdi:gauge': '◔', 'mdi:counter': '№', 'mdi:thermometer': '🌡',
+    'mdi:chip': '▦', 'mdi:currency-eur': '€', 'mdi:currency-eur-off': '€',
+    'mdi:leaf': '🍃', 'mdi:leaf-off': '🍂', 'mdi:current-ac': '∿',
+    'mdi:battery-high': '▮', 'mdi:battery-medium': '▮', 'mdi:battery-low': '▯',
+    'mdi:ray-vertex': '✳',
+  };
+  customElements.define('ha-card', class extends HTMLElement {});
+  customElements.define('ha-icon', class extends HTMLElement {
+    static observedAttributes = ['icon'];
+    set icon(v) { this.setAttribute('icon', v || ''); }
+    attributeChangedCallback() { this.textContent = GLYPHS[this.getAttribute('icon')] || '•'; }
+    connectedCallback() { if (!this.textContent) this.textContent = GLYPHS[this.getAttribute('icon')] || '•'; }
+  });
+  customElements.define('ha-switch', class extends HTMLElement {
+    set checked(v) { this.toggleAttribute('checked', !!v); }
+    get checked() { return this.hasAttribute('checked'); }
+    connectedCallback() {
+      this.addEventListener('click', () => {
+        this.checked = !this.checked;
+        this.dispatchEvent(new Event('change'));
+      });
+    }
+  });
+</script>
+
+<script type="module">
+  import '../dist/lektrico-charger-card.js';
+
+  const mk = (eid, state, attributes = {}) => ({ entity_id: eid, state, attributes });
+  const baseStates = () => ({
+    'sensor.1p7k_state': mk('sensor.1p7k_state', 'available', { friendly_name: 'Lektri.co 1P7K' }),
+    'sensor.1p7k_charging_time': mk('sensor.1p7k_charging_time', '0', { device_class: 'duration', unit_of_measurement: 's' }),
+    'sensor.1p7k_energia': mk('sensor.1p7k_energia', '0', { device_class: 'energy', unit_of_measurement: 'kWh' }),
+    'sensor.1p7k_lifetime_energy': mk('sensor.1p7k_lifetime_energy', '1234', { unit_of_measurement: 'kWh' }),
+    'sensor.1p7k_potenza': mk('sensor.1p7k_potenza', '0', { device_class: 'power', unit_of_measurement: 'kW' }),
+    'sensor.1p7k_tensione': mk('sensor.1p7k_tensione', '234.8', { device_class: 'voltage', unit_of_measurement: 'V' }),
+    'sensor.1p7k_corrente': mk('sensor.1p7k_corrente', '0', { device_class: 'current', unit_of_measurement: 'A' }),
+    'sensor.1p7k_installation_current': mk('sensor.1p7k_installation_current', '32', { unit_of_measurement: 'A' }),
+    'sensor.1p7k_limit_reason': mk('sensor.1p7k_limit_reason', 'dynamic_limit', {}),
+    'sensor.1p7k_temperatura': mk('sensor.1p7k_temperatura', '45.9', { device_class: 'temperature', unit_of_measurement: '°C' }),
+    'number.1p7k_limite_dinamico': mk('number.1p7k_limite_dinamico', '11', { min: 6, max: 32, step: 1, unit_of_measurement: 'A' }),
+    'number.1p7k_led_brightness': mk('number.1p7k_led_brightness', '100', { min: 10, max: 100, step: 5, unit_of_measurement: '%' }),
+    'switch.1p7k_autenticazione': mk('switch.1p7k_autenticazione', 'off', {}),
+    'switch.1p7k_blocca': mk('switch.1p7k_blocca', 'off', {}),
+    'button.1p7k_charge_start': mk('button.1p7k_charge_start', 'unknown', {}),
+    'button.1p7k_charge_stop': mk('button.1p7k_charge_stop', 'unknown', {}),
+    'binary_sensor.1p7k_overheating': mk('binary_sensor.1p7k_overheating', 'off', {}),
+    'binary_sensor.1p7k_rcd_error': mk('binary_sensor.1p7k_rcd_error', 'off', {}),
+    'automation.caricatore_costo_zero': mk('automation.caricatore_costo_zero', 'on', {}),
+    'input_text.caricatore': mk('input_text.caricatore', 'COSTO ZERO', {}),
+  });
+
+  const tk = {
+    'sensor.1p7k_state': 'state', 'sensor.1p7k_charging_time': 'charging_time',
+    'sensor.1p7k_energia': 'session_energy', 'sensor.1p7k_lifetime_energy': 'lifetime_energy',
+    'sensor.1p7k_potenza': 'instant_power', 'sensor.1p7k_tensione': 'voltage',
+    'sensor.1p7k_corrente': 'current', 'sensor.1p7k_installation_current': 'installation_current',
+    'sensor.1p7k_limit_reason': 'limit_reason', 'sensor.1p7k_temperatura': 'temperature',
+    'number.1p7k_limite_dinamico': 'dynamic_limit', 'number.1p7k_led_brightness': 'led_max_brightness',
+    'switch.1p7k_autenticazione': 'authentication', 'switch.1p7k_blocca': 'lock',
+    'button.1p7k_charge_start': 'charge_start', 'button.1p7k_charge_stop': 'charge_stop',
+    'binary_sensor.1p7k_overheating': 'overheating', 'binary_sensor.1p7k_rcd_error': 'rcd_error',
+  };
+  const entities = {};
+  for (const [eid, key] of Object.entries(tk)) {
+    entities[eid] = { entity_id: eid, device_id: 'dev1', platform: 'lektrico', translation_key: key };
+  }
+
+  let states = baseStates();
+  const hass = () => ({
+    language: 'it',
+    states,
+    entities,
+    formatEntityState: (st) => {
+      const u = st.attributes.unit_of_measurement;
+      return u ? `${st.state} ${u}` : st.state;
+    },
+    callService: (domain, service, data) => {
+      console.log('callService', domain, service, data);
+      if (domain === 'number' && service === 'set_value') {
+        states[data.entity_id] = { ...states[data.entity_id], state: String(data.value) };
+      }
+      if (domain === 'switch' && service === 'toggle') {
+        const cur = states[data.entity_id].state;
+        states[data.entity_id] = { ...states[data.entity_id], state: cur === 'on' ? 'off' : 'on' };
+      }
+      refresh();
+    },
+  });
+
+  const card = document.createElement('lektrico-charger-card');
+  card.setConfig({
+    entity: 'sensor.1p7k_state',
+    name: 'Lektri.co',
+    location: 'Tettoia Macchine',
+    substatus_entity: 'input_text.caricatore',
+    actions: [
+      { text: 'Costo Zero', icon: 'mdi:currency-eur', entity: 'automation.caricatore_costo_zero', service: 'automation.turn_on', service_data: { entity_id: 'automation.caricatore_costo_zero' } },
+      { text: 'Costo Zero con Spegnimento', icon: 'mdi:currency-eur-off', service: 'automation.turn_on', service_data: { entity_id: 'automation.caricatore_costo_zero_con_spegnimento' } },
+      { text: 'Modalità Green', icon: 'mdi:leaf', service: 'automation.turn_on', service_data: { entity_id: 'automation.caricatore_modalita_green' } },
+      { text: 'Green con Spegnimento', icon: 'mdi:leaf-off', service: 'automation.turn_on', service_data: { entity_id: 'automation.caricatore_modalita_green_con_spegnimento' } },
+      { text: 'Massima Energia 32A', icon: 'mdi:battery-high', service: 'number.set_value', service_data: { entity_id: 'number.1p7k_limite_dinamico', value: 32 } },
+      { text: 'Livello Standard 16A', icon: 'mdi:battery-medium', service: 'number.set_value', service_data: { entity_id: 'number.1p7k_limite_dinamico', value: 16 } },
+      { text: 'Livello Basso 10A', icon: 'mdi:battery-low', service: 'number.set_value', service_data: { entity_id: 'number.1p7k_limite_dinamico', value: 10 } },
+    ],
+  });
+  document.getElementById('holder').appendChild(card);
+  const refresh = () => { card.hass = hass(); };
+
+  const SCENARIOS = {
+    'Scollegato': (s) => { s['sensor.1p7k_state'].state = 'available'; },
+    'Connesso': (s) => { s['sensor.1p7k_state'].state = 'connected'; },
+    'In carica 8A': (s) => {
+      s['sensor.1p7k_state'].state = 'charging';
+      s['sensor.1p7k_corrente'].state = '8';
+      s['sensor.1p7k_potenza'].state = '1.8';
+      s['sensor.1p7k_energia'].state = '2.4';
+      s['sensor.1p7k_charging_time'].state = '4520';
+    },
+    'In carica 32A': (s) => {
+      s['sensor.1p7k_state'].state = 'charging';
+      s['sensor.1p7k_corrente'].state = '32';
+      s['sensor.1p7k_potenza'].state = '7.2';
+      s['sensor.1p7k_energia'].state = '6.1';
+      s['sensor.1p7k_charging_time'].state = '10930';
+    },
+    'In pausa': (s) => { s['sensor.1p7k_state'].state = 'paused'; },
+    'Autenticazione': (s) => { s['sensor.1p7k_state'].state = 'need_auth'; },
+    'Bloccato': (s) => { s['sensor.1p7k_state'].state = 'locked'; },
+    'Errore': (s) => {
+      s['sensor.1p7k_state'].state = 'error';
+      s['binary_sensor.1p7k_overheating'].state = 'on';
+      s['binary_sensor.1p7k_rcd_error'].state = 'on';
+    },
+  };
+
+  const btns = document.getElementById('stateBtns');
+  for (const name of Object.keys(SCENARIOS)) {
+    const b = document.createElement('button');
+    b.textContent = name;
+    b.onclick = () => {
+      states = baseStates();
+      SCENARIOS[name](states);
+      refresh();
+      btns.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b));
+    };
+    btns.appendChild(b);
+  }
+
+  document.querySelectorAll('[data-w]').forEach((b) => {
+    b.onclick = () => { document.getElementById('holder').style.width = b.dataset.w + 'px'; };
+  });
+  document.getElementById('themeBtn').onclick = () => document.body.classList.toggle('light');
+
+  btns.firstChild.click();
+</script>
+</body>
+</html>
