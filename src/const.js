@@ -1,4 +1,4 @@
-export const CARD_VERSION = '1.0.0';
+export const CARD_VERSION = '1.1.0';
 
 export const CARD_NAME = 'lektrico-charger-card';
 
@@ -257,7 +257,11 @@ export const ERROR_KEYS = [
 ];
 
 // Spin animation period bounds (seconds): slowest at minimal current,
-// fastest at 32 A. Overridable via `led_spin: {slowest, fastest}`.
+// fastest at the charger's maximum current. The maximum is read from the
+// dynamic-limit number entity (6-32 A per phase on both 1P7K/One 7.4 kW
+// and 3P22K/Tri 22 kW, per the manufacturer's specs), so derated
+// installations scale automatically. Overridable via
+// `led_spin: {slowest, fastest}`.
 export const DEFAULT_LED_SPIN = { slowest: 6.0, fastest: 2.0 };
 
 export const DEFAULT_CURRENT_PRESETS = [6, 10, 13, 16, 20, 25, 32];

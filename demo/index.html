@@ -124,7 +124,9 @@
     'binary_sensor.1p7k_overheating': mk('binary_sensor.1p7k_overheating', 'off', {}),
     'binary_sensor.1p7k_rcd_error': mk('binary_sensor.1p7k_rcd_error', 'off', {}),
     'automation.caricatore_costo_zero': mk('automation.caricatore_costo_zero', 'on', {}),
-    'input_text.caricatore': mk('input_text.caricatore', 'COSTO ZERO', {}),
+    'automation.caricatore_costo_zero_con_spegnimento': mk('automation.caricatore_costo_zero_con_spegnimento', 'off', {}),
+    'automation.caricatore_modalita_green': mk('automation.caricatore_modalita_green', 'off', {}),
+    'automation.caricatore_modalita_green_con_spegnimento': mk('automation.caricatore_modalita_green_con_spegnimento', 'off', {}),
   });
 
   const tk = {
@@ -161,6 +163,14 @@
         const cur = states[data.entity_id].state;
         states[data.entity_id] = { ...states[data.entity_id], state: cur === 'on' ? 'off' : 'on' };
       }
+      if (domain === 'automation' && service === 'turn_on') {
+        // demo behaviour: mode automations are mutually exclusive
+        for (const id of Object.keys(states)) {
+          if (id.startsWith('automation.')) {
+            states[id] = { ...states[id], state: id === data.entity_id ? 'on' : 'off' };
+          }
+        }
+      }
       refresh();
     },
   });
@@ -170,12 +180,12 @@
     entity: 'sensor.1p7k_state',
     name: 'Lektri.co',
     location: 'Tettoia Macchine',
-    substatus_entity: 'input_text.caricatore',
+    // substatus is derived automatically from the active mode action below
     actions: [
-      { text: 'Costo Zero', icon: 'mdi:currency-eur', entity: 'automation.caricatore_costo_zero', service: 'automation.turn_on', service_data: { entity_id: 'automation.caricatore_costo_zero' } },
-      { text: 'Costo Zero con Spegnimento', icon: 'mdi:currency-eur-off', service: 'automation.turn_on', service_data: { entity_id: 'automation.caricatore_costo_zero_con_spegnimento' } },
-      { text: 'Modalità Green', icon: 'mdi:leaf', service: 'automation.turn_on', service_data: { entity_id: 'automation.caricatore_modalita_green' } },
-      { text: 'Green con Spegnimento', icon: 'mdi:leaf-off', service: 'automation.turn_on', service_data: { entity_id: 'automation.caricatore_modalita_green_con_spegnimento' } },
+      { text: 'Costo Zero', icon: 'mdi:currency-eur', entity: 'automation.caricatore_costo_zero', service: 'automation.turn_on' },
+      { text: 'Costo Zero con Spegnimento', icon: 'mdi:currency-eur-off', entity: 'automation.caricatore_costo_zero_con_spegnimento', service: 'automation.turn_on' },
+      { text: 'Modalità Green', icon: 'mdi:leaf', entity: 'automation.caricatore_modalita_green', service: 'automation.turn_on' },
+      { text: 'Green con Spegnimento', icon: 'mdi:leaf-off', entity: 'automation.caricatore_modalita_green_con_spegnimento', service: 'automation.turn_on' },
       { text: 'Massima Energia 32A', icon: 'mdi:battery-high', service: 'number.set_value', service_data: { entity_id: 'number.1p7k_limite_dinamico', value: 32 } },
       { text: 'Livello Standard 16A', icon: 'mdi:battery-medium', service: 'number.set_value', service_data: { entity_id: 'number.1p7k_limite_dinamico', value: 16 } },
       { text: 'Livello Basso 10A', icon: 'mdi:battery-low', service: 'number.set_value', service_data: { entity_id: 'number.1p7k_limite_dinamico', value: 10 } },

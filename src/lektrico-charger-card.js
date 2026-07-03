@@ -3,6 +3,7 @@ import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import styles from './styles.js';
 import { chargerSvg, ledOverlaySvg } from './charger-svg.js';
+import './editor.js';
 import {
   CARD_VERSION,
   CARD_NAME,
@@ -64,6 +65,10 @@ class LektricoChargerCard extends LitElement {
     return { entity: guess ? guess.entity_id : 'sensor.1p7k_state' };
   }
 
+  static getConfigElement() {
+    return document.createElement('lektrico-charger-card-editor');
+  }
+
   /* ------------------------------------------------------------------ */
   /* localization                                                        */
   /* ------------------------------------------------------------------ */
@@ -116,49 +121,83 @@ class LektricoChargerCard extends LitElement {
       .split('.')[1]
       .replace(/_(state|stato)$/, '');
 
+    const roleEntries = Object.entries(ENTITY_ROLES);
     const roles = {};
-    for (const [role, spec] of Object.entries(ENTITY_ROLES)) {
-      if (overrides[role]) {
-        roles[role] = overrides[role];
-        continue;
-      }
-      let found;
-      // 1. entity registry translation_key (language independent)
-      if (deviceEntities.length) {
-        found = deviceEntities.find(
-          (e) =>
-            e.entity_id.startsWith(`${spec.domain}.`) &&
-            spec.keys?.includes(e.translation_key)
-        );
-      }
-      // 2. entity_id suffix
-      if (!found) {
-        const pool = deviceEntities.length
-          ? deviceEntities.map((e) => e.entity_id)
-          : Object.keys(hass.states).filter((id) =>
-              id.startsWith(`${spec.domain}.${prefix}`)
-            );
-        for (const suffix of spec.suffixes || []) {
-          const eid = pool.find(
-            (id) => id.startsWith(`${spec.domain}.`) && id.endsWith(suffix)
-          );
-          if (eid) {
-            found = eid;
-            break;
-          }
+    const claimed = new Set();
+    const claim = (role, eid) => {
+      roles[role] = eid;
+      claimed.add(eid);
+    };
+
+    // 0. explicit overrides
+    for (const [role] of roleEntries) {
+      if (overrides[role]) claim(role, overrides[role]);
+    }
+    // 1. entity registry translation_key (language independent)
+    for (const [role, spec] of roleEntries) {
+      if (roles[role] || !deviceEntities.length) continue;
+      const found = deviceEntities.find(
+        (e) =>
+          !claimed.has(e.entity_id) &&
+          e.entity_id.startsWith(`${spec.domain}.`) &&
+          spec.keys?.includes(e.translation_key)
+      );
+      if (found) claim(role, found.entity_id);
+    }
+    // 2. exact `<domain>.<prefix><suffix>` entity ids
+    for (const [role, spec] of roleEntries) {
+      if (roles[role]) continue;
+      for (const suffix of spec.suffixes || []) {
+        const eid = `${spec.domain}.${prefix}${suffix}`;
+        if (!claimed.has(eid) && hass.states[eid]) {
+          claim(role, eid);
+          break;
         }
       }
-      // 3. unique device_class among the device entities
-      if (!found && spec.device_class && deviceEntities.length) {
-        const candidates = deviceEntities.filter(
-          (e) =>
-            e.entity_id.startsWith(`${spec.domain}.`) &&
-            hass.states[e.entity_id]?.attributes.device_class ===
-              spec.device_class
-        );
-        if (candidates.length === 1) found = candidates[0];
+    }
+    // 3. suffix match. A candidate is skipped when a *longer* suffix of a
+    //    different role also matches, so `current` can never steal
+    //    `..._installation_current`.
+    const allSuffixes = roleEntries.flatMap(([, s]) => s.suffixes || []);
+    for (const [role, spec] of roleEntries) {
+      if (roles[role]) continue;
+      const pool = deviceEntities.length
+        ? deviceEntities.map((e) => e.entity_id)
+        : Object.keys(hass.states).filter((id) =>
+            id.startsWith(`${spec.domain}.${prefix}`)
+          );
+      outer: for (const suffix of spec.suffixes || []) {
+        for (const id of pool) {
+          if (
+            claimed.has(id) ||
+            !id.startsWith(`${spec.domain}.`) ||
+            !id.endsWith(suffix)
+          ) {
+            continue;
+          }
+          const longerMatch = allSuffixes.some(
+            (s2) =>
+              s2.length > suffix.length &&
+              !(spec.suffixes || []).includes(s2) &&
+              id.endsWith(s2)
+          );
+          if (longerMatch) continue;
+          claim(role, id);
+          break outer;
+        }
       }
-      if (found) roles[role] = found.entity_id || found;
+    }
+    // 4. unique device_class among the remaining device entities
+    for (const [role, spec] of roleEntries) {
+      if (roles[role] || !spec.device_class || !deviceEntities.length) continue;
+      const candidates = deviceEntities.filter(
+        (e) =>
+          !claimed.has(e.entity_id) &&
+          e.entity_id.startsWith(`${spec.domain}.`) &&
+          hass.states[e.entity_id]?.attributes.device_class ===
+            spec.device_class
+      );
+      if (candidates.length === 1) claim(role, candidates[0].entity_id);
     }
     roles.state = roles.state || stateEid;
 
@@ -297,6 +336,11 @@ class LektricoChargerCard extends LitElement {
     }
     const [domain, service] = action.service.split('.');
     const data = { ...(action.service_data || action.data || {}) };
+    // `entity` doubles as the default service target, so simple actions
+    // don't have to repeat the id in service_data.
+    if (action.entity && !data.entity_id && !action.target) {
+      data.entity_id = action.entity;
+    }
     this.hass.callService(domain, service, data, action.target);
   }
 
@@ -347,7 +391,10 @@ class LektricoChargerCard extends LitElement {
 
   _renderTop(state) {
     if (this._config.show_image === false) return nothing;
-    const left = this._config.info_left ?? ['current', 'dynamic_limit'];
+    const left = this._config.info_left ?? [
+      { entity: 'current', decimals: 1 },
+      'dynamic_limit',
+    ];
     const right = this._config.info_right ?? ['voltage', 'power'];
     return html`
       <div class="top">
@@ -368,9 +415,25 @@ class LektricoChargerCard extends LitElement {
     if (!stateObj) return nothing;
     const label =
       conf.label ||
-      (typeof item === 'string' && STRINGS.en[item]
-        ? this._t(item)
+      (STRINGS.en[conf.entity]
+        ? this._t(conf.entity)
         : stateObj.attributes.friendly_name);
+    // `decimals` forces a fixed number of decimals on numeric states
+    // (e.g. the instantaneous charging current).
+    let value;
+    const num = Number(stateObj.state);
+    if (
+      conf.decimals != null &&
+      stateObj.state !== '' &&
+      !Number.isNaN(num) &&
+      stateObj.state !== 'unavailable' &&
+      stateObj.state !== 'unknown'
+    ) {
+      const unit = stateObj.attributes.unit_of_measurement;
+      value = `${num.toFixed(conf.decimals)}${unit ? ` ${unit}` : ''}`;
+    } else {
+      value = this._fmt(stateObj);
+    }
     return html`
       <div
         class="info-item"
@@ -378,7 +441,7 @@ class LektricoChargerCard extends LitElement {
       >
         <div class="value">
           ${conf.icon ? html`<ha-icon .icon=${conf.icon}></ha-icon>` : nothing}
-          ${this._fmt(stateObj)}
+          ${value}
         </div>
         <div class="label">${label}</div>
       </div>
@@ -393,8 +456,22 @@ class LektricoChargerCard extends LitElement {
     };
   }
 
+  _maxAmps() {
+    // Per-phase maximum of the charger: read from the dynamic-limit
+    // number entity (6-32 A on both the 7.4 kW and the 22 kW models),
+    // falling back to the installation current, then 32 A.
+    const limit = this._stateObj('dynamic_limit');
+    const installation = this._stateObj('installation_current');
+    return (
+      Number(limit?.attributes.max) ||
+      Number(installation?.state) ||
+      32
+    );
+  }
+
   _ledPeriod() {
-    // Spin speed follows the charging current, like the real device.
+    // Spin speed follows the charging current, like the real device,
+    // normalized to this charger's actual maximum.
     const current = this._stateObj('current');
     const limit = this._stateObj('dynamic_limit');
     let amps = Number(current?.state);
@@ -403,7 +480,8 @@ class LektricoChargerCard extends LitElement {
       ...DEFAULT_LED_SPIN,
       ...(this._config.led_spin || {}),
     };
-    const period = slowest - (Math.min(amps, 32) / 32) * (slowest - fastest);
+    const max = this._maxAmps();
+    const period = slowest - (Math.min(amps, max) / max) * (slowest - fastest);
     return `${Math.max(period, fastest).toFixed(2)}s`;
   }
 
@@ -457,12 +535,37 @@ class LektricoChargerCard extends LitElement {
 
   /* ---------- status ---------- */
 
+  _substatusText() {
+    // 1. explicit helper entity (e.g. an input_text set by automations)
+    if (this._config.substatus_entity) {
+      const sub = this.hass.states[this._config.substatus_entity];
+      if (sub && sub.state && !['unknown', 'unavailable'].includes(sub.state)) {
+        return sub.state;
+      }
+      return undefined;
+    }
+    // 2. derived from the actions: every action whose `entity` is `on`
+    //    contributes its text (or its `substatus` string). Works out of
+    //    the box when each mode-automation disables the others.
+    if (this._config.substatus_from_actions === false) return undefined;
+    const active = (this._config.actions || []).filter(
+      (a) =>
+        a.entity &&
+        a.substatus !== false &&
+        this.hass.states[a.entity]?.state === 'on'
+    );
+    if (!active.length) return undefined;
+    return active
+      .map((a) =>
+        typeof a.substatus === 'string' ? a.substatus : a.text || a.name
+      )
+      .join(' · ');
+  }
+
   _renderStatus(stateObj, state) {
     const name = this._config.name || stateObj.attributes.friendly_name;
     const location = this._config.location;
-    const substatus = this._config.substatus_entity
-      ? this.hass.states[this._config.substatus_entity]
-      : undefined;
+    const substatus = this._substatusText();
     return html`
       <div class="status" @click=${() => this._moreInfo(this._config.entity)}>
         ${this._config.show_name !== false
@@ -479,8 +582,8 @@ class LektricoChargerCard extends LitElement {
         >
           ${this._stateText(state)}
         </div>
-        ${substatus && substatus.state
-          ? html`<div class="substatus">${substatus.state}</div>`
+        ${substatus
+          ? html`<div class="substatus">${substatus}</div>`
           : nothing}
       </div>
     `;

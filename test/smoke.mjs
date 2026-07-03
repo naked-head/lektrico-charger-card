@@ -88,7 +88,7 @@ card.setConfig({
   location: 'Tettoia Macchine',
   substatus_entity: 'input_text.caricatore',
   actions: [
-    { text: 'Costo Zero', icon: 'mdi:currency-eur', service: 'automation.turn_on', service_data: { entity_id: 'automation.caricatore_costo_zero' }, entity: 'automation.caricatore_costo_zero' },
+    { text: 'Costo Zero', icon: 'mdi:currency-eur', service: 'automation.turn_on', entity: 'automation.caricatore_costo_zero' },
   ],
 });
 card.hass = hass;
@@ -110,6 +110,8 @@ assert(text.includes('01:02:05'), 'charging time formatted HH:MM:SS');
 assert(text.includes('4.2 kWh'), 'session energy shown');
 assert(text.includes('45.9 °C'), 'temperature shown');
 assert(text.includes('234.8 V'), 'voltage shown');
+assert(text.includes('16.0 A'), 'instantaneous current with 1 decimal');
+assert(!sr.querySelector('.side-info.left')?.textContent.includes('32'), 'left info does not show installation current');
 assert(sr.querySelector('.error-banner'), 'error banner visible (overheating on)');
 assert(text.includes('Surriscaldamento'), 'error name localized');
 const ledWrap = sr.querySelector('.leds.anim-spin');
@@ -151,7 +153,7 @@ const chip = sr.querySelector('.action-chip');
 assert(chip, 'custom action chip rendered');
 assert(chip.classList.contains('active'), 'action chip active (automation on)');
 chip.click();
-assert(calls.some((c) => c[0] === 'automation' && c[1] === 'turn_on'), 'action chip calls automation.turn_on');
+assert(calls.some((c) => c[0] === 'automation' && c[1] === 'turn_on' && c[2].entity_id === 'automation.caricatore_costo_zero'), 'action entity used as default service target');
 
 // available state -> green steady
 hass.states['sensor.1p7k_state'] = { ...states['sensor.1p7k_state'], state: 'available' };
@@ -175,7 +177,12 @@ assert([...card.shadowRoot.querySelectorAll('.stat .label')].some((l) => l.textC
 // discovery without registry (fallback by suffix)
 const hassNoReg = { ...hass, entities: {} };
 const card2 = document.createElement('lektrico-charger-card');
-card2.setConfig({ entity: 'sensor.1p7k_state' });
+card2.setConfig({
+  entity: 'sensor.1p7k_state',
+  actions: [
+    { text: 'Costo Zero', entity: 'automation.caricatore_costo_zero', service: 'automation.turn_on' },
+  ],
+});
 card2.hass = hassNoReg;
 document.body.appendChild(card2);
 await card2.updateComplete;
@@ -183,5 +190,7 @@ card2.shadowRoot.querySelectorAll('.section-header')[0].click();
 await card2.updateComplete;
 assert(card2.shadowRoot.querySelectorAll('input[type=range]').length === 2, 'suffix-fallback discovery finds numbers (italian entity ids)');
 assert(card2.shadowRoot.textContent.includes('234.8 V'), 'suffix-fallback finds voltage (tensione)');
+assert(card2.shadowRoot.querySelector('.side-info.left').textContent.includes('16.0 A'), 'suffix-fallback current is sensor.1p7k_corrente, not installation_current');
+assert(card2.shadowRoot.querySelector('.substatus')?.textContent.trim() === 'Costo Zero', 'substatus derived from active action entity');
 
 console.log(process.exitCode ? '\nSMOKE TEST FAILED' : '\nSMOKE TEST PASSED');

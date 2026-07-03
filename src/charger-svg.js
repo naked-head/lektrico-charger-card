@@ -1,7 +1,7 @@
 import { svg } from 'lit';
 
 // Vector rendering of a Lektri.co charger (1P7K / One / 3P22K / Tri):
-// a dark rounded square with four LED bars arranged as a cross.
+// a dark rounded square with four thin LED bars arranged as a cross.
 // Being SVG it scales to any card width without ever covering the
 // surrounding texts, and the LED bars can change color and animate.
 export const chargerSvg = () => svg`
@@ -32,10 +32,10 @@ export const chargerSvg = () => svg`
 
     <!-- LED cross: top / right / bottom / left -->
     <g class="leds">
-      <rect class="led led-0" x="115.5" y="42" width="9" height="54" rx="4.5"></rect>
-      <rect class="led led-1" x="144" y="115.5" width="54" height="9" rx="4.5"></rect>
-      <rect class="led led-2" x="115.5" y="144" width="9" height="54" rx="4.5"></rect>
-      <rect class="led led-3" x="42" y="115.5" width="54" height="9" rx="4.5"></rect>
+      <rect class="led led-0" x="117" y="42" width="6" height="54" rx="3"></rect>
+      <rect class="led led-1" x="144" y="117" width="54" height="6" rx="3"></rect>
+      <rect class="led led-2" x="117" y="144" width="6" height="54" rx="3"></rect>
+      <rect class="led led-3" x="42" y="117" width="54" height="6" rx="3"></rect>
     </g>
 
     <text x="120" y="216" text-anchor="middle" class="brand-text">LEKTRI.CO</text>
@@ -52,10 +52,10 @@ export const ledOverlaySvg = () => svg`
     aria-hidden="true"
   >
     <g class="leds">
-      <rect class="led led-0" x="95.5" y="22" width="9" height="54" rx="4.5"></rect>
-      <rect class="led led-1" x="124" y="95.5" width="54" height="9" rx="4.5"></rect>
-      <rect class="led led-2" x="95.5" y="124" width="9" height="54" rx="4.5"></rect>
-      <rect class="led led-3" x="22" y="95.5" width="54" height="9" rx="4.5"></rect>
+      <rect class="led led-0" x="97" y="22" width="6" height="54" rx="3"></rect>
+      <rect class="led led-1" x="124" y="97" width="54" height="6" rx="3"></rect>
+      <rect class="led led-2" x="97" y="124" width="6" height="54" rx="3"></rect>
+      <rect class="led led-3" x="22" y="97" width="54" height="6" rx="3"></rect>
     </g>
   </svg>
 `;
