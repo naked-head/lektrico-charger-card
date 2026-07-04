@@ -285,10 +285,29 @@ document.body.appendChild(card4);
 await card4.updateComplete;
 const sr4 = card4.shadowRoot;
 assert(sr4.querySelector('.compact-top'), 'compact top layout rendered');
-assert(!sr4.querySelector('.sections'), 'compact: no accordion sections');
-assert(sr4.querySelector('.actions-grid'), 'compact: action chips inline');
+const compactHeaders = sr4.querySelectorAll('.section-header');
+assert(compactHeaders.length === 1, 'compact: single accordion section (Actions)');
+assert(!sr4.querySelector('.actions-grid'), 'compact: actions collapsed by default');
+compactHeaders[0].click();
+await card4.updateComplete;
+assert(card4.shadowRoot.querySelector('.actions-grid'), 'compact: actions open on demand');
 assert(!sr4.textContent.includes('Carport'), 'compact: location hidden');
 assert(!sr4.querySelector('.compact-top').textContent.includes('kW'), 'compact: power hidden');
 assert(sr4.querySelectorAll('.qa-button').length === 4, 'compact: quick actions available');
+
+// info-only card: all sections disabled
+const card5 = document.createElement('lektrico-charger-card');
+card5.setConfig({
+  entity: 'sensor.1p7k_state', compact: true,
+  show_parameters: false, show_info: false, show_actions: false,
+  show_quick_actions: false,
+  actions: [{ text: 'Green Mode', entity: 'automation.caricatore_costo_zero', service: 'automation.turn_on' }],
+});
+card5.hass = { ...hass };
+document.body.appendChild(card5);
+await card5.updateComplete;
+assert(!card5.shadowRoot.querySelector('.sections'), 'info-only: no sections at all');
+assert(!card5.shadowRoot.querySelector('.quick-actions'), 'info-only: no quick actions');
+assert(card5.shadowRoot.querySelector('.stats'), 'info-only: stats still shown');
 
 console.log(process.exitCode ? '\nSMOKE TEST FAILED' : '\nSMOKE TEST PASSED');

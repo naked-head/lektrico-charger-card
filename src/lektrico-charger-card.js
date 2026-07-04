@@ -425,7 +425,7 @@ class LektricoChargerCard extends LitElement {
         ${this._config.show_quick_actions !== false
           ? this._renderQuickActions(state)
           : nothing}
-        ${compact ? this._renderActionsGrid() : this._renderSections()}
+        ${this._renderSections(compact)}
         ${this._config.show_stats !== false
           ? this._renderStats(state, activeErrors)
           : nothing}
@@ -760,31 +760,40 @@ class LektricoChargerCard extends LitElement {
 
   /* ---------- accordion sections ---------- */
 
-  _renderSections() {
-    const actionsGrid = this._renderActionsGrid();
-    const sections = [
-      {
+  // Each section can be disabled individually (show_parameters /
+  // show_info / show_actions: false). In compact view only the Actions
+  // section is kept, still as a collapsed accordion.
+  _renderSections(compact = false) {
+    const sections = [];
+    if (!compact && this._config.show_parameters !== false) {
+      sections.push({
         id: 'parameters',
         icon: 'mdi:speedometer',
         title:
       this._config.section_titles?.parameters || this._t('parameters'),
         body: () => this._renderParameters(),
-      },
-      {
+      });
+    }
+    if (!compact && this._config.show_info !== false) {
+      sections.push({
         id: 'info',
         icon: 'mdi:information-outline',
         title: this._config.section_titles?.info || this._t('info'),
         body: () => this._renderInfoList(),
-      },
-    ];
-    if (actionsGrid !== nothing) {
-      sections.push({
-        id: 'actions',
-        icon: 'mdi:gesture-tap-button',
-        title: this._config.section_titles?.actions || this._t('actions'),
-        body: () => actionsGrid,
       });
     }
+    if (this._config.show_actions !== false) {
+      const actionsGrid = this._renderActionsGrid();
+      if (actionsGrid !== nothing) {
+        sections.push({
+          id: 'actions',
+          icon: 'mdi:gesture-tap-button',
+          title: this._config.section_titles?.actions || this._t('actions'),
+          body: () => actionsGrid,
+        });
+      }
+    }
+    if (!sections.length) return nothing;
 
     return html`
       <div class="sections">

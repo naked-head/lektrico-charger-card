@@ -19,6 +19,9 @@ const BOOL_DEFAULTS = {
   show_stats: true,
   show_quick_actions: true,
   show_name: true,
+  show_parameters: true,
+  show_info: true,
+  show_actions: true,
 };
 
 const SCHEMA = [
@@ -36,6 +39,9 @@ const SCHEMA = [
       { name: 'show_stats', selector: { boolean: {} } },
       { name: 'show_quick_actions', selector: { boolean: {} } },
       { name: 'show_name', selector: { boolean: {} } },
+      { name: 'show_parameters', selector: { boolean: {} } },
+      { name: 'show_info', selector: { boolean: {} } },
+      { name: 'show_actions', selector: { boolean: {} } },
     ],
   },
   {
