@@ -120,7 +120,7 @@ assert(/--led-color:\s*#ffffff/.test(ledWrap?.getAttribute('style') || ''), 'LED
 assert((ledWrap?.getAttribute('style') || '').includes('--led-period'), 'LED period set');
 
 // open parameters section
-sr.querySelectorAll('.section-header')[0].click();
+sr.querySelectorAll('.section-toggle')[0].click();
 await card.updateComplete;
 const sliders = sr.querySelectorAll('input[type=range]');
 assert(sliders.length === 2, 'two sliders (limit + brightness)');
@@ -142,12 +142,12 @@ qa[3].click();
 assert(calls.some((c) => c[0] === 'switch' && c[1] === 'toggle' && c[2].entity_id === 'switch.1p7k_blocca'), 'lock toggles switch');
 
 // info section
-sr.querySelectorAll('.section-header')[1].click();
+sr.querySelectorAll('.section-toggle')[1].click();
 await card.updateComplete;
 assert(sr.textContent.includes('1234 kWh'), 'lifetime energy in info section');
 
 // actions section
-sr.querySelectorAll('.section-header')[2].click();
+sr.querySelectorAll('.section-toggle')[2].click();
 await card.updateComplete;
 const chip = sr.querySelector('.action-chip');
 assert(chip, 'custom action chip rendered');
@@ -186,7 +186,7 @@ card2.setConfig({
 card2.hass = hassNoReg;
 document.body.appendChild(card2);
 await card2.updateComplete;
-card2.shadowRoot.querySelectorAll('.section-header')[0].click();
+card2.shadowRoot.querySelectorAll('.section-toggle')[0].click();
 await card2.updateComplete;
 assert(card2.shadowRoot.querySelectorAll('input[type=range]').length === 2, 'suffix-fallback discovery finds numbers (italian entity ids)');
 assert(card2.shadowRoot.textContent.includes('234.8 V'), 'suffix-fallback finds voltage (tensione)');
@@ -257,7 +257,7 @@ assert(left3.includes('16.0 A') && left3.includes('15.5 A') && left3.includes('1
 assert(right3.includes('231 V') && right3.includes('232 V') && right3.includes('233 V'), 'three-phase: three voltages on the right');
 
 // device actions: force_single_phase + lb_mode chips + reboots
-sr3.querySelectorAll('.section-header')[2].click();
+sr3.querySelectorAll('.section-toggle')[2].click();
 await card3.updateComplete;
 const deviceChips = [...sr3.querySelectorAll('.action-chip.device')];
 assert(deviceChips.length === 7, `7 device chips (single-phase toggle + 4 lb + 2 reboots), got ${deviceChips.length}`);
@@ -269,7 +269,7 @@ deviceChips.find((c) => c.textContent.includes('Single phase')).click();
 assert(calls3.some((c) => c[0] === 'switch' && c[1] === 'toggle' && c[2].entity_id === 'switch.tri_force_single_phase'), 'single-phase chip toggles switch');
 
 // meter rows in info section
-sr3.querySelectorAll('.section-header')[1].click();
+sr3.querySelectorAll('.section-toggle')[1].click();
 await card3.updateComplete;
 assert(sr3.textContent.includes('Breaker current'), 'meter breaker current in info list');
 
@@ -285,8 +285,8 @@ document.body.appendChild(card4);
 await card4.updateComplete;
 const sr4 = card4.shadowRoot;
 assert(sr4.querySelector('.compact-top'), 'compact top layout rendered');
-const compactHeaders = sr4.querySelectorAll('.section-header');
-assert(compactHeaders.length === 1, 'compact: single accordion section (Actions)');
+const compactHeaders = sr4.querySelectorAll('.section-toggle');
+assert(compactHeaders.length === 1, 'compact: single toggle icon (Actions)');
 assert(!sr4.querySelector('.actions-grid'), 'compact: actions collapsed by default');
 compactHeaders[0].click();
 await card4.updateComplete;
@@ -309,5 +309,69 @@ await card5.updateComplete;
 assert(!card5.shadowRoot.querySelector('.sections'), 'info-only: no sections at all');
 assert(!card5.shadowRoot.querySelector('.quick-actions'), 'info-only: no quick actions');
 assert(card5.shadowRoot.querySelector('.stats'), 'info-only: stats still shown');
+
+
+// ---------- multi-open sections + divider ----------
+// parameters(0), info(1), actions(2) are all toggled open above on `card`;
+// verify they render simultaneously with a divider between them.
+const openBodies = sr.querySelectorAll('.section-body');
+assert(openBodies.length === 3, `three sections open simultaneously, got ${openBodies.length}`);
+assert(!openBodies[0].classList.contains('divider'), 'first open section has no divider');
+assert(openBodies[1].classList.contains('divider') && openBodies[2].classList.contains('divider'), 'subsequent open sections have a divider');
+// closing the first (parameters) leaves the other two open
+sr.querySelectorAll('.section-toggle')[0].click();
+await card.updateComplete;
+assert(sr.querySelectorAll('.section-body').length === 2, 'closing one section leaves the others open');
+assert(sr.querySelectorAll('.section-toggle')[1].classList.contains('active'), 'still-open toggle stays highlighted');
+
+// ---------- configurable quick actions ----------
+const card6 = document.createElement('lektrico-charger-card');
+card6.setConfig({
+  entity: 'sensor.1p7k_state',
+  quick_actions: ['lock', 'authentication'],
+  actions: [
+    { id: 'green', text: 'Green Mode', icon: 'mdi:leaf', entity: 'automation.caricatore_modalita_green', service: 'automation.turn_on' },
+  ],
+});
+card6.hass = { ...hass };
+document.body.appendChild(card6);
+await card6.updateComplete;
+const qa6 = [...card6.shadowRoot.querySelectorAll('.qa-button')];
+assert(qa6.length === 2, `quick_actions picks exactly the 2 requested, got ${qa6.length}`);
+assert(qa6.some((b) => b.textContent.includes('Blocco') || b.textContent.includes('Lock')), 'quick_actions: lock present');
+assert(!qa6.some((b) => b.textContent.includes('Avvia') || b.textContent.includes('Start')), 'quick_actions: start excluded when not selected');
+
+// custom action + device chip pickable as quick actions, capped at 4
+const card7 = document.createElement('lektrico-charger-card');
+card7.setConfig({
+  entity: 'sensor.tri_state',
+  meter_entity: 'select.em_lb_mode',
+  quick_actions: ['start', 'stop', 'force_single_phase', 'lb_mode:green', 'lock'],
+  actions: [
+    { id: 'green', text: 'Green Mode', icon: 'mdi:leaf', entity: 'automation.caricatore_modalita_green', service: 'automation.turn_on' },
+  ],
+});
+card7.hass = hass3;
+document.body.appendChild(card7);
+await card7.updateComplete;
+const qa7 = [...card7.shadowRoot.querySelectorAll('.qa-button')];
+assert(qa7.length === 4, `quick_actions capped at 4 even when 5 ids given, got ${qa7.length}`);
+assert(qa7.some((b) => b.textContent.includes('Single phase')), 'quick_actions: device chip (force_single_phase) picked');
+assert(qa7.some((b) => b.textContent.includes('green')), 'quick_actions: device chip (lb_mode option) picked');
+assert(!qa7.some((b) => b.textContent.includes('Lock')), 'quick_actions: 5th id (lock) dropped by the 4-item cap');
+
+const card8 = document.createElement('lektrico-charger-card');
+card8.setConfig({
+  entity: 'sensor.1p7k_state',
+  quick_actions: ['custom:0'],
+  actions: [
+    { text: 'Green Mode', icon: 'mdi:leaf', entity: 'automation.caricatore_modalita_green', service: 'automation.turn_on' },
+  ],
+});
+card8.hass = { ...hass };
+document.body.appendChild(card8);
+await card8.updateComplete;
+const qa8 = [...card8.shadowRoot.querySelectorAll('.qa-button')];
+assert(qa8.length === 1 && qa8[0].textContent.includes('Green Mode'), 'quick_actions: custom action picked via custom:<index> fallback id');
 
 console.log(process.exitCode ? '\nSMOKE TEST FAILED' : '\nSMOKE TEST PASSED');
