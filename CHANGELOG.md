@@ -5,13 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-07-04
+
 ### Added
 - Ultra-compact view (`compact: ultra`): purely informational one-row layout with
   charger image, state / substatus / dynamic limit in the centre column, and
   actual current / session energy / temperature in a right column; an inline
   error chip and an optional start/stop button below.
 - Translations for German (`de`), French (`fr`), Dutch (`nl`), Swedish (`sv`),
-  Danish (`da`), and Norwegian Bokmål (`nb`).
+  Danish (`da`), Norwegian Bokmål (`nb`), Romanian (`ro`), and Spanish (`es`).
 
 ### Changed
 - Compact-mode selector in the GUI editor is now a three-way dropdown
@@ -116,7 +118,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   from the diagnostic sensors, quick actions, custom action chips,
   en/it localization, jsdom smoke test and standalone demo page.
 
-[Unreleased]: https://github.com/naked-head/lektrico-charger-card/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/naked-head/lektrico-charger-card/compare/v1.5.0...HEAD
+[1.5.0]: https://github.com/naked-head/lektrico-charger-card/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/naked-head/lektrico-charger-card/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/naked-head/lektrico-charger-card/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/naked-head/lektrico-charger-card/compare/v1.1.0...v1.2.0
