@@ -75,7 +75,7 @@ export default {
     location: 'Posizione',
     meter_entity: 'Entità energy meter (opzionale)',
     substatus_entity: 'Entità sottostato (opzionale)',
-    compact: 'Vista compatta',
+    compact: 'Layout',
     show_leds: 'Mostra LED',
     show_stats: 'Mostra statistiche',
     show_quick_actions: 'Mostra azioni rapide',

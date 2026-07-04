@@ -14,7 +14,6 @@ const fireEvent = (node, type, detail = {}) => {
 // Options whose absence means `true`/`false`: pre-filled so the toggles
 // reflect the effective value, stripped again when left at the default.
 const BOOL_DEFAULTS = {
-  compact: false,
   show_leds: true,
   show_stats: true,
   show_quick_actions: true,
@@ -31,10 +30,22 @@ const SCHEMA = [
   { name: 'substatus_entity', selector: { entity: {} } },
   { name: 'meter_entity', selector: { entity: {} } },
   {
+    name: 'compact',
+    selector: {
+      select: {
+        mode: 'list',
+        options: [
+          { value: '', label: 'Standard' },
+          { value: 'compact', label: 'Compact' },
+          { value: 'ultra', label: 'Ultra compact' },
+        ],
+      },
+    },
+  },
+  {
     name: '',
     type: 'grid',
     schema: [
-      { name: 'compact', selector: { boolean: {} } },
       { name: 'show_leds', selector: { boolean: {} } },
       { name: 'show_stats', selector: { boolean: {} } },
       { name: 'show_quick_actions', selector: { boolean: {} } },
@@ -52,7 +63,13 @@ const SCHEMA = [
         options: [
           { value: '', label: 'Auto' },
           { value: 'en', label: 'English' },
+          { value: 'de', label: 'Deutsch' },
+          { value: 'fr', label: 'Français' },
           { value: 'it', label: 'Italiano' },
+          { value: 'nl', label: 'Nederlands' },
+          { value: 'sv', label: 'Svenska' },
+          { value: 'da', label: 'Dansk' },
+          { value: 'nb', label: 'Norsk bokmål' },
         ],
       },
     },
@@ -77,9 +94,17 @@ class LektricoChargerCardEditor extends LitElement {
   _computeLabel = (schema) =>
     localize(this._lang, 'editor', schema.name);
 
+  // Convert compact (true/false/'ultra') to the select string value.
+  _compactToStr(compact) {
+    if (compact === 'ultra') return 'ultra';
+    if (compact === true) return 'compact';
+    return '';
+  }
+
   render() {
     if (!this.hass || !this._config) return nothing;
-    const data = { ...BOOL_DEFAULTS, ...this._config };
+    const compactStr = this._compactToStr(this._config.compact);
+    const data = { ...BOOL_DEFAULTS, ...this._config, compact: compactStr };
     return html`
       <ha-form
         .hass=${this.hass}
@@ -94,6 +119,16 @@ class LektricoChargerCardEditor extends LitElement {
   _valueChanged(ev) {
     ev.stopPropagation();
     const config = { ...ev.detail.value };
+
+    // Map select string back to compact boolean/string.
+    const compactStr = config.compact;
+    if (!compactStr || compactStr === '') {
+      delete config.compact;
+    } else if (compactStr === 'compact') {
+      config.compact = true;
+    }
+    // 'ultra' stays as the string 'ultra'.
+
     for (const [key, def] of Object.entries(BOOL_DEFAULTS)) {
       if (config[key] === def) delete config[key];
     }

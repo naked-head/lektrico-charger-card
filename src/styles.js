@@ -555,6 +555,117 @@ export default css`
     }
   }
 
+  /* ---------- ultra-compact ---------- */
+
+  .ultra-top {
+    display: grid;
+    grid-template-columns: 60px 1fr auto;
+    gap: 10px;
+    align-items: center;
+  }
+  .ultra-top .image-wrap {
+    max-width: 60px;
+    margin: 0;
+  }
+  .ultra-center {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+    cursor: pointer;
+  }
+  .ultra-state {
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--primary-text-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .ultra-state.state-error {
+    color: var(--error-color, #f44336);
+  }
+  .ultra-state.state-charging {
+    color: var(--primary-color);
+  }
+  .ultra-substatus {
+    font-size: 11px;
+    color: var(--secondary-text-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .ultra-limit {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--secondary-text-color);
+    white-space: nowrap;
+  }
+  .ultra-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    text-align: right;
+    min-width: 60px;
+  }
+  .ultra-stat-item {
+    cursor: pointer;
+    line-height: 1.2;
+  }
+  .ultra-stat-item .v {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--primary-text-color);
+    white-space: nowrap;
+  }
+  .ultra-stat-item .l {
+    font-size: 10px;
+    color: var(--secondary-text-color);
+    white-space: nowrap;
+  }
+  .ultra-error {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 6px;
+    font-size: 11px;
+    color: var(--error-color, #f44336);
+    cursor: pointer;
+  }
+  .ultra-error ha-icon {
+    --mdc-icon-size: 14px;
+    flex-shrink: 0;
+  }
+  .ultra-btn {
+    display: flex;
+    justify-content: center;
+    margin-top: 8px;
+  }
+  .ultra-btn button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 16px;
+    border-radius: 16px;
+    border: 1px solid var(--primary-color);
+    background: none;
+    color: var(--primary-color);
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .ultra-btn button:hover {
+    background: rgba(var(--rgb-primary-color, 33, 150, 243), 0.1);
+  }
+  .ultra-btn button ha-icon {
+    --mdc-icon-size: 16px;
+  }
+
   /* ---------- narrow layouts ----------
      When the card itself gets narrow (phone or a tight dashboard
      column) the image moves above the two info columns instead of
