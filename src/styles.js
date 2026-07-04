@@ -95,6 +95,15 @@ export default css`
   .leds-off .led {
     display: none;
   }
+  /* paused: only the top bar stays lit, steady */
+  .leds.anim-top .led {
+    opacity: 0.08;
+    filter: none;
+  }
+  .leds.anim-top .led-0 {
+    opacity: 1;
+    filter: drop-shadow(0 0 3px var(--led-color, #ffffff));
+  }
   .leds.anim-pulse .led {
     animation: led-pulse 2s ease-in-out infinite;
   }
@@ -432,6 +441,25 @@ export default css`
   .action-chip.active ha-icon {
     color: var(--primary-color);
   }
+  .action-chip.device {
+    background: var(--secondary-background-color, rgba(127, 127, 127, 0.12));
+    border-color: transparent;
+  }
+  .action-chip.device.active {
+    background: rgba(var(--rgb-primary-color, 33, 150, 243), 0.15);
+    color: var(--primary-color);
+  }
+  .actions-caption {
+    width: 100%;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--secondary-text-color);
+    margin: 6px 0 2px;
+  }
+  .actions-caption:first-child {
+    margin-top: 0;
+  }
 
   /* ---------- stats ---------- */
 
@@ -465,14 +493,47 @@ export default css`
 
   /* ---------- compact ---------- */
 
-  .compact .top {
-    grid-template-columns: minmax(60px, 1fr) minmax(72px, 26%) minmax(60px, 1fr);
+  .compact-top {
+    display: grid;
+    grid-template-columns: 88px 1fr auto;
+    gap: 12px;
+    align-items: center;
   }
-  .compact .image-wrap {
-    max-width: 120px;
+  .compact-top .image-wrap {
+    max-width: 88px;
+    margin: 0;
   }
-  .compact .status .state {
-    font-size: 17px;
+  .compact-top .status {
+    text-align: left;
+    margin-top: 0;
+    min-width: 0;
+  }
+  .compact-top .status .state {
+    font-size: 16px;
+  }
+  .compact-top .side-info {
+    padding-top: 0;
+    gap: 6px;
+  }
+  .compact .quick-actions {
+    margin-top: 12px;
+  }
+  .compact .actions-grid {
+    margin-top: 12px;
+  }
+  .compact .stats {
+    margin-top: 12px;
+  }
+  @container (max-width: 340px) {
+    .compact-top {
+      grid-template-columns: 72px 1fr;
+    }
+    .compact-top .side-info.right {
+      grid-column: 1 / -1;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
   }
 
   /* ---------- narrow layouts ----------
