@@ -282,11 +282,26 @@ substatus_entity: input_text.charger_mode
 
 ## Adding a language
 
-Translations live in [`src/translations/`](src/translations/):
+Built-in translations (all fall back to English for missing keys):
 
-1. copy `en.js` to `<language-code>.js` (e.g. `de.js`) and translate the
+| Code | Language |
+| ---- | -------- |
+| `en` | English |
+| `it` | Italiano |
+| `de` | Deutsch |
+| `fr` | Français |
+| `nl` | Nederlands |
+| `sv` | Svenska |
+| `da` | Dansk |
+| `nb` | Norsk bokmål |
+| `ro` | Română |
+| `es` | Español |
+
+To add another language, translations live in [`src/translations/`](src/translations/):
+
+1. copy `en.js` to `<language-code>.js` (e.g. `pt.js`) and translate the
    values — any missing key falls back to English;
 2. register it in [`src/translations/index.js`](src/translations/index.js)
-   (`import de from './de.js';` and add it to `LANGUAGES`);
-3. optionally add it to the language dropdown in `src/editor.js`;
+   (`import pt from './pt.js';` and add it to `LANGUAGES`);
+3. add it to the language dropdown in `src/editor.js`;
 4. run `npm run build` and open a pull request.

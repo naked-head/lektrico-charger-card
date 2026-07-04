@@ -58,10 +58,12 @@ hardware in mind.
   automations.
 - 🖱️ **GUI editor** — the main options are configurable from the dashboard
   UI; advanced options remain available in YAML.
-- 🌍 **Localized** — English and Italian out of the box
+- 🌍 **Localized** — English, Italian, German, French, Dutch, Swedish, Danish,
+  Norwegian, Romanian and Spanish out of the box
   ([add a language](DOCS.md#adding-a-language)), every text overridable.
 - 🌗 Light & dark theme aware; works in narrow dashboard columns thanks to
-  CSS container queries; a dedicated **compact view** for tight dashboards.
+  CSS container queries; a **compact view** for tight dashboards and an
+  **ultra-compact view** (`compact: ultra`) for fully informative one-liners.
 
 ## Screenshots
 
@@ -76,6 +78,10 @@ hardware in mind.
 | Compact | Compact — actions open |
 | :---: | :---: |
 | ![Compact](docs/images/compact.png) | ![Compact actions](docs/images/compact-actions.png) |
+
+| Ultra compact |
+| :---: |
+| ![Ultra compact](docs/images/ultra-compact.png) |
 
 ## Installation
 
@@ -211,7 +217,7 @@ in order of precedence:
 | `location` | string | — | Shown next to the name. |
 | `substatus_entity` | string | — | Any entity whose state is shown under the status (e.g. an `input_text` describing the active charging mode). Takes precedence over the actions-derived substatus. |
 | `substatus_from_actions` | bool | `true` | Derive the substatus from the actions whose `entity` is `on` (see *Substatus* above). |
-| `compact` | bool | `false` | Smaller image beside the status instead of above it; location and power hidden; Parameters/Information sections unavailable (Actions still is, see *Sections & quick actions*). |
+| `compact` | `false` / `true` / `'ultra'` | `false` | `true`: smaller image beside the status, location/power hidden, Parameters/Information unavailable. `'ultra'`: purely informative one-row layout — image + state/substatus/limit in the centre, current/energy/temperature on the right; no sections, no stats bar; an optional start/stop button fits inside the centre column (hidden by `show_quick_actions: false`; icon-only on very narrow cards). |
 | `meter_entity` | string | — | Any entity of a paired energy meter (EM/3EM) device — see *Three-phase chargers & energy meter*. Never auto-attached. |
 | `quick_actions` | list | `[start, stop, authentication, lock]` (only the ones that exist) | Up to 4 ids for the quick-action buttons — see *Sections & quick actions*. |
 | `show_name` / `show_stats` / `show_quick_actions` / `show_image` / `show_parameters` / `show_info` / `show_actions` | bool | `true` | Toggle individual areas of the card. |
@@ -221,7 +227,7 @@ in order of precedence:
 | `led_states` | object | device-like | Override LED color/animation per state: `charging: {color: '#ffffff', animation: spin}`. Animations: `spin`, `pulse`, `top` (only the top bar lit, steady — the default for `paused`), `none`. |
 | `led_spin` | object | `{slowest: 6.0, fastest: 2.0}` | Rotation period (seconds) of the white charging animation: `slowest` at minimal current, `fastest` at the charger's maximum. The maximum is read from the dynamic-limit entity (6–32 A per phase on both the 7.4 kW and the 22 kW models), so it adapts to derated installations too. |
 | `state_text` | object | it/en defaults | Override the status text per state (`available`, `connected`, `need_auth`, `charging`, `paused`, `paused_by_scheduler`, `locked`, `error`, `updating_firmware`). |
-| `language` | string | HA language | Force `en` or `it`. |
+| `language` | string | HA language | Force a UI language. Built-in codes: `en`, `it`, `de`, `fr`, `nl`, `sv`, `da`, `nb`, `ro`, `es`. |
 | `current_presets` | list | `[6,10,13,16,20,25,32]` | Preset chips for the charging current. Values outside the charger's allowed range are hidden. |
 | `brightness_presets` | list | `[10,25,50,75,100]` | Preset chips for the LED brightness. |
 | `info_left` / `info_right` | list | current(s)+limit / voltage(s)+power | Items beside the image. Each item is a role name (`current`, `dynamic_limit`, `voltage`, `power`, `current_l1`/`l2`/`l3`, `voltage_l1`/`l2`/`l3`, …), an entity id, or `{entity, label, icon, decimals}`. `decimals` forces fixed decimals on numeric values. Three-phase chargers default to the three currents/voltages instead of the single ones. |
