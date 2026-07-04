@@ -12,9 +12,10 @@
 [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=naked-head&repository=lektrico-charger-card&category=plugin)
 
 A Home Assistant Lovelace card built specifically for **Lektri.co EV
-chargers** (1P7K / One and 3P22K / Tri), on top of the official
-[`lektrico`](https://www.home-assistant.io/integrations/lektrico/) core
-integration. Designed as a rethink of the generic
+chargers** — 1P7K / One (single-phase, 7.4 kW) and 3P22K / Tri
+(three-phase, 22 kW), with optional EM / 3EM energy meter — on top of the
+official [`lektrico`](https://www.home-assistant.io/integrations/lektrico/)
+core integration. Designed as a rethink of the generic
 [charger-card](https://github.com/tmjo/charger-card) with the Lektri.co
 hardware in mind.
 
@@ -23,9 +24,15 @@ hardware in mind.
 - 📱 **Fully responsive** — the charger is drawn as an SVG, it scales with
   the card width and never overlaps the surrounding text, on any device.
 - 💡 **Real LED behaviour** — the four LED bars mirror the physical device:
-  green when idle, blue when the EV is connected, white spinning while
-  charging (the spin speed follows the actual charging current), red on
-  error. Colors and animations are overridable per state.
+  green when idle, blue when connected, white spinning while charging (the
+  spin speed follows the actual current, normalized to the charger's real
+  maximum), a single steady white bar while paused, red on error. Colors
+  and animations are overridable per state.
+- 🔌 **Three-phase & energy meter aware** — 3P22K/Tri chargers show the
+  three per-phase currents and voltages automatically (per the
+  [integration's docs](https://www.home-assistant.io/integrations/lektrico/));
+  attach a paired EM/3EM meter with `meter_entity` for load-balancing mode
+  chips, breaker current and meter power.
 - 🎚️ **No overlapping dropdowns** — charging current and LED brightness are
   sliders with preset chips that wrap on small screens; every value is
   always reachable, and presets outside the charger's allowed range are
@@ -37,17 +44,24 @@ hardware in mind.
 - 🚨 **Error handling** — on error, a red banner lists the active
   diagnostic sensors (overheating, RCD, overcurrent, …) with friendly
   names, and the stats row switches to the error view.
-- ▶️ **Quick actions** — start / stop charge, authentication and cable lock
-  as one-tap buttons, enabled/disabled based on the charger state.
+- ▶️ **Configurable quick actions** — up to 4 one-tap buttons picked from
+  start/stop/authentication/lock, the auto-discovered device actions, or
+  your own custom actions.
+- 🗂️ **Compact, lateral section toggles** — Parameters / Information /
+  Actions open from small icon buttons beside the status text (not a
+  full-width accordion), any number can be open at once, and the card can
+  be reduced to a purely informative view by disabling all of them.
 - ⚡ **Charging modes** — your own automations (solar charging, zero cost,
-  fixed levels…) as chips; the active mode is shown under the status
-  automatically. See [DOCS.md](DOCS.md) for ready-made automations.
+  fixed levels…) as chips, graphically distinct from the auto-discovered
+  device actions (reboot, load balancing, …); the active mode is shown
+  under the status automatically. See [DOCS.md](DOCS.md) for ready-made
+  automations.
 - 🖱️ **GUI editor** — the main options are configurable from the dashboard
   UI; advanced options remain available in YAML.
 - 🌍 **Localized** — English and Italian out of the box
   ([add a language](DOCS.md#adding-a-language)), every text overridable.
 - 🌗 Light & dark theme aware; works in narrow dashboard columns thanks to
-  CSS container queries.
+  CSS container queries; a dedicated **compact view** for tight dashboards.
 
 ## Screenshots
 
@@ -55,9 +69,13 @@ hardware in mind.
 | :---: | :---: |
 | ![Charging](docs/images/charging.png) | ![Parameters](docs/images/parameters.png) |
 
-| Error state | Charging modes (light) |
+| Error state | Actions (light) |
 | :---: | :---: |
-| ![Error](docs/images/error.png) | ![Modes](docs/images/light.png) |
+| ![Error](docs/images/error.png) | ![Actions](docs/images/light.png) |
+
+| Compact | Compact — actions open |
+| :---: | :---: |
+| ![Compact](docs/images/compact.png) | ![Compact actions](docs/images/compact-actions.png) |
 
 ## Installation
 
@@ -124,6 +142,51 @@ actions:
       value: 10
 ```
 
+### Sections & quick actions
+
+Parameters, Information and Actions open from small icon buttons beside
+the status text — like the reference charger-card, not a full-width
+accordion — so the card stays compact when everything is collapsed. Any
+number of sections can be open at the same time; their content stacks in
+its usual place (below the quick actions), separated by a divider line.
+Each section can be hidden entirely with `show_parameters: false` /
+`show_info: false` / `show_actions: false` — turn off all three (and
+`show_quick_actions: false`) for a purely informative card with no
+interaction at all.
+
+The 4 quick-action buttons default to start/stop/authentication/lock, but
+can be replaced with `quick_actions`, a list of up to 4 ids picked from:
+the built-ins (`start`, `stop`, `authentication`, `lock`), the
+auto-discovered device actions (e.g. `force_single_phase`,
+`lb_mode:power` — one-off actions like `reboot` are excluded), and your
+own custom actions (referenced by an `id` you set on them, or
+`custom:<index>` for the position in `actions:`):
+
+```yaml
+quick_actions: [start, stop, force_single_phase, lb_mode:green]
+```
+
+### Three-phase chargers & energy meter
+
+3P22K/Tri chargers expose `voltage_l1/l2/l3` and `current_l1/l2/l3`
+instead of the single-phase sensors; the card discovers them
+automatically and shows the three currents / voltages in place of the
+single ones, with no configuration needed. The `force_single_phase`
+switch, when present, appears as a Parameters toggle and a device chip.
+
+A paired Lektri.co energy meter (EM/3EM) is a **separate device** and is
+never attached automatically — point `meter_entity` at any of its
+entities to enable load-balancing chips, breaker current and meter power:
+
+```yaml
+meter_entity: select.em_lb_mode
+```
+
+The load-balancing chips only appear if the device behind `meter_entity`
+actually exposes the `lb_mode` select — see
+[DOCS.md](DOCS.md#three-phase--energy-meter-notes) for a note on
+third-party meters.
+
 ### Substatus (active charging mode)
 
 The line under the status shows the active charging mode. Two mechanisms,
@@ -148,23 +211,26 @@ in order of precedence:
 | `location` | string | — | Shown next to the name. |
 | `substatus_entity` | string | — | Any entity whose state is shown under the status (e.g. an `input_text` describing the active charging mode). Takes precedence over the actions-derived substatus. |
 | `substatus_from_actions` | bool | `true` | Derive the substatus from the actions whose `entity` is `on` (see *Substatus* above). |
-| `compact` | bool | `false` | Smaller image, no collapsible sections. |
-| `show_name` / `show_stats` / `show_quick_actions` / `show_image` | bool | `true` | Toggle individual areas of the card. |
+| `compact` | bool | `false` | Smaller image beside the status instead of above it; location and power hidden; Parameters/Information sections unavailable (Actions still is, see *Sections & quick actions*). |
+| `meter_entity` | string | — | Any entity of a paired energy meter (EM/3EM) device — see *Three-phase chargers & energy meter*. Never auto-attached. |
+| `quick_actions` | list | `[start, stop, authentication, lock]` (only the ones that exist) | Up to 4 ids for the quick-action buttons — see *Sections & quick actions*. |
+| `show_name` / `show_stats` / `show_quick_actions` / `show_image` / `show_parameters` / `show_info` / `show_actions` | bool | `true` | Toggle individual areas of the card. |
 | `show_leds` | bool | `true` | Draw the LED cross. |
 | `image` | string | built-in SVG | Path/URL of a custom charger image (e.g. `/local/lektri.co.png`). The LED cross is overlaid on top (see `led_overlay_position`). |
 | `led_overlay_position` | object | centered | `{left, top, size}` CSS values for the LED overlay on a custom image, e.g. `{left: 28%, top: 25%, size: 44%}`. |
-| `led_states` | object | device-like | Override LED color/animation per state: `charging: {color: '#ffffff', animation: spin}`. Animations: `spin`, `pulse`, `none`. |
+| `led_states` | object | device-like | Override LED color/animation per state: `charging: {color: '#ffffff', animation: spin}`. Animations: `spin`, `pulse`, `top` (only the top bar lit, steady — the default for `paused`), `none`. |
 | `led_spin` | object | `{slowest: 6.0, fastest: 2.0}` | Rotation period (seconds) of the white charging animation: `slowest` at minimal current, `fastest` at the charger's maximum. The maximum is read from the dynamic-limit entity (6–32 A per phase on both the 7.4 kW and the 22 kW models), so it adapts to derated installations too. |
 | `state_text` | object | it/en defaults | Override the status text per state (`available`, `connected`, `need_auth`, `charging`, `paused`, `paused_by_scheduler`, `locked`, `error`, `updating_firmware`). |
 | `language` | string | HA language | Force `en` or `it`. |
 | `current_presets` | list | `[6,10,13,16,20,25,32]` | Preset chips for the charging current. Values outside the charger's allowed range are hidden. |
 | `brightness_presets` | list | `[10,25,50,75,100]` | Preset chips for the LED brightness. |
-| `info_left` / `info_right` | list | current+limit / voltage+power | Items beside the image. Each item is a role name (`current`, `dynamic_limit`, `voltage`, `power`, …), an entity id, or `{entity, label, icon, decimals}`. `decimals` forces fixed decimals on numeric values; the default left item shows the instantaneous charging current with one decimal (`0.0 A` when idle). |
-| `info_items` | list | installation current, lifetime energy, limit reason, temperature | Rows of the *Information* section (same item format). |
+| `info_left` / `info_right` | list | current(s)+limit / voltage(s)+power | Items beside the image. Each item is a role name (`current`, `dynamic_limit`, `voltage`, `power`, `current_l1`/`l2`/`l3`, `voltage_l1`/`l2`/`l3`, …), an entity id, or `{entity, label, icon, decimals}`. `decimals` forces fixed decimals on numeric values. Three-phase chargers default to the three currents/voltages instead of the single ones. |
+| `info_items` | list | installation current, lifetime energy, limit reason, temperature (+ breaker current, meter power when a meter is attached) | Rows of the *Information* section (same item format). |
 | `stats` | list or object | energy, time, temperature | Bottom stats. Either a list, or `{default: [...], charging: [...], error: [...]}` per state. |
-| `actions` | list | — | Chips in the *Actions* section: `{text, icon, service, service_data, target, entity, confirm, substatus}`. `entity` highlights the chip when its state is `on` and doubles as the default service target; `confirm` asks before running; `substatus` customizes (string) or suppresses (`false`) the chip's contribution to the derived substatus. |
-| `entities` | object | auto | Override auto-discovery per role: `entities: {power: sensor.my_power, dynamic_limit: number.my_limit, errors: [binary_sensor.a, …]}`. Roles: `state`, `charging_time`, `session_energy`, `lifetime_energy`, `power`, `voltage`, `current`, `installation_current`, `limit_reason`, `temperature`, `dynamic_limit`, `led_brightness`, `authentication`, `lock`, `charge_start`, `charge_stop`, `update`, `errors`. |
-| `section_titles` | object | localized | Override the accordion titles: `{parameters, info, actions}`. |
+| `actions` | list | — | Chips in the *Actions* section: `{id, text, icon, service, service_data, target, entity, confirm, substatus}`. `id` lets a `quick_actions` entry reference this action; `entity` highlights the chip when its state is `on` and doubles as the default service target; `confirm` asks before running; `substatus` customizes (string) or suppresses (`false`) the chip's contribution to the derived substatus. |
+| `show_device_actions` | bool | `true` | Hide the auto-discovered device chips (reboot, load balancing, single-phase toggle, …) from the Actions section, keeping only custom ones. |
+| `entities` | object | auto | Override auto-discovery per role: `entities: {power: sensor.my_power, dynamic_limit: number.my_limit, errors: [binary_sensor.a, …]}`. Roles: `state`, `charging_time`, `session_energy`, `lifetime_energy`, `power`, `voltage`, `current`, `voltage_l1`/`l2`/`l3`, `current_l1`/`l2`/`l3`, `installation_current`, `limit_reason`, `temperature`, `dynamic_limit`, `led_brightness`, `authentication`, `lock`, `charge_start`, `charge_stop`, `reboot`, `schedule_override`, `force_single_phase`, `update`, `errors`. |
+| `section_titles` | object | localized | Override the section tooltips/titles: `{parameters, info, actions}`. |
 
 ### How auto-discovery works
 
@@ -179,6 +245,9 @@ then matches each role by, in order:
 4. unique device class among the device's entities
 
 So it works even if you renamed the entities or your HA is not in English.
+The paired energy meter (`meter_entity`) uses the same matching engine,
+scoped to its own device, for the `lb_mode`, `breaker_current`,
+`meter_power` and `meter_reboot` roles.
 
 ## Automations
 

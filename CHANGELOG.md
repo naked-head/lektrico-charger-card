@@ -3,6 +3,55 @@
 All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.4.0] - 2026-07-04
+
+### Added
+- Quick actions (max 4) are user-selectable via `quick_actions: [id, ...]`,
+  picked from the built-ins (`start`/`stop`/`authentication`/`lock`), the
+  auto-discovered device actions (excluding the one-off
+  `schedule_override`/`reboot`/`meter_reboot`), and custom actions
+  (referenced by an `id` you set, or `custom:<index>`). Unset, the
+  previous default (start/stop/auth/lock) is unchanged.
+
+### Changed
+- Parameters/Information/Actions no longer open from a full-width
+  accordion header; a vertical column of small icon toggles sits beside
+  the status text instead (matching the reference `tmjo/charger-card`
+  layout), minimizing vertical space when every section is collapsed.
+  Any number of sections can now be open simultaneously; their content
+  still renders in the same place as before, with a divider between
+  additional open blocks.
+
+## [1.3.0] - 2026-07-03
+
+### Added
+- Three-phase chargers (3P22K/Tri): per the integration's docs, discover
+  `voltage_l1/l2/l3` and `current_l1/l2/l3` and default to showing the
+  three currents / voltages in the side columns.
+- Paired energy meter (EM/3EM) support via the new `meter_entity` option
+  (never auto-attached — see DOCS.md for why): load-balancing mode chips
+  (Disabled/Power/Hybrid/Green), breaker current and meter power in the
+  Information section, meter reboot.
+- Device-provided actions (schedule override, single-phase toggle, load
+  balancing, reboots) render as filled chips in the Actions section,
+  graphically distinct from the outlined custom chips, with group
+  captions when both are present (`show_device_actions: false` to hide).
+- `show_parameters` / `show_info` / `show_actions` to disable each
+  section individually — with all off (and quick actions too) the card
+  becomes purely informative.
+- Recognize the diagnostic binary sensors' device-style keys from the
+  integration docs (`state_e_activated`, `overtemp`, `critical_temp`,
+  `meter_fault`, `cp_diode_failure`, `contactor_failure`) alongside the
+  core translation keys.
+
+### Changed
+- Paused / paused-by-scheduler: only the top LED bar stays lit, steady
+  white, matching the real device (new `top` LED animation).
+- Compact view redesigned: small image beside the status (no location,
+  no power), quick actions, and the Actions section — Parameters and
+  Information are unavailable in compact.
+- LED bars slightly thinner.
+
 ## [1.2.0] - 2026-07-03
 
 ### Added
