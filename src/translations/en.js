@@ -76,7 +76,7 @@ export default {
     location: 'Location',
     meter_entity: 'Energy meter entity (optional)',
     substatus_entity: 'Substatus entity (optional)',
-    compact: 'Compact view',
+    compact: 'Layout',
     show_leds: 'Show LEDs',
     show_stats: 'Show stats',
     show_quick_actions: 'Show quick actions',

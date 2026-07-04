@@ -55,7 +55,10 @@ class LektricoChargerCard extends LitElement {
   }
 
   getCardSize() {
-    return this._config?.compact ? 4 : 8;
+    const compact = this._config?.compact;
+    if (compact === 'ultra') return 2;
+    if (compact === true) return 4;
+    return 8;
   }
 
   static getStubConfig(hass) {
@@ -411,28 +414,32 @@ class LektricoChargerCard extends LitElement {
     }
 
     const state = stateObj.state;
-    const compact = this._config.compact === true;
+    const compact = this._config.compact;
+    const isUltra = compact === 'ultra';
+    const isCompact = compact === true;
     const activeErrors = (roles.errors || [])
       .map((id) => this.hass.states[id])
       .filter((s) => s && s.state === 'on');
-    const sections = this._computeSections(compact);
+    const sections = isUltra ? [] : this._computeSections(isCompact);
 
     return html`
-      <ha-card class=${classMap({ compact })}>
-        ${compact
+      <ha-card class=${classMap({ compact: isCompact, ultra: isUltra })}>
+        ${isUltra
+          ? this._renderUltraCompact(stateObj, state, activeErrors)
+          : isCompact
           ? html`${this._renderCompactTop(stateObj, state)}
-            ${this._renderSectionToggleBar(sections, true)}`
+              ${this._renderSectionToggleBar(sections, true)}`
           : html`${this._renderTop(state)}
-            <div class="status-line">
-              ${this._renderStatus(stateObj, state)}
-              ${this._renderSectionToggleBar(sections)}
-            </div>`}
-        ${activeErrors.length ? this._renderErrors(activeErrors) : nothing}
-        ${this._config.show_quick_actions !== false
+              <div class="status-line">
+                ${this._renderStatus(stateObj, state)}
+                ${this._renderSectionToggleBar(sections)}
+              </div>`}
+        ${isUltra ? nothing : activeErrors.length ? this._renderErrors(activeErrors) : nothing}
+        ${!isUltra && this._config.show_quick_actions !== false
           ? this._renderQuickActions(state)
           : nothing}
-        ${this._renderSectionBodies(sections)}
-        ${this._config.show_stats !== false
+        ${isUltra ? nothing : this._renderSectionBodies(sections)}
+        ${!isUltra && this._config.show_stats !== false
           ? this._renderStats(state, activeErrors)
           : nothing}
       </ha-card>
@@ -500,6 +507,112 @@ class LektricoChargerCard extends LitElement {
         <div class="side-info right">
           ${infos.map((item) => this._renderInfoItem(item))}
         </div>
+      </div>
+    `;
+  }
+
+  // Ultra-compact: image | state+substatus+limit | current/energy/temp
+  // Purely informational; no sliders, no sections, no stats bar.
+  _renderUltraCompact(stateObj, state, activeErrors) {
+    const substatus = this._substatusText();
+    const limitObj = this._stateObj('dynamic_limit');
+    const limitText = limitObj ? this._fmt(limitObj) : null;
+    const chargeStart = this._stateObj('charge_start');
+    const chargeStop = this._stateObj('charge_stop');
+    const canStart = chargeStart && state !== 'charging' && state !== 'paused';
+    const canStop = chargeStop && (state === 'charging' || state === 'paused');
+
+    const rightItems = [
+      { entity: 'current', decimals: 1 },
+      { entity: 'session_energy' },
+      { entity: 'temperature' },
+    ];
+
+    return html`
+      <div class="ultra-top">
+        ${this._renderImage(state)}
+        <div
+          class="ultra-center"
+          @click=${() => this._moreInfo(this._config.entity)}
+        >
+          <div
+            class=${classMap({
+              'ultra-state': true,
+              'state-error': state === 'error',
+              'state-charging': state === 'charging',
+            })}
+          >
+            ${this._stateText(state)}
+          </div>
+          ${substatus
+            ? html`<div class="ultra-substatus">${substatus}</div>`
+            : nothing}
+          ${limitText
+            ? html`<div class="ultra-limit">${limitText}</div>`
+            : nothing}
+        </div>
+        <div class="ultra-stats">
+          ${rightItems.map((item) => this._renderUltraStat(item))}
+        </div>
+      </div>
+      ${activeErrors.length
+        ? html`<div
+            class="ultra-error"
+            @click=${() => this._moreInfo(activeErrors[0].entity_id)}
+          >
+            <ha-icon icon="mdi:alert-circle"></ha-icon>
+            ${this._errorName(
+              this._errorKeyOf(activeErrors[0].entity_id),
+              activeErrors[0]
+            )}${activeErrors.length > 1
+              ? html` (+${activeErrors.length - 1})`
+              : nothing}
+          </div>`
+        : nothing}
+      ${canStart || canStop
+        ? html`<div class="ultra-btn">
+            ${canStart
+              ? html`<button @click=${() => this._pressButton('charge_start')}>
+                  <ha-icon icon="mdi:play"></ha-icon>${this._t('start')}
+                </button>`
+              : html`<button @click=${() => this._pressButton('charge_stop')}>
+                  <ha-icon icon="mdi:stop"></ha-icon>${this._t('stop')}
+                </button>`}
+          </div>`
+        : nothing}
+    `;
+  }
+
+  _renderUltraStat({ entity, decimals }) {
+    const stateObj = this._stateObj(entity);
+    if (!stateObj) return nothing;
+    const label =
+      LANGUAGES.en.ui[entity]
+        ? this._t(entity)
+        : stateObj.attributes.friendly_name;
+    let value;
+    if (decimals != null) {
+      const num = Number(stateObj.state);
+      if (
+        !Number.isNaN(num) &&
+        stateObj.state !== 'unavailable' &&
+        stateObj.state !== 'unknown'
+      ) {
+        const unit = stateObj.attributes.unit_of_measurement;
+        value = `${num.toFixed(decimals)}${unit ? ` ${unit}` : ''}`;
+      } else {
+        value = this._fmt(stateObj);
+      }
+    } else {
+      value = this._fmt(stateObj);
+    }
+    return html`
+      <div
+        class="ultra-stat-item"
+        @click=${() => this._moreInfo(stateObj.entity_id)}
+      >
+        <div class="v">${value}</div>
+        <div class="l">${label}</div>
       </div>
     `;
   }

@@ -1,4 +1,4 @@
-const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,i=Symbol(),s=new WeakMap;let r=class{constructor(t,e,s){if(this._$cssResult$=!0,s!==i)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e}get styleSheet(){let t=this.o;const i=this.t;if(e&&void 0===t){const e=void 0!==i&&1===i.length;e&&(t=s.get(i)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),e&&s.set(i,t))}return t}toString(){return this.cssText}};const o=e?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const i of t.cssRules)e+=i.cssText;return(t=>new r("string"==typeof t?t:t+"",void 0,i))(e)})(t):t,{is:n,defineProperty:a,getOwnPropertyDescriptor:c,getOwnPropertyNames:l,getOwnPropertySymbols:d,getPrototypeOf:h}=Object,p=globalThis,_=p.trustedTypes,u=_?_.emptyScript:"",m=p.reactiveElementPolyfillSupport,g=(t,e)=>t,f={toAttribute(t,e){switch(e){case Boolean:t=t?u:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t)}return t},fromAttribute(t,e){let i=t;switch(e){case Boolean:i=null!==t;break;case Number:i=null===t?null:Number(t);break;case Object:case Array:try{i=JSON.parse(t)}catch(t){i=null}}return i}},v=(t,e)=>!n(t,e),y={attribute:!0,type:String,converter:f,reflect:!1,useDefault:!1,hasChanged:v};Symbol.metadata??=Symbol("metadata"),p.litPropertyMetadata??=new WeakMap;let b=class extends HTMLElement{static addInitializer(t){this._$Ei(),(this.l??=[]).push(t)}static get observedAttributes(){return this.finalize(),this._$Eh&&[...this._$Eh.keys()]}static createProperty(t,e=y){if(e.state&&(e.attribute=!1),this._$Ei(),this.prototype.hasOwnProperty(t)&&((e=Object.create(e)).wrapped=!0),this.elementProperties.set(t,e),!e.noAccessor){const i=Symbol(),s=this.getPropertyDescriptor(t,i,e);void 0!==s&&a(this.prototype,t,s)}}static getPropertyDescriptor(t,e,i){const{get:s,set:r}=c(this.prototype,t)??{get(){return this[e]},set(t){this[e]=t}};return{get:s,set(e){const o=s?.call(this);r?.call(this,e),this.requestUpdate(t,o,i)},configurable:!0,enumerable:!0}}static getPropertyOptions(t){return this.elementProperties.get(t)??y}static _$Ei(){if(this.hasOwnProperty(g("elementProperties")))return;const t=h(this);t.finalize(),void 0!==t.l&&(this.l=[...t.l]),this.elementProperties=new Map(t.elementProperties)}static finalize(){if(this.hasOwnProperty(g("finalized")))return;if(this.finalized=!0,this._$Ei(),this.hasOwnProperty(g("properties"))){const t=this.properties,e=[...l(t),...d(t)];for(const i of e)this.createProperty(i,t[i])}const t=this[Symbol.metadata];if(null!==t){const e=litPropertyMetadata.get(t);if(void 0!==e)for(const[t,i]of e)this.elementProperties.set(t,i)}this._$Eh=new Map;for(const[t,e]of this.elementProperties){const i=this._$Eu(t,e);void 0!==i&&this._$Eh.set(i,t)}this.elementStyles=this.finalizeStyles(this.styles)}static finalizeStyles(t){const e=[];if(Array.isArray(t)){const i=new Set(t.flat(1/0).reverse());for(const t of i)e.unshift(o(t))}else void 0!==t&&e.push(o(t));return e}static _$Eu(t,e){const i=e.attribute;return!1===i?void 0:"string"==typeof i?i:"string"==typeof t?t.toLowerCase():void 0}constructor(){super(),this._$Ep=void 0,this.isUpdatePending=!1,this.hasUpdated=!1,this._$Em=null,this._$Ev()}_$Ev(){this._$ES=new Promise(t=>this.enableUpdating=t),this._$AL=new Map,this._$E_(),this.requestUpdate(),this.constructor.l?.forEach(t=>t(this))}addController(t){(this._$EO??=new Set).add(t),void 0!==this.renderRoot&&this.isConnected&&t.hostConnected?.()}removeController(t){this._$EO?.delete(t)}_$E_(){const t=new Map,e=this.constructor.elementProperties;for(const i of e.keys())this.hasOwnProperty(i)&&(t.set(i,this[i]),delete this[i]);t.size>0&&(this._$Ep=t)}createRenderRoot(){const i=this.shadowRoot??this.attachShadow(this.constructor.shadowRootOptions);return((i,s)=>{if(e)i.adoptedStyleSheets=s.map(t=>t instanceof CSSStyleSheet?t:t.styleSheet);else for(const e of s){const s=document.createElement("style"),r=t.litNonce;void 0!==r&&s.setAttribute("nonce",r),s.textContent=e.cssText,i.appendChild(s)}})(i,this.constructor.elementStyles),i}connectedCallback(){this.renderRoot??=this.createRenderRoot(),this.enableUpdating(!0),this._$EO?.forEach(t=>t.hostConnected?.())}enableUpdating(t){}disconnectedCallback(){this._$EO?.forEach(t=>t.hostDisconnected?.())}attributeChangedCallback(t,e,i){this._$AK(t,i)}_$ET(t,e){const i=this.constructor.elementProperties.get(t),s=this.constructor._$Eu(t,i);if(void 0!==s&&!0===i.reflect){const r=(void 0!==i.converter?.toAttribute?i.converter:f).toAttribute(e,i.type);this._$Em=t,null==r?this.removeAttribute(s):this.setAttribute(s,r),this._$Em=null}}_$AK(t,e){const i=this.constructor,s=i._$Eh.get(t);if(void 0!==s&&this._$Em!==s){const t=i.getPropertyOptions(s),r="function"==typeof t.converter?{fromAttribute:t.converter}:void 0!==t.converter?.fromAttribute?t.converter:f;this._$Em=s;const o=r.fromAttribute(e,t.type);this[s]=o??this._$Ej?.get(s)??o,this._$Em=null}}requestUpdate(t,e,i,s=!1,r){if(void 0!==t){const o=this.constructor;if(!1===s&&(r=this[t]),i??=o.getPropertyOptions(t),!((i.hasChanged??v)(r,e)||i.useDefault&&i.reflect&&r===this._$Ej?.get(t)&&!this.hasAttribute(o._$Eu(t,i))))return;this.C(t,e,i)}!1===this.isUpdatePending&&(this._$ES=this._$EP())}C(t,e,{useDefault:i,reflect:s,wrapped:r},o){i&&!(this._$Ej??=new Map).has(t)&&(this._$Ej.set(t,o??e??this[t]),!0!==r||void 0!==o)||(this._$AL.has(t)||(this.hasUpdated||i||(e=void 0),this._$AL.set(t,e)),!0===s&&this._$Em!==t&&(this._$Eq??=new Set).add(t))}async _$EP(){this.isUpdatePending=!0;try{await this._$ES}catch(t){Promise.reject(t)}const t=this.scheduleUpdate();return null!=t&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){if(!this.isUpdatePending)return;if(!this.hasUpdated){if(this.renderRoot??=this.createRenderRoot(),this._$Ep){for(const[t,e]of this._$Ep)this[t]=e;this._$Ep=void 0}const t=this.constructor.elementProperties;if(t.size>0)for(const[e,i]of t){const{wrapped:t}=i,s=this[e];!0!==t||this._$AL.has(e)||void 0===s||this.C(e,void 0,i,s)}}let t=!1;const e=this._$AL;try{t=this.shouldUpdate(e),t?(this.willUpdate(e),this._$EO?.forEach(t=>t.hostUpdate?.()),this.update(e)):this._$EM()}catch(e){throw t=!1,this._$EM(),e}t&&this._$AE(e)}willUpdate(t){}_$AE(t){this._$EO?.forEach(t=>t.hostUpdated?.()),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(t)),this.updated(t)}_$EM(){this._$AL=new Map,this.isUpdatePending=!1}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$ES}shouldUpdate(t){return!0}update(t){this._$Eq&&=this._$Eq.forEach(t=>this._$ET(t,this[t])),this._$EM()}updated(t){}firstUpdated(t){}};b.elementStyles=[],b.shadowRootOptions={mode:"open"},b[g("elementProperties")]=new Map,b[g("finalized")]=new Map,m?.({ReactiveElement:b}),(p.reactiveElementVersions??=[]).push("2.1.2");const $=globalThis,x=t=>t,w=$.trustedTypes,k=w?w.createPolicy("lit-html",{createHTML:t=>t}):void 0,A="$lit$",S=`lit$${Math.random().toFixed(9).slice(2)}$`,E="?"+S,C=`<${E}>`,O=document,z=()=>O.createComment(""),N=t=>null===t||"object"!=typeof t&&"function"!=typeof t,P=Array.isArray,T="[ \t\n\f\r]",I=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,L=/-->/g,M=/>/g,j=RegExp(`>|${T}(?:([^\\s"'>=/]+)(${T}*=${T}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),U=/'/g,R=/"/g,D=/^(?:script|style|textarea|title)$/i,H=t=>(e,...i)=>({_$litType$:t,strings:e,values:i}),q=H(1),B=H(2),W=Symbol.for("lit-noChange"),K=Symbol.for("lit-nothing"),V=new WeakMap,F=O.createTreeWalker(O,129);function G(t,e){if(!P(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==k?k.createHTML(e):e}const Q=(t,e)=>{const i=t.length-1,s=[];let r,o=2===e?"<svg>":3===e?"<math>":"",n=I;for(let e=0;e<i;e++){const i=t[e];let a,c,l=-1,d=0;for(;d<i.length&&(n.lastIndex=d,c=n.exec(i),null!==c);)d=n.lastIndex,n===I?"!--"===c[1]?n=L:void 0!==c[1]?n=M:void 0!==c[2]?(D.test(c[2])&&(r=RegExp("</"+c[2],"g")),n=j):void 0!==c[3]&&(n=j):n===j?">"===c[0]?(n=r??I,l=-1):void 0===c[1]?l=-2:(l=n.lastIndex-c[2].length,a=c[1],n=void 0===c[3]?j:'"'===c[3]?R:U):n===R||n===U?n=j:n===L||n===M?n=I:(n=j,r=void 0);const h=n===j&&t[e+1].startsWith("/>")?" ":"";o+=n===I?i+C:l>=0?(s.push(a),i.slice(0,l)+A+i.slice(l)+S+h):i+S+(-2===l?e:h)}return[G(t,o+(t[i]||"<?>")+(2===e?"</svg>":3===e?"</math>":"")),s]};class Z{constructor({strings:t,_$litType$:e},i){let s;this.parts=[];let r=0,o=0;const n=t.length-1,a=this.parts,[c,l]=Q(t,e);if(this.el=Z.createElement(c,i),F.currentNode=this.el.content,2===e||3===e){const t=this.el.content.firstChild;t.replaceWith(...t.childNodes)}for(;null!==(s=F.nextNode())&&a.length<n;){if(1===s.nodeType){if(s.hasAttributes())for(const t of s.getAttributeNames())if(t.endsWith(A)){const e=l[o++],i=s.getAttribute(t).split(S),n=/([.?@])?(.*)/.exec(e);a.push({type:1,index:r,name:n[2],strings:i,ctor:"."===n[1]?et:"?"===n[1]?it:"@"===n[1]?st:tt}),s.removeAttribute(t)}else t.startsWith(S)&&(a.push({type:6,index:r}),s.removeAttribute(t));if(D.test(s.tagName)){const t=s.textContent.split(S),e=t.length-1;if(e>0){s.textContent=w?w.emptyScript:"";for(let i=0;i<e;i++)s.append(t[i],z()),F.nextNode(),a.push({type:2,index:++r});s.append(t[e],z())}}}else if(8===s.nodeType)if(s.data===E)a.push({type:2,index:r});else{let t=-1;for(;-1!==(t=s.data.indexOf(S,t+1));)a.push({type:7,index:r}),t+=S.length-1}r++}}static createElement(t,e){const i=O.createElement("template");return i.innerHTML=t,i}}function J(t,e,i=t,s){if(e===W)return e;let r=void 0!==s?i._$Co?.[s]:i._$Cl;const o=N(e)?void 0:e._$litDirective$;return r?.constructor!==o&&(r?._$AO?.(!1),void 0===o?r=void 0:(r=new o(t),r._$AT(t,i,s)),void 0!==s?(i._$Co??=[])[s]=r:i._$Cl=r),void 0!==r&&(e=J(t,r._$AS(t,e.values),r,s)),e}class X{constructor(t,e){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=e}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){const{el:{content:e},parts:i}=this._$AD,s=(t?.creationScope??O).importNode(e,!0);F.currentNode=s;let r=F.nextNode(),o=0,n=0,a=i[0];for(;void 0!==a;){if(o===a.index){let e;2===a.type?e=new Y(r,r.nextSibling,this,t):1===a.type?e=new a.ctor(r,a.name,a.strings,this,t):6===a.type&&(e=new rt(r,this,t)),this._$AV.push(e),a=i[++n]}o!==a?.index&&(r=F.nextNode(),o++)}return F.currentNode=O,s}p(t){let e=0;for(const i of this._$AV)void 0!==i&&(void 0!==i.strings?(i._$AI(t,i,e),e+=i.strings.length-2):i._$AI(t[e])),e++}}class Y{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(t,e,i,s){this.type=2,this._$AH=K,this._$AN=void 0,this._$AA=t,this._$AB=e,this._$AM=i,this.options=s,this._$Cv=s?.isConnected??!0}get parentNode(){let t=this._$AA.parentNode;const e=this._$AM;return void 0!==e&&11===t?.nodeType&&(t=e.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,e=this){t=J(this,t,e),N(t)?t===K||null==t||""===t?(this._$AH!==K&&this._$AR(),this._$AH=K):t!==this._$AH&&t!==W&&this._(t):void 0!==t._$litType$?this.$(t):void 0!==t.nodeType?this.T(t):(t=>P(t)||"function"==typeof t?.[Symbol.iterator])(t)?this.k(t):this._(t)}O(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t))}_(t){this._$AH!==K&&N(this._$AH)?this._$AA.nextSibling.data=t:this.T(O.createTextNode(t)),this._$AH=t}$(t){const{values:e,_$litType$:i}=t,s="number"==typeof i?this._$AC(t):(void 0===i.el&&(i.el=Z.createElement(G(i.h,i.h[0]),this.options)),i);if(this._$AH?._$AD===s)this._$AH.p(e);else{const t=new X(s,this),i=t.u(this.options);t.p(e),this.T(i),this._$AH=t}}_$AC(t){let e=V.get(t.strings);return void 0===e&&V.set(t.strings,e=new Z(t)),e}k(t){P(this._$AH)||(this._$AH=[],this._$AR());const e=this._$AH;let i,s=0;for(const r of t)s===e.length?e.push(i=new Y(this.O(z()),this.O(z()),this,this.options)):i=e[s],i._$AI(r),s++;s<e.length&&(this._$AR(i&&i._$AB.nextSibling,s),e.length=s)}_$AR(t=this._$AA.nextSibling,e){for(this._$AP?.(!1,!0,e);t!==this._$AB;){const e=x(t).nextSibling;x(t).remove(),t=e}}setConnected(t){void 0===this._$AM&&(this._$Cv=t,this._$AP?.(t))}}class tt{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(t,e,i,s,r){this.type=1,this._$AH=K,this._$AN=void 0,this.element=t,this.name=e,this._$AM=s,this.options=r,i.length>2||""!==i[0]||""!==i[1]?(this._$AH=Array(i.length-1).fill(new String),this.strings=i):this._$AH=K}_$AI(t,e=this,i,s){const r=this.strings;let o=!1;if(void 0===r)t=J(this,t,e,0),o=!N(t)||t!==this._$AH&&t!==W,o&&(this._$AH=t);else{const s=t;let n,a;for(t=r[0],n=0;n<r.length-1;n++)a=J(this,s[i+n],e,n),a===W&&(a=this._$AH[n]),o||=!N(a)||a!==this._$AH[n],a===K?t=K:t!==K&&(t+=(a??"")+r[n+1]),this._$AH[n]=a}o&&!s&&this.j(t)}j(t){t===K?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,t??"")}}class et extends tt{constructor(){super(...arguments),this.type=3}j(t){this.element[this.name]=t===K?void 0:t}}class it extends tt{constructor(){super(...arguments),this.type=4}j(t){this.element.toggleAttribute(this.name,!!t&&t!==K)}}class st extends tt{constructor(t,e,i,s,r){super(t,e,i,s,r),this.type=5}_$AI(t,e=this){if((t=J(this,t,e,0)??K)===W)return;const i=this._$AH,s=t===K&&i!==K||t.capture!==i.capture||t.once!==i.once||t.passive!==i.passive,r=t!==K&&(i===K||s);s&&this.element.removeEventListener(this.name,this,i),r&&this.element.addEventListener(this.name,this,t),this._$AH=t}handleEvent(t){"function"==typeof this._$AH?this._$AH.call(this.options?.host??this.element,t):this._$AH.handleEvent(t)}}class rt{constructor(t,e,i){this.element=t,this.type=6,this._$AN=void 0,this._$AM=e,this.options=i}get _$AU(){return this._$AM._$AU}_$AI(t){J(this,t)}}const ot=$.litHtmlPolyfillSupport;ot?.(Z,Y),($.litHtmlVersions??=[]).push("3.3.3");const nt=globalThis;let at=class extends b{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0}createRenderRoot(){const t=super.createRenderRoot();return this.renderOptions.renderBefore??=t.firstChild,t}update(t){const e=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=((t,e,i)=>{const s=i?.renderBefore??e;let r=s._$litPart$;if(void 0===r){const t=i?.renderBefore??null;s._$litPart$=r=new Y(e.insertBefore(z(),t),t,void 0,i??{})}return r._$AI(t),r})(e,this.renderRoot,this.renderOptions)}connectedCallback(){super.connectedCallback(),this._$Do?.setConnected(!0)}disconnectedCallback(){super.disconnectedCallback(),this._$Do?.setConnected(!1)}render(){return W}};at._$litElement$=!0,at.finalized=!0,nt.litElementHydrateSupport?.({LitElement:at});const ct=nt.litElementPolyfillSupport;ct?.({LitElement:at}),(nt.litElementVersions??=[]).push("4.2.2");const lt=1,dt=t=>(...e)=>({_$litDirective$:t,values:e});let ht=class{constructor(t){}get _$AU(){return this._$AM._$AU}_$AT(t,e,i){this._$Ct=t,this._$AM=e,this._$Ci=i}_$AS(t,e){return this.update(t,e)}update(t,e){return this.render(...e)}};const pt=dt(class extends ht{constructor(t){if(super(t),t.type!==lt||"class"!==t.name||t.strings?.length>2)throw Error("`classMap()` can only be used in the `class` attribute and must be the only part in the attribute.")}render(t){return" "+Object.keys(t).filter(e=>t[e]).join(" ")+" "}update(t,[e]){if(void 0===this.st){this.st=new Set,void 0!==t.strings&&(this.nt=new Set(t.strings.join(" ").split(/\s/).filter(t=>""!==t)));for(const t in e)e[t]&&!this.nt?.has(t)&&this.st.add(t);return this.render(e)}const i=t.element.classList;for(const t of this.st)t in e||(i.remove(t),this.st.delete(t));for(const t in e){const s=!!e[t];s===this.st.has(t)||this.nt?.has(t)||(s?(i.add(t),this.st.add(t)):(i.remove(t),this.st.delete(t)))}return W}}),_t="important",ut=" !"+_t,mt=dt(class extends ht{constructor(t){if(super(t),t.type!==lt||"style"!==t.name||t.strings?.length>2)throw Error("The `styleMap` directive must be used in the `style` attribute and must be the only part in the attribute.")}render(t){return Object.keys(t).reduce((e,i)=>{const s=t[i];return null==s?e:e+`${i=i.includes("-")?i:i.replace(/(?:^(webkit|moz|ms|o)|)(?=[A-Z])/g,"-$&").toLowerCase()}:${s};`},"")}update(t,[e]){const{style:i}=t.element;if(void 0===this.ft)return this.ft=new Set(Object.keys(e)),this.render(e);for(const t of this.ft)null==e[t]&&(this.ft.delete(t),t.includes("-")?i.removeProperty(t):i[t]=null);for(const t in e){const s=e[t];if(null!=s){this.ft.add(t);const e="string"==typeof s&&s.endsWith(ut);t.includes("-")||e?i.setProperty(t,e?s.slice(0,-11):s,e?_t:""):i[t]=s}}return W}});var gt=((t,...e)=>{const s=1===t.length?t[0]:e.reduce((e,i,s)=>e+(t=>{if(!0===t._$cssResult$)return t.cssText;if("number"==typeof t)return t;throw Error("Value passed to 'css' function must be a 'css' function result: "+t+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(i)+t[s+1],t[0]);return new r(s,t,i)})`
+const e=globalThis,t=e.ShadowRoot&&(void 0===e.ShadyCSS||e.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,i=Symbol(),r=new WeakMap;let s=class{constructor(e,t,r){if(this._$cssResult$=!0,r!==i)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=e,this.t=t}get styleSheet(){let e=this.o;const i=this.t;if(t&&void 0===e){const t=void 0!==i&&1===i.length;t&&(e=r.get(i)),void 0===e&&((this.o=e=new CSSStyleSheet).replaceSync(this.cssText),t&&r.set(i,e))}return e}toString(){return this.cssText}};const n=t?e=>e:e=>e instanceof CSSStyleSheet?(e=>{let t="";for(const i of e.cssRules)t+=i.cssText;return(e=>new s("string"==typeof e?e:e+"",void 0,i))(t)})(e):e,{is:o,defineProperty:a,getOwnPropertyDescriptor:c,getOwnPropertyNames:l,getOwnPropertySymbols:d,getPrototypeOf:h}=Object,u=globalThis,_=u.trustedTypes,p=_?_.emptyScript:"",m=u.reactiveElementPolyfillSupport,g=(e,t)=>e,f={toAttribute(e,t){switch(t){case Boolean:e=e?p:null;break;case Object:case Array:e=null==e?e:JSON.stringify(e)}return e},fromAttribute(e,t){let i=e;switch(t){case Boolean:i=null!==e;break;case Number:i=null===e?null:Number(e);break;case Object:case Array:try{i=JSON.parse(e)}catch(e){i=null}}return i}},v=(e,t)=>!o(e,t),y={attribute:!0,type:String,converter:f,reflect:!1,useDefault:!1,hasChanged:v};Symbol.metadata??=Symbol("metadata"),u.litPropertyMetadata??=new WeakMap;let b=class extends HTMLElement{static addInitializer(e){this._$Ei(),(this.l??=[]).push(e)}static get observedAttributes(){return this.finalize(),this._$Eh&&[...this._$Eh.keys()]}static createProperty(e,t=y){if(t.state&&(t.attribute=!1),this._$Ei(),this.prototype.hasOwnProperty(e)&&((t=Object.create(t)).wrapped=!0),this.elementProperties.set(e,t),!t.noAccessor){const i=Symbol(),r=this.getPropertyDescriptor(e,i,t);void 0!==r&&a(this.prototype,e,r)}}static getPropertyDescriptor(e,t,i){const{get:r,set:s}=c(this.prototype,e)??{get(){return this[t]},set(e){this[t]=e}};return{get:r,set(t){const n=r?.call(this);s?.call(this,t),this.requestUpdate(e,n,i)},configurable:!0,enumerable:!0}}static getPropertyOptions(e){return this.elementProperties.get(e)??y}static _$Ei(){if(this.hasOwnProperty(g("elementProperties")))return;const e=h(this);e.finalize(),void 0!==e.l&&(this.l=[...e.l]),this.elementProperties=new Map(e.elementProperties)}static finalize(){if(this.hasOwnProperty(g("finalized")))return;if(this.finalized=!0,this._$Ei(),this.hasOwnProperty(g("properties"))){const e=this.properties,t=[...l(e),...d(e)];for(const i of t)this.createProperty(i,e[i])}const e=this[Symbol.metadata];if(null!==e){const t=litPropertyMetadata.get(e);if(void 0!==t)for(const[e,i]of t)this.elementProperties.set(e,i)}this._$Eh=new Map;for(const[e,t]of this.elementProperties){const i=this._$Eu(e,t);void 0!==i&&this._$Eh.set(i,e)}this.elementStyles=this.finalizeStyles(this.styles)}static finalizeStyles(e){const t=[];if(Array.isArray(e)){const i=new Set(e.flat(1/0).reverse());for(const e of i)t.unshift(n(e))}else void 0!==e&&t.push(n(e));return t}static _$Eu(e,t){const i=t.attribute;return!1===i?void 0:"string"==typeof i?i:"string"==typeof e?e.toLowerCase():void 0}constructor(){super(),this._$Ep=void 0,this.isUpdatePending=!1,this.hasUpdated=!1,this._$Em=null,this._$Ev()}_$Ev(){this._$ES=new Promise(e=>this.enableUpdating=e),this._$AL=new Map,this._$E_(),this.requestUpdate(),this.constructor.l?.forEach(e=>e(this))}addController(e){(this._$EO??=new Set).add(e),void 0!==this.renderRoot&&this.isConnected&&e.hostConnected?.()}removeController(e){this._$EO?.delete(e)}_$E_(){const e=new Map,t=this.constructor.elementProperties;for(const i of t.keys())this.hasOwnProperty(i)&&(e.set(i,this[i]),delete this[i]);e.size>0&&(this._$Ep=e)}createRenderRoot(){const i=this.shadowRoot??this.attachShadow(this.constructor.shadowRootOptions);return((i,r)=>{if(t)i.adoptedStyleSheets=r.map(e=>e instanceof CSSStyleSheet?e:e.styleSheet);else for(const t of r){const r=document.createElement("style"),s=e.litNonce;void 0!==s&&r.setAttribute("nonce",s),r.textContent=t.cssText,i.appendChild(r)}})(i,this.constructor.elementStyles),i}connectedCallback(){this.renderRoot??=this.createRenderRoot(),this.enableUpdating(!0),this._$EO?.forEach(e=>e.hostConnected?.())}enableUpdating(e){}disconnectedCallback(){this._$EO?.forEach(e=>e.hostDisconnected?.())}attributeChangedCallback(e,t,i){this._$AK(e,i)}_$ET(e,t){const i=this.constructor.elementProperties.get(e),r=this.constructor._$Eu(e,i);if(void 0!==r&&!0===i.reflect){const s=(void 0!==i.converter?.toAttribute?i.converter:f).toAttribute(t,i.type);this._$Em=e,null==s?this.removeAttribute(r):this.setAttribute(r,s),this._$Em=null}}_$AK(e,t){const i=this.constructor,r=i._$Eh.get(e);if(void 0!==r&&this._$Em!==r){const e=i.getPropertyOptions(r),s="function"==typeof e.converter?{fromAttribute:e.converter}:void 0!==e.converter?.fromAttribute?e.converter:f;this._$Em=r;const n=s.fromAttribute(t,e.type);this[r]=n??this._$Ej?.get(r)??n,this._$Em=null}}requestUpdate(e,t,i,r=!1,s){if(void 0!==e){const n=this.constructor;if(!1===r&&(s=this[e]),i??=n.getPropertyOptions(e),!((i.hasChanged??v)(s,t)||i.useDefault&&i.reflect&&s===this._$Ej?.get(e)&&!this.hasAttribute(n._$Eu(e,i))))return;this.C(e,t,i)}!1===this.isUpdatePending&&(this._$ES=this._$EP())}C(e,t,{useDefault:i,reflect:r,wrapped:s},n){i&&!(this._$Ej??=new Map).has(e)&&(this._$Ej.set(e,n??t??this[e]),!0!==s||void 0!==n)||(this._$AL.has(e)||(this.hasUpdated||i||(t=void 0),this._$AL.set(e,t)),!0===r&&this._$Em!==e&&(this._$Eq??=new Set).add(e))}async _$EP(){this.isUpdatePending=!0;try{await this._$ES}catch(e){Promise.reject(e)}const e=this.scheduleUpdate();return null!=e&&await e,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){if(!this.isUpdatePending)return;if(!this.hasUpdated){if(this.renderRoot??=this.createRenderRoot(),this._$Ep){for(const[e,t]of this._$Ep)this[e]=t;this._$Ep=void 0}const e=this.constructor.elementProperties;if(e.size>0)for(const[t,i]of e){const{wrapped:e}=i,r=this[t];!0!==e||this._$AL.has(t)||void 0===r||this.C(t,void 0,i,r)}}let e=!1;const t=this._$AL;try{e=this.shouldUpdate(t),e?(this.willUpdate(t),this._$EO?.forEach(e=>e.hostUpdate?.()),this.update(t)):this._$EM()}catch(t){throw e=!1,this._$EM(),t}e&&this._$AE(t)}willUpdate(e){}_$AE(e){this._$EO?.forEach(e=>e.hostUpdated?.()),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(e)),this.updated(e)}_$EM(){this._$AL=new Map,this.isUpdatePending=!1}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$ES}shouldUpdate(e){return!0}update(e){this._$Eq&&=this._$Eq.forEach(e=>this._$ET(e,this[e])),this._$EM()}updated(e){}firstUpdated(e){}};b.elementStyles=[],b.shadowRootOptions={mode:"open"},b[g("elementProperties")]=new Map,b[g("finalized")]=new Map,m?.({ReactiveElement:b}),(u.reactiveElementVersions??=[]).push("2.1.2");const w=globalThis,$=e=>e,x=w.trustedTypes,k=x?x.createPolicy("lit-html",{createHTML:e=>e}):void 0,S="$lit$",A=`lit$${Math.random().toFixed(9).slice(2)}$`,E="?"+A,L=`<${E}>`,C=document,z=()=>C.createComment(""),O=e=>null===e||"object"!=typeof e&&"function"!=typeof e,T=Array.isArray,j="[ \t\n\f\r]",N=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,I=/-->/g,P=/>/g,M=RegExp(`>|${j}(?:([^\\s"'>=/]+)(${j}*=${j}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),U=/'/g,R=/"/g,D=/^(?:script|style|textarea|title)$/i,V=e=>(t,...i)=>({_$litType$:e,strings:t,values:i}),q=V(1),H=V(2),B=Symbol.for("lit-noChange"),F=Symbol.for("lit-nothing"),K=new WeakMap,W=C.createTreeWalker(C,129);function G(e,t){if(!T(e)||!e.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==k?k.createHTML(t):t}const Z=(e,t)=>{const i=e.length-1,r=[];let s,n=2===t?"<svg>":3===t?"<math>":"",o=N;for(let t=0;t<i;t++){const i=e[t];let a,c,l=-1,d=0;for(;d<i.length&&(o.lastIndex=d,c=o.exec(i),null!==c);)d=o.lastIndex,o===N?"!--"===c[1]?o=I:void 0!==c[1]?o=P:void 0!==c[2]?(D.test(c[2])&&(s=RegExp("</"+c[2],"g")),o=M):void 0!==c[3]&&(o=M):o===M?">"===c[0]?(o=s??N,l=-1):void 0===c[1]?l=-2:(l=o.lastIndex-c[2].length,a=c[1],o=void 0===c[3]?M:'"'===c[3]?R:U):o===R||o===U?o=M:o===I||o===P?o=N:(o=M,s=void 0);const h=o===M&&e[t+1].startsWith("/>")?" ":"";n+=o===N?i+L:l>=0?(r.push(a),i.slice(0,l)+S+i.slice(l)+A+h):i+A+(-2===l?t:h)}return[G(e,n+(e[i]||"<?>")+(2===t?"</svg>":3===t?"</math>":"")),r]};class Q{constructor({strings:e,_$litType$:t},i){let r;this.parts=[];let s=0,n=0;const o=e.length-1,a=this.parts,[c,l]=Z(e,t);if(this.el=Q.createElement(c,i),W.currentNode=this.el.content,2===t||3===t){const e=this.el.content.firstChild;e.replaceWith(...e.childNodes)}for(;null!==(r=W.nextNode())&&a.length<o;){if(1===r.nodeType){if(r.hasAttributes())for(const e of r.getAttributeNames())if(e.endsWith(S)){const t=l[n++],i=r.getAttribute(e).split(A),o=/([.?@])?(.*)/.exec(t);a.push({type:1,index:s,name:o[2],strings:i,ctor:"."===o[1]?te:"?"===o[1]?ie:"@"===o[1]?re:ee}),r.removeAttribute(e)}else e.startsWith(A)&&(a.push({type:6,index:s}),r.removeAttribute(e));if(D.test(r.tagName)){const e=r.textContent.split(A),t=e.length-1;if(t>0){r.textContent=x?x.emptyScript:"";for(let i=0;i<t;i++)r.append(e[i],z()),W.nextNode(),a.push({type:2,index:++s});r.append(e[t],z())}}}else if(8===r.nodeType)if(r.data===E)a.push({type:2,index:s});else{let e=-1;for(;-1!==(e=r.data.indexOf(A,e+1));)a.push({type:7,index:s}),e+=A.length-1}s++}}static createElement(e,t){const i=C.createElement("template");return i.innerHTML=e,i}}function J(e,t,i=e,r){if(t===B)return t;let s=void 0!==r?i._$Co?.[r]:i._$Cl;const n=O(t)?void 0:t._$litDirective$;return s?.constructor!==n&&(s?._$AO?.(!1),void 0===n?s=void 0:(s=new n(e),s._$AT(e,i,r)),void 0!==r?(i._$Co??=[])[r]=s:i._$Cl=s),void 0!==s&&(t=J(e,s._$AS(e,t.values),s,r)),t}class X{constructor(e,t){this._$AV=[],this._$AN=void 0,this._$AD=e,this._$AM=t}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(e){const{el:{content:t},parts:i}=this._$AD,r=(e?.creationScope??C).importNode(t,!0);W.currentNode=r;let s=W.nextNode(),n=0,o=0,a=i[0];for(;void 0!==a;){if(n===a.index){let t;2===a.type?t=new Y(s,s.nextSibling,this,e):1===a.type?t=new a.ctor(s,a.name,a.strings,this,e):6===a.type&&(t=new se(s,this,e)),this._$AV.push(t),a=i[++o]}n!==a?.index&&(s=W.nextNode(),n++)}return W.currentNode=C,r}p(e){let t=0;for(const i of this._$AV)void 0!==i&&(void 0!==i.strings?(i._$AI(e,i,t),t+=i.strings.length-2):i._$AI(e[t])),t++}}class Y{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(e,t,i,r){this.type=2,this._$AH=F,this._$AN=void 0,this._$AA=e,this._$AB=t,this._$AM=i,this.options=r,this._$Cv=r?.isConnected??!0}get parentNode(){let e=this._$AA.parentNode;const t=this._$AM;return void 0!==t&&11===e?.nodeType&&(e=t.parentNode),e}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(e,t=this){e=J(this,e,t),O(e)?e===F||null==e||""===e?(this._$AH!==F&&this._$AR(),this._$AH=F):e!==this._$AH&&e!==B&&this._(e):void 0!==e._$litType$?this.$(e):void 0!==e.nodeType?this.T(e):(e=>T(e)||"function"==typeof e?.[Symbol.iterator])(e)?this.k(e):this._(e)}O(e){return this._$AA.parentNode.insertBefore(e,this._$AB)}T(e){this._$AH!==e&&(this._$AR(),this._$AH=this.O(e))}_(e){this._$AH!==F&&O(this._$AH)?this._$AA.nextSibling.data=e:this.T(C.createTextNode(e)),this._$AH=e}$(e){const{values:t,_$litType$:i}=e,r="number"==typeof i?this._$AC(e):(void 0===i.el&&(i.el=Q.createElement(G(i.h,i.h[0]),this.options)),i);if(this._$AH?._$AD===r)this._$AH.p(t);else{const e=new X(r,this),i=e.u(this.options);e.p(t),this.T(i),this._$AH=e}}_$AC(e){let t=K.get(e.strings);return void 0===t&&K.set(e.strings,t=new Q(e)),t}k(e){T(this._$AH)||(this._$AH=[],this._$AR());const t=this._$AH;let i,r=0;for(const s of e)r===t.length?t.push(i=new Y(this.O(z()),this.O(z()),this,this.options)):i=t[r],i._$AI(s),r++;r<t.length&&(this._$AR(i&&i._$AB.nextSibling,r),t.length=r)}_$AR(e=this._$AA.nextSibling,t){for(this._$AP?.(!1,!0,t);e!==this._$AB;){const t=$(e).nextSibling;$(e).remove(),e=t}}setConnected(e){void 0===this._$AM&&(this._$Cv=e,this._$AP?.(e))}}class ee{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(e,t,i,r,s){this.type=1,this._$AH=F,this._$AN=void 0,this.element=e,this.name=t,this._$AM=r,this.options=s,i.length>2||""!==i[0]||""!==i[1]?(this._$AH=Array(i.length-1).fill(new String),this.strings=i):this._$AH=F}_$AI(e,t=this,i,r){const s=this.strings;let n=!1;if(void 0===s)e=J(this,e,t,0),n=!O(e)||e!==this._$AH&&e!==B,n&&(this._$AH=e);else{const r=e;let o,a;for(e=s[0],o=0;o<s.length-1;o++)a=J(this,r[i+o],t,o),a===B&&(a=this._$AH[o]),n||=!O(a)||a!==this._$AH[o],a===F?e=F:e!==F&&(e+=(a??"")+s[o+1]),this._$AH[o]=a}n&&!r&&this.j(e)}j(e){e===F?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,e??"")}}class te extends ee{constructor(){super(...arguments),this.type=3}j(e){this.element[this.name]=e===F?void 0:e}}class ie extends ee{constructor(){super(...arguments),this.type=4}j(e){this.element.toggleAttribute(this.name,!!e&&e!==F)}}class re extends ee{constructor(e,t,i,r,s){super(e,t,i,r,s),this.type=5}_$AI(e,t=this){if((e=J(this,e,t,0)??F)===B)return;const i=this._$AH,r=e===F&&i!==F||e.capture!==i.capture||e.once!==i.once||e.passive!==i.passive,s=e!==F&&(i===F||r);r&&this.element.removeEventListener(this.name,this,i),s&&this.element.addEventListener(this.name,this,e),this._$AH=e}handleEvent(e){"function"==typeof this._$AH?this._$AH.call(this.options?.host??this.element,e):this._$AH.handleEvent(e)}}class se{constructor(e,t,i){this.element=e,this.type=6,this._$AN=void 0,this._$AM=t,this.options=i}get _$AU(){return this._$AM._$AU}_$AI(e){J(this,e)}}const ne=w.litHtmlPolyfillSupport;ne?.(Q,Y),(w.litHtmlVersions??=[]).push("3.3.3");const oe=globalThis;let ae=class extends b{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0}createRenderRoot(){const e=super.createRenderRoot();return this.renderOptions.renderBefore??=e.firstChild,e}update(e){const t=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(e),this._$Do=((e,t,i)=>{const r=i?.renderBefore??t;let s=r._$litPart$;if(void 0===s){const e=i?.renderBefore??null;r._$litPart$=s=new Y(t.insertBefore(z(),e),e,void 0,i??{})}return s._$AI(e),s})(t,this.renderRoot,this.renderOptions)}connectedCallback(){super.connectedCallback(),this._$Do?.setConnected(!0)}disconnectedCallback(){super.disconnectedCallback(),this._$Do?.setConnected(!1)}render(){return B}};ae._$litElement$=!0,ae.finalized=!0,oe.litElementHydrateSupport?.({LitElement:ae});const ce=oe.litElementPolyfillSupport;ce?.({LitElement:ae}),(oe.litElementVersions??=[]).push("4.2.2");const le=1,de=e=>(...t)=>({_$litDirective$:e,values:t});let he=class{constructor(e){}get _$AU(){return this._$AM._$AU}_$AT(e,t,i){this._$Ct=e,this._$AM=t,this._$Ci=i}_$AS(e,t){return this.update(e,t)}update(e,t){return this.render(...t)}};const ue=de(class extends he{constructor(e){if(super(e),e.type!==le||"class"!==e.name||e.strings?.length>2)throw Error("`classMap()` can only be used in the `class` attribute and must be the only part in the attribute.")}render(e){return" "+Object.keys(e).filter(t=>e[t]).join(" ")+" "}update(e,[t]){if(void 0===this.st){this.st=new Set,void 0!==e.strings&&(this.nt=new Set(e.strings.join(" ").split(/\s/).filter(e=>""!==e)));for(const e in t)t[e]&&!this.nt?.has(e)&&this.st.add(e);return this.render(t)}const i=e.element.classList;for(const e of this.st)e in t||(i.remove(e),this.st.delete(e));for(const e in t){const r=!!t[e];r===this.st.has(e)||this.nt?.has(e)||(r?(i.add(e),this.st.add(e)):(i.remove(e),this.st.delete(e)))}return B}}),_e="important",pe=" !"+_e,me=de(class extends he{constructor(e){if(super(e),e.type!==le||"style"!==e.name||e.strings?.length>2)throw Error("The `styleMap` directive must be used in the `style` attribute and must be the only part in the attribute.")}render(e){return Object.keys(e).reduce((t,i)=>{const r=e[i];return null==r?t:t+`${i=i.includes("-")?i:i.replace(/(?:^(webkit|moz|ms|o)|)(?=[A-Z])/g,"-$&").toLowerCase()}:${r};`},"")}update(e,[t]){const{style:i}=e.element;if(void 0===this.ft)return this.ft=new Set(Object.keys(t)),this.render(t);for(const e of this.ft)null==t[e]&&(this.ft.delete(e),e.includes("-")?i.removeProperty(e):i[e]=null);for(const e in t){const r=t[e];if(null!=r){this.ft.add(e);const t="string"==typeof r&&r.endsWith(pe);e.includes("-")||t?i.setProperty(e,t?r.slice(0,-11):r,t?_e:""):i[e]=r}}return B}});var ge=((e,...t)=>{const r=1===e.length?e[0]:t.reduce((t,i,r)=>t+(e=>{if(!0===e._$cssResult$)return e.cssText;if("number"==typeof e)return e;throw Error("Value passed to 'css' function must be a 'css' function result: "+e+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(i)+e[r+1],e[0]);return new s(r,e,i)})`
   :host {
     display: block;
     container-type: inline-size;
@@ -553,6 +553,117 @@ const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow
     }
   }
 
+  /* ---------- ultra-compact ---------- */
+
+  .ultra-top {
+    display: grid;
+    grid-template-columns: 60px 1fr auto;
+    gap: 10px;
+    align-items: center;
+  }
+  .ultra-top .image-wrap {
+    max-width: 60px;
+    margin: 0;
+  }
+  .ultra-center {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+    cursor: pointer;
+  }
+  .ultra-state {
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--primary-text-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .ultra-state.state-error {
+    color: var(--error-color, #f44336);
+  }
+  .ultra-state.state-charging {
+    color: var(--primary-color);
+  }
+  .ultra-substatus {
+    font-size: 11px;
+    color: var(--secondary-text-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .ultra-limit {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--secondary-text-color);
+    white-space: nowrap;
+  }
+  .ultra-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    text-align: right;
+    min-width: 60px;
+  }
+  .ultra-stat-item {
+    cursor: pointer;
+    line-height: 1.2;
+  }
+  .ultra-stat-item .v {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--primary-text-color);
+    white-space: nowrap;
+  }
+  .ultra-stat-item .l {
+    font-size: 10px;
+    color: var(--secondary-text-color);
+    white-space: nowrap;
+  }
+  .ultra-error {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 6px;
+    font-size: 11px;
+    color: var(--error-color, #f44336);
+    cursor: pointer;
+  }
+  .ultra-error ha-icon {
+    --mdc-icon-size: 14px;
+    flex-shrink: 0;
+  }
+  .ultra-btn {
+    display: flex;
+    justify-content: center;
+    margin-top: 8px;
+  }
+  .ultra-btn button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 16px;
+    border-radius: 16px;
+    border: 1px solid var(--primary-color);
+    background: none;
+    color: var(--primary-color);
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .ultra-btn button:hover {
+    background: rgba(var(--rgb-primary-color, 33, 150, 243), 0.1);
+  }
+  .ultra-btn button ha-icon {
+    --mdc-icon-size: 16px;
+  }
+
   /* ---------- narrow layouts ----------
      When the card itself gets narrow (phone or a tight dashboard
      column) the image moves above the two info columns instead of
@@ -577,64 +688,105 @@ const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow
       grid-area: right;
     }
   }
-`;const ft={en:{ui:{parameters:"Parameters",info:"Information",actions:"Actions",start:"Start",stop:"Stop",reboot:"Reboot",authentication:"Authentication",lock:"Lock",dynamic_limit:"Charging current",led_brightness:"LED brightness",energy:"Energy",charging_time:"Charging time",temperature:"Temperature",power:"Power",voltage:"Voltage",current:"Current",installation_current:"Installation current",lifetime_energy:"Lifetime energy",limit_reason:"Limit reason",firmware:"Firmware",errors:"Active errors",current_l1:"Current L1",current_l2:"Current L2",current_l3:"Current L3",voltage_l1:"Voltage L1",voltage_l2:"Voltage L2",voltage_l3:"Voltage L3",schedule_override:"Schedule override",force_single_phase:"Single phase",lb_mode:"Load balancing",breaker_current:"Breaker current",meter_power:"Meter power",meter_reboot:"Meter reboot",device_actions:"Device",custom_actions:"Custom",entity_missing:"Entity not found"},states:{available:"Unplugged",connected:"Connected",need_auth:"Waiting for authentication",charging:"Charging",error:"Error",locked:"Locked",paused:"Paused",paused_by_scheduler:"Paused by scheduler",updating_firmware:"Updating firmware",unavailable:"Unavailable",unknown:"Unknown"},errors:{ev_error:"Vehicle error",ev_diode_short:"Vehicle communication error",overheating:"Overheating",thermal_throttling:"Thermal throttling",metering_error:"Metering error",overcurrent:"Overcurrent",overvoltage:"Overvoltage",undervoltage:"Undervoltage",rcd_error:"RCD error",relay_contacts_welded:"Relay contacts welded",state_e_activated:"Vehicle error",overtemp:"Overheating",critical_temp:"Critical temperature",meter_fault:"Metering error",cp_diode_failure:"Vehicle communication error",contactor_failure:"Contactor failure"},editor:{entity:"Charger state sensor (required)",name:"Name",location:"Location",meter_entity:"Energy meter entity (optional)",substatus_entity:"Substatus entity (optional)",compact:"Compact view",show_leds:"Show LEDs",show_stats:"Show stats",show_quick_actions:"Show quick actions",show_name:"Show name",show_parameters:"Show parameters section",show_info:"Show information section",show_actions:"Show actions section",language:"Language",image:"Custom image (optional path)"}},it:{ui:{parameters:"Parametri",info:"Informazioni",actions:"Azioni",start:"Avvia",stop:"Ferma",reboot:"Riavvia",authentication:"Autenticazione",lock:"Blocco",dynamic_limit:"Corrente di ricarica",led_brightness:"Luminosità LED",energy:"Energia",charging_time:"Tempo ricarica",temperature:"Temperatura",power:"Potenza",voltage:"Tensione",current:"Corrente",installation_current:"Corrente di installazione",lifetime_energy:"Energia erogata",limit_reason:"Motivo limitazione",firmware:"Firmware",errors:"Errori attivi",current_l1:"Corrente L1",current_l2:"Corrente L2",current_l3:"Corrente L3",voltage_l1:"Tensione L1",voltage_l2:"Tensione L2",voltage_l3:"Tensione L3",schedule_override:"Ignora programmazione",force_single_phase:"Monofase",lb_mode:"Bilanciamento",breaker_current:"Corrente interruttore",meter_power:"Potenza meter",meter_reboot:"Riavvio meter",device_actions:"Dispositivo",custom_actions:"Personalizzate",entity_missing:"Entità non trovata"},states:{available:"Scollegato",connected:"Connesso",need_auth:"In attesa di autenticazione",charging:"In carica",error:"Errore",locked:"Bloccato",paused:"In pausa",paused_by_scheduler:"In pausa (programmata)",updating_firmware:"Aggiornamento firmware",unavailable:"Non disponibile",unknown:"Sconosciuto"},errors:{ev_error:"Errore veicolo",ev_diode_short:"Errore comunicazione veicolo",overheating:"Surriscaldamento",thermal_throttling:"Limitazione termica",metering_error:"Errore misuratore",overcurrent:"Sovracorrente",overvoltage:"Sovratensione",undervoltage:"Sottotensione",rcd_error:"Errore RCD",relay_contacts_welded:"Contatti relè incollati",state_e_activated:"Errore veicolo",overtemp:"Surriscaldamento",critical_temp:"Temperatura critica",meter_fault:"Errore misuratore",cp_diode_failure:"Errore comunicazione veicolo",contactor_failure:"Errore contattore"},editor:{entity:"Sensore stato del charger (obbligatorio)",name:"Nome",location:"Posizione",meter_entity:"Entità energy meter (opzionale)",substatus_entity:"Entità sottostato (opzionale)",compact:"Vista compatta",show_leds:"Mostra LED",show_stats:"Mostra statistiche",show_quick_actions:"Mostra azioni rapide",show_name:"Mostra nome",show_parameters:"Mostra sezione parametri",show_info:"Mostra sezione informazioni",show_actions:"Mostra sezione azioni",language:"Lingua",image:"Immagine personalizzata (percorso, opzionale)"}}},vt=t=>{const e=(t||"en").split("-")[0].toLowerCase();return ft[e]?e:"en"},yt=(t,e,i)=>ft[t]?.[e]?.[i]??ft.en[e]?.[i]??i,bt={compact:!1,show_leds:!0,show_stats:!0,show_quick_actions:!0,show_name:!0,show_parameters:!0,show_info:!0,show_actions:!0},$t=[{name:"entity",required:!0,selector:{entity:{domain:"sensor"}}},{name:"name",selector:{text:{}}},{name:"location",selector:{text:{}}},{name:"substatus_entity",selector:{entity:{}}},{name:"meter_entity",selector:{entity:{}}},{name:"",type:"grid",schema:[{name:"compact",selector:{boolean:{}}},{name:"show_leds",selector:{boolean:{}}},{name:"show_stats",selector:{boolean:{}}},{name:"show_quick_actions",selector:{boolean:{}}},{name:"show_name",selector:{boolean:{}}},{name:"show_parameters",selector:{boolean:{}}},{name:"show_info",selector:{boolean:{}}},{name:"show_actions",selector:{boolean:{}}}]},{name:"language",selector:{select:{mode:"dropdown",options:[{value:"",label:"Auto"},{value:"en",label:"English"},{value:"it",label:"Italiano"}]}}},{name:"image",selector:{text:{}}}];class xt extends at{static properties={hass:{attribute:!1},_config:{state:!0}};setConfig(t){this._config=t}get _lang(){return vt(this.hass?.language)}_computeLabel=t=>yt(this._lang,"editor",t.name);render(){if(!this.hass||!this._config)return K;const t={...bt,...this._config};return q`
+`;const fe={en:{ui:{parameters:"Parameters",info:"Information",actions:"Actions",start:"Start",stop:"Stop",reboot:"Reboot",authentication:"Authentication",lock:"Lock",dynamic_limit:"Charging current",led_brightness:"LED brightness",energy:"Energy",charging_time:"Charging time",temperature:"Temperature",power:"Power",voltage:"Voltage",current:"Current",installation_current:"Installation current",lifetime_energy:"Lifetime energy",limit_reason:"Limit reason",firmware:"Firmware",errors:"Active errors",current_l1:"Current L1",current_l2:"Current L2",current_l3:"Current L3",voltage_l1:"Voltage L1",voltage_l2:"Voltage L2",voltage_l3:"Voltage L3",schedule_override:"Schedule override",force_single_phase:"Single phase",lb_mode:"Load balancing",breaker_current:"Breaker current",meter_power:"Meter power",meter_reboot:"Meter reboot",device_actions:"Device",custom_actions:"Custom",entity_missing:"Entity not found"},states:{available:"Unplugged",connected:"Connected",need_auth:"Waiting for authentication",charging:"Charging",error:"Error",locked:"Locked",paused:"Paused",paused_by_scheduler:"Paused by scheduler",updating_firmware:"Updating firmware",unavailable:"Unavailable",unknown:"Unknown"},errors:{ev_error:"Vehicle error",ev_diode_short:"Vehicle communication error",overheating:"Overheating",thermal_throttling:"Thermal throttling",metering_error:"Metering error",overcurrent:"Overcurrent",overvoltage:"Overvoltage",undervoltage:"Undervoltage",rcd_error:"RCD error",relay_contacts_welded:"Relay contacts welded",state_e_activated:"Vehicle error",overtemp:"Overheating",critical_temp:"Critical temperature",meter_fault:"Metering error",cp_diode_failure:"Vehicle communication error",contactor_failure:"Contactor failure"},editor:{entity:"Charger state sensor (required)",name:"Name",location:"Location",meter_entity:"Energy meter entity (optional)",substatus_entity:"Substatus entity (optional)",compact:"Layout",show_leds:"Show LEDs",show_stats:"Show stats",show_quick_actions:"Show quick actions",show_name:"Show name",show_parameters:"Show parameters section",show_info:"Show information section",show_actions:"Show actions section",language:"Language",image:"Custom image (optional path)"}},it:{ui:{parameters:"Parametri",info:"Informazioni",actions:"Azioni",start:"Avvia",stop:"Ferma",reboot:"Riavvia",authentication:"Autenticazione",lock:"Blocco",dynamic_limit:"Corrente di ricarica",led_brightness:"Luminosità LED",energy:"Energia",charging_time:"Tempo ricarica",temperature:"Temperatura",power:"Potenza",voltage:"Tensione",current:"Corrente",installation_current:"Corrente di installazione",lifetime_energy:"Energia erogata",limit_reason:"Motivo limitazione",firmware:"Firmware",errors:"Errori attivi",current_l1:"Corrente L1",current_l2:"Corrente L2",current_l3:"Corrente L3",voltage_l1:"Tensione L1",voltage_l2:"Tensione L2",voltage_l3:"Tensione L3",schedule_override:"Ignora programmazione",force_single_phase:"Monofase",lb_mode:"Bilanciamento",breaker_current:"Corrente interruttore",meter_power:"Potenza meter",meter_reboot:"Riavvio meter",device_actions:"Dispositivo",custom_actions:"Personalizzate",entity_missing:"Entità non trovata"},states:{available:"Scollegato",connected:"Connesso",need_auth:"In attesa di autenticazione",charging:"In carica",error:"Errore",locked:"Bloccato",paused:"In pausa",paused_by_scheduler:"In pausa (programmata)",updating_firmware:"Aggiornamento firmware",unavailable:"Non disponibile",unknown:"Sconosciuto"},errors:{ev_error:"Errore veicolo",ev_diode_short:"Errore comunicazione veicolo",overheating:"Surriscaldamento",thermal_throttling:"Limitazione termica",metering_error:"Errore misuratore",overcurrent:"Sovracorrente",overvoltage:"Sovratensione",undervoltage:"Sottotensione",rcd_error:"Errore RCD",relay_contacts_welded:"Contatti relè incollati",state_e_activated:"Errore veicolo",overtemp:"Surriscaldamento",critical_temp:"Temperatura critica",meter_fault:"Errore misuratore",cp_diode_failure:"Errore comunicazione veicolo",contactor_failure:"Errore contattore"},editor:{entity:"Sensore stato del charger (obbligatorio)",name:"Nome",location:"Posizione",meter_entity:"Entità energy meter (opzionale)",substatus_entity:"Entità sottostato (opzionale)",compact:"Layout",show_leds:"Mostra LED",show_stats:"Mostra statistiche",show_quick_actions:"Mostra azioni rapide",show_name:"Mostra nome",show_parameters:"Mostra sezione parametri",show_info:"Mostra sezione informazioni",show_actions:"Mostra sezione azioni",language:"Lingua",image:"Immagine personalizzata (percorso, opzionale)"}},de:{ui:{parameters:"Parameter",info:"Informationen",actions:"Aktionen",start:"Starten",stop:"Stoppen",reboot:"Neustart",authentication:"Authentifizierung",lock:"Sperren",dynamic_limit:"Ladestrom",led_brightness:"LED-Helligkeit",energy:"Energie",charging_time:"Ladezeit",temperature:"Temperatur",power:"Leistung",voltage:"Spannung",current:"Strom",installation_current:"Installationsstrom",lifetime_energy:"Lebenszeit-Energie",limit_reason:"Limitierungsgrund",firmware:"Firmware",errors:"Aktive Fehler",current_l1:"Strom L1",current_l2:"Strom L2",current_l3:"Strom L3",voltage_l1:"Spannung L1",voltage_l2:"Spannung L2",voltage_l3:"Spannung L3",schedule_override:"Zeitplan überschreiben",force_single_phase:"Einphasig",lb_mode:"Lastausgleich",breaker_current:"Schutzschalter",meter_power:"Zählerleistung",meter_reboot:"Zähler neu starten",device_actions:"Gerät",custom_actions:"Benutzerdefiniert",entity_missing:"Entität nicht gefunden"},states:{available:"Nicht verbunden",connected:"Verbunden",need_auth:"Warten auf Authentifizierung",charging:"Lädt",error:"Fehler",locked:"Gesperrt",paused:"Pausiert",paused_by_scheduler:"Pausiert (geplant)",updating_firmware:"Firmware-Update",unavailable:"Nicht verfügbar",unknown:"Unbekannt"},errors:{ev_error:"Fahrzeugfehler",ev_diode_short:"Fahrzeugkommunikationsfehler",overheating:"Überhitzung",thermal_throttling:"Thermische Drosselung",metering_error:"Messfehler",overcurrent:"Überstrom",overvoltage:"Überspannung",undervoltage:"Unterspannung",rcd_error:"FI-Schutzschalter-Fehler",relay_contacts_welded:"Relaiskontakte verschweißt",state_e_activated:"Fahrzeugfehler",overtemp:"Überhitzung",critical_temp:"Kritische Temperatur",meter_fault:"Messfehler",cp_diode_failure:"Fahrzeugkommunikationsfehler",contactor_failure:"Schützfehler"},editor:{entity:"Ladezustandssensor (erforderlich)",name:"Name",location:"Standort",meter_entity:"Energiezähler-Entität (optional)",substatus_entity:"Substatus-Entität (optional)",compact:"Layout",show_leds:"LEDs anzeigen",show_stats:"Statistiken anzeigen",show_quick_actions:"Schnellaktionen anzeigen",show_name:"Namen anzeigen",show_parameters:"Parameterbereich anzeigen",show_info:"Informationsbereich anzeigen",show_actions:"Aktionsbereich anzeigen",language:"Sprache",image:"Benutzerdefiniertes Bild (Pfad, optional)"}},fr:{ui:{parameters:"Paramètres",info:"Informations",actions:"Actions",start:"Démarrer",stop:"Arrêter",reboot:"Redémarrer",authentication:"Authentification",lock:"Verrouiller",dynamic_limit:"Courant de charge",led_brightness:"Luminosité LED",energy:"Énergie",charging_time:"Temps de charge",temperature:"Température",power:"Puissance",voltage:"Tension",current:"Courant",installation_current:"Courant d'installation",lifetime_energy:"Énergie totale",limit_reason:"Raison de limitation",firmware:"Firmware",errors:"Erreurs actives",current_l1:"Courant L1",current_l2:"Courant L2",current_l3:"Courant L3",voltage_l1:"Tension L1",voltage_l2:"Tension L2",voltage_l3:"Tension L3",schedule_override:"Ignorer le planning",force_single_phase:"Monophasé",lb_mode:"Équilibrage de charge",breaker_current:"Courant disjoncteur",meter_power:"Puissance compteur",meter_reboot:"Redémarrer compteur",device_actions:"Appareil",custom_actions:"Personnalisé",entity_missing:"Entité introuvable"},states:{available:"Déconnecté",connected:"Connecté",need_auth:"En attente d'authentification",charging:"En charge",error:"Erreur",locked:"Verrouillé",paused:"En pause",paused_by_scheduler:"En pause (planifiée)",updating_firmware:"Mise à jour firmware",unavailable:"Indisponible",unknown:"Inconnu"},errors:{ev_error:"Erreur véhicule",ev_diode_short:"Erreur communication véhicule",overheating:"Surchauffe",thermal_throttling:"Limitation thermique",metering_error:"Erreur de mesure",overcurrent:"Surintensité",overvoltage:"Surtension",undervoltage:"Sous-tension",rcd_error:"Erreur différentiel",relay_contacts_welded:"Contacts relais soudés",state_e_activated:"Erreur véhicule",overtemp:"Surchauffe",critical_temp:"Température critique",meter_fault:"Erreur de mesure",cp_diode_failure:"Erreur communication véhicule",contactor_failure:"Défaillance contacteur"},editor:{entity:"Capteur d'état (requis)",name:"Nom",location:"Emplacement",meter_entity:"Entité compteur (optionnel)",substatus_entity:"Entité sous-état (optionnel)",compact:"Disposition",show_leds:"Afficher LEDs",show_stats:"Afficher statistiques",show_quick_actions:"Afficher actions rapides",show_name:"Afficher nom",show_parameters:"Afficher section paramètres",show_info:"Afficher section informations",show_actions:"Afficher section actions",language:"Langue",image:"Image personnalisée (chemin, optionnel)"}},nl:{ui:{parameters:"Parameters",info:"Informatie",actions:"Acties",start:"Starten",stop:"Stoppen",reboot:"Herstarten",authentication:"Authenticatie",lock:"Vergrendelen",dynamic_limit:"Laadstroom",led_brightness:"LED-helderheid",energy:"Energie",charging_time:"Laadtijd",temperature:"Temperatuur",power:"Vermogen",voltage:"Spanning",current:"Stroom",installation_current:"Installatiestroom",lifetime_energy:"Totale energie",limit_reason:"Reden beperking",firmware:"Firmware",errors:"Actieve fouten",current_l1:"Stroom L1",current_l2:"Stroom L2",current_l3:"Stroom L3",voltage_l1:"Spanning L1",voltage_l2:"Spanning L2",voltage_l3:"Spanning L3",schedule_override:"Schema overschrijven",force_single_phase:"Eénfasig",lb_mode:"Lastverdeling",breaker_current:"Zekeringsstroom",meter_power:"Metervermogen",meter_reboot:"Meter herstarten",device_actions:"Apparaat",custom_actions:"Aangepast",entity_missing:"Entiteit niet gevonden"},states:{available:"Niet verbonden",connected:"Verbonden",need_auth:"Wacht op authenticatie",charging:"Aan het laden",error:"Fout",locked:"Vergrendeld",paused:"Gepauzeerd",paused_by_scheduler:"Gepauzeerd (gepland)",updating_firmware:"Firmware-update",unavailable:"Niet beschikbaar",unknown:"Onbekend"},errors:{ev_error:"Voertuigfout",ev_diode_short:"Communicatiefout voertuig",overheating:"Oververhitting",thermal_throttling:"Thermische beperking",metering_error:"Meetfout",overcurrent:"Overstroom",overvoltage:"Overspanning",undervoltage:"Onderspanning",rcd_error:"Aardlekschakelaarfout",relay_contacts_welded:"Relaiskontakten versmolten",state_e_activated:"Voertuigfout",overtemp:"Oververhitting",critical_temp:"Kritieke temperatuur",meter_fault:"Meetfout",cp_diode_failure:"Communicatiefout voertuig",contactor_failure:"Contactorfout"},editor:{entity:"Laadstatussensor (verplicht)",name:"Naam",location:"Locatie",meter_entity:"Energiemeter entiteit (optioneel)",substatus_entity:"Substatus entiteit (optioneel)",compact:"Indeling",show_leds:"LED's weergeven",show_stats:"Statistieken weergeven",show_quick_actions:"Snelle acties weergeven",show_name:"Naam weergeven",show_parameters:"Parameterssectie weergeven",show_info:"Informatiesectie weergeven",show_actions:"Actiessectie weergeven",language:"Taal",image:"Aangepaste afbeelding (pad, optioneel)"}},sv:{ui:{parameters:"Parametrar",info:"Information",actions:"Åtgärder",start:"Starta",stop:"Stoppa",reboot:"Starta om",authentication:"Autentisering",lock:"Lås",dynamic_limit:"Laddström",led_brightness:"LED-ljusstyrka",energy:"Energi",charging_time:"Laddtid",temperature:"Temperatur",power:"Effekt",voltage:"Spänning",current:"Ström",installation_current:"Installationsström",lifetime_energy:"Total energi",limit_reason:"Begränsningsorsak",firmware:"Firmware",errors:"Aktiva fel",current_l1:"Ström L1",current_l2:"Ström L2",current_l3:"Ström L3",voltage_l1:"Spänning L1",voltage_l2:"Spänning L2",voltage_l3:"Spänning L3",schedule_override:"Överskrid schema",force_single_phase:"Enfasig",lb_mode:"Lastbalansering",breaker_current:"Säkringsström",meter_power:"Mätareffekt",meter_reboot:"Starta om mätare",device_actions:"Enhet",custom_actions:"Anpassad",entity_missing:"Entitet hittades inte"},states:{available:"Frånkopplad",connected:"Ansluten",need_auth:"Väntar på autentisering",charging:"Laddar",error:"Fel",locked:"Låst",paused:"Pausad",paused_by_scheduler:"Pausad (schemalagd)",updating_firmware:"Firmware-uppdatering",unavailable:"Otillgänglig",unknown:"Okänd"},errors:{ev_error:"Fordonsfel",ev_diode_short:"Kommunikationsfel fordon",overheating:"Överhettning",thermal_throttling:"Termisk begränsning",metering_error:"Mätfel",overcurrent:"Överström",overvoltage:"Överspänning",undervoltage:"Underspänning",rcd_error:"Jordfelsbrytarfel",relay_contacts_welded:"Reläkontakter sammansvetsade",state_e_activated:"Fordonsfel",overtemp:"Överhettning",critical_temp:"Kritisk temperatur",meter_fault:"Mätfel",cp_diode_failure:"Kommunikationsfel fordon",contactor_failure:"Kontaktorefel"},editor:{entity:"Laddstatussensor (krävs)",name:"Namn",location:"Plats",meter_entity:"Energimätar-entitet (valfritt)",substatus_entity:"Substatusentitet (valfritt)",compact:"Layout",show_leds:"Visa LEDs",show_stats:"Visa statistik",show_quick_actions:"Visa snabbåtgärder",show_name:"Visa namn",show_parameters:"Visa parametersektion",show_info:"Visa informationssektion",show_actions:"Visa åtgärdssektion",language:"Språk",image:"Anpassad bild (sökväg, valfritt)"}},da:{ui:{parameters:"Parametre",info:"Information",actions:"Handlinger",start:"Start",stop:"Stop",reboot:"Genstart",authentication:"Godkendelse",lock:"Lås",dynamic_limit:"Ladestrøm",led_brightness:"LED-lysstyrke",energy:"Energi",charging_time:"Ladetid",temperature:"Temperatur",power:"Effekt",voltage:"Spænding",current:"Strøm",installation_current:"Installationsstrøm",lifetime_energy:"Samlet energi",limit_reason:"Begrænsningsårsag",firmware:"Firmware",errors:"Aktive fejl",current_l1:"Strøm L1",current_l2:"Strøm L2",current_l3:"Strøm L3",voltage_l1:"Spænding L1",voltage_l2:"Spænding L2",voltage_l3:"Spænding L3",schedule_override:"Tilsidesæt tidsplan",force_single_phase:"Enfaset",lb_mode:"Lastbalancering",breaker_current:"Sikringsstrøm",meter_power:"Målereffekt",meter_reboot:"Genstart måler",device_actions:"Enhed",custom_actions:"Tilpasset",entity_missing:"Entitet ikke fundet"},states:{available:"Frakoblet",connected:"Tilsluttet",need_auth:"Venter på godkendelse",charging:"Oplader",error:"Fejl",locked:"Låst",paused:"Sat på pause",paused_by_scheduler:"Sat på pause (planlagt)",updating_firmware:"Firmware-opdatering",unavailable:"Utilgængelig",unknown:"Ukendt"},errors:{ev_error:"Køretøjsfejl",ev_diode_short:"Kommunikationsfejl køretøj",overheating:"Overophedning",thermal_throttling:"Termisk begrænsning",metering_error:"Målefejl",overcurrent:"Overstrøm",overvoltage:"Overspænding",undervoltage:"Underspænding",rcd_error:"Fejlstrømsafbryderfejl",relay_contacts_welded:"Relaiskontakter svejset",state_e_activated:"Køretøjsfejl",overtemp:"Overophedning",critical_temp:"Kritisk temperatur",meter_fault:"Målefejl",cp_diode_failure:"Kommunikationsfejl køretøj",contactor_failure:"Kontaktorfejl"},editor:{entity:"Ladestatussensor (påkrævet)",name:"Navn",location:"Placering",meter_entity:"Energimåler entitet (valgfrit)",substatus_entity:"Substatus entitet (valgfrit)",compact:"Layout",show_leds:"Vis LEDs",show_stats:"Vis statistik",show_quick_actions:"Vis hurtige handlinger",show_name:"Vis navn",show_parameters:"Vis parametersektion",show_info:"Vis informationssektion",show_actions:"Vis handlingssektion",language:"Sprog",image:"Brugerdefineret billede (sti, valgfrit)"}},nb:{ui:{parameters:"Parametere",info:"Informasjon",actions:"Handlinger",start:"Start",stop:"Stopp",reboot:"Start på nytt",authentication:"Godkjenning",lock:"Lås",dynamic_limit:"Ladestrøm",led_brightness:"LED-lysstyrke",energy:"Energi",charging_time:"Ladetid",temperature:"Temperatur",power:"Effekt",voltage:"Spenning",current:"Strøm",installation_current:"Installasjonsstrøm",lifetime_energy:"Total energi",limit_reason:"Årsak til begrensning",firmware:"Fastvare",errors:"Aktive feil",current_l1:"Strøm L1",current_l2:"Strøm L2",current_l3:"Strøm L3",voltage_l1:"Spenning L1",voltage_l2:"Spenning L2",voltage_l3:"Spenning L3",schedule_override:"Overstyr tidsplan",force_single_phase:"Enfaset",lb_mode:"Lastbalansering",breaker_current:"Sikringsstrøm",meter_power:"Målereffekt",meter_reboot:"Start måler på nytt",device_actions:"Enhet",custom_actions:"Tilpasset",entity_missing:"Entitet ikke funnet"},states:{available:"Frakoblet",connected:"Tilkoblet",need_auth:"Venter på godkjenning",charging:"Lader",error:"Feil",locked:"Låst",paused:"Satt på pause",paused_by_scheduler:"Satt på pause (planlagt)",updating_firmware:"Fastvare-oppdatering",unavailable:"Utilgjengelig",unknown:"Ukjent"},errors:{ev_error:"Kjøretøyfeil",ev_diode_short:"Kommunikasjonsfeil kjøretøy",overheating:"Overoppheting",thermal_throttling:"Termisk begrensning",metering_error:"Målefeil",overcurrent:"Overstrøm",overvoltage:"Overspenning",undervoltage:"Underspenning",rcd_error:"Jordfeilavbryterfeil",relay_contacts_welded:"Reléskontakter smeltet",state_e_activated:"Kjøretøyfeil",overtemp:"Overoppheting",critical_temp:"Kritisk temperatur",meter_fault:"Målefeil",cp_diode_failure:"Kommunikasjonsfeil kjøretøy",contactor_failure:"Kontaktorfeil"},editor:{entity:"Ladestatussensor (påkrevd)",name:"Navn",location:"Sted",meter_entity:"Energimåler entitet (valgfritt)",substatus_entity:"Substatus entitet (valgfritt)",compact:"Layout",show_leds:"Vis LEDs",show_stats:"Vis statistikk",show_quick_actions:"Vis hurtighandlinger",show_name:"Vis navn",show_parameters:"Vis parametersseksjon",show_info:"Vis informasjonsseksjon",show_actions:"Vis handlingsseksjon",language:"Språk",image:"Tilpasset bilde (sti, valgfritt)"}}},ve=e=>{const t=(e||"en").split("-")[0].toLowerCase();return fe[t]?t:"en"},ye=(e,t,i)=>fe[e]?.[t]?.[i]??fe.en[t]?.[i]??i,be={show_leds:!0,show_stats:!0,show_quick_actions:!0,show_name:!0,show_parameters:!0,show_info:!0,show_actions:!0},we=[{name:"entity",required:!0,selector:{entity:{domain:"sensor"}}},{name:"name",selector:{text:{}}},{name:"location",selector:{text:{}}},{name:"substatus_entity",selector:{entity:{}}},{name:"meter_entity",selector:{entity:{}}},{name:"compact",selector:{select:{mode:"list",options:[{value:"",label:"Standard"},{value:"compact",label:"Compact"},{value:"ultra",label:"Ultra compact"}]}}},{name:"",type:"grid",schema:[{name:"show_leds",selector:{boolean:{}}},{name:"show_stats",selector:{boolean:{}}},{name:"show_quick_actions",selector:{boolean:{}}},{name:"show_name",selector:{boolean:{}}},{name:"show_parameters",selector:{boolean:{}}},{name:"show_info",selector:{boolean:{}}},{name:"show_actions",selector:{boolean:{}}}]},{name:"language",selector:{select:{mode:"dropdown",options:[{value:"",label:"Auto"},{value:"en",label:"English"},{value:"de",label:"Deutsch"},{value:"fr",label:"Français"},{value:"it",label:"Italiano"},{value:"nl",label:"Nederlands"},{value:"sv",label:"Svenska"},{value:"da",label:"Dansk"},{value:"nb",label:"Norsk bokmål"}]}}},{name:"image",selector:{text:{}}}];class $e extends ae{static properties={hass:{attribute:!1},_config:{state:!0}};setConfig(e){this._config=e}get _lang(){return ve(this.hass?.language)}_computeLabel=e=>ye(this._lang,"editor",e.name);_compactToStr(e){return"ultra"===e?"ultra":!0===e?"compact":""}render(){if(!this.hass||!this._config)return F;const e=this._compactToStr(this._config.compact),t={...be,...this._config,compact:e};return q`
       <ha-form
         .hass=${this.hass}
         .data=${t}
-        .schema=${$t}
+        .schema=${we}
         .computeLabel=${this._computeLabel}
         @value-changed=${this._valueChanged}
       ></ha-form>
-    `}_valueChanged(t){t.stopPropagation();const e={...t.detail.value};for(const[t,i]of Object.entries(bt))e[t]===i&&delete e[t];for(const t of["name","location","substatus_entity","meter_entity","image","language"])""===e[t]&&delete e[t];((t,e,i={})=>{const s=new Event(e,{bubbles:!0,composed:!0});s.detail=i,t.dispatchEvent(s)})(this,"config-changed",{config:e})}}customElements.get("lektrico-charger-card-editor")||customElements.define("lektrico-charger-card-editor",xt);const wt="lektrico-charger-card",kt={available:{color:"#4caf50",animation:"none"},connected:{color:"#2196f3",animation:"none"},need_auth:{color:"#2196f3",animation:"pulse"},charging:{color:"#ffffff",animation:"spin"},paused:{color:"#ffffff",animation:"top"},paused_by_scheduler:{color:"#ffffff",animation:"top"},locked:{color:"#ff5722",animation:"none"},error:{color:"#f44336",animation:"pulse"},updating_firmware:{color:"#ab47bc",animation:"pulse"},unavailable:{color:"#616161",animation:"none"},unknown:{color:"#616161",animation:"none"}},At={state:{domain:"sensor",keys:["state"],suffixes:["_state","_stato"]},charging_time:{domain:"sensor",keys:["charging_time"],suffixes:["_charging_time","_tempo_ricarica","_tempo_di_ricarica"]},session_energy:{domain:"sensor",keys:["session_energy","energy"],suffixes:["_session_energy","_energia","_energia_sessione","_energy"]},lifetime_energy:{domain:"sensor",keys:["lifetime_energy"],suffixes:["_lifetime_energy","_energia_erogata"]},power:{domain:"sensor",keys:["instant_power","power"],suffixes:["_instant_power","_power","_potenza"],device_class:"power"},voltage:{domain:"sensor",keys:["voltage"],suffixes:["_voltage","_tensione"],device_class:"voltage"},current:{domain:"sensor",keys:["current"],suffixes:["_current","_corrente"],device_class:"current"},voltage_l1:{domain:"sensor",keys:["voltage_l1"],suffixes:["_voltage_l1","_tensione_l1"]},voltage_l2:{domain:"sensor",keys:["voltage_l2"],suffixes:["_voltage_l2","_tensione_l2"]},voltage_l3:{domain:"sensor",keys:["voltage_l3"],suffixes:["_voltage_l3","_tensione_l3"]},current_l1:{domain:"sensor",keys:["current_l1"],suffixes:["_current_l1","_corrente_l1"]},current_l2:{domain:"sensor",keys:["current_l2"],suffixes:["_current_l2","_corrente_l2"]},current_l3:{domain:"sensor",keys:["current_l3"],suffixes:["_current_l3","_corrente_l3"]},installation_current:{domain:"sensor",keys:["installation_current"],suffixes:["_installation_current","_corrente_di_installazione"]},limit_reason:{domain:"sensor",keys:["limit_reason"],suffixes:["_limit_reason","_motivo_limitazione"]},temperature:{domain:"sensor",keys:["temperature"],suffixes:["_temperature","_temperatura"],device_class:"temperature"},dynamic_limit:{domain:"number",keys:["dynamic_limit"],suffixes:["_dynamic_limit","_limite_dinamico"]},led_brightness:{domain:"number",keys:["led_max_brightness"],suffixes:["_led_max_brightness","_led_brightness","_luminosita_led","_luminosita_massima_led"]},authentication:{domain:"switch",keys:["authentication"],suffixes:["_authentication","_autenticazione"]},lock:{domain:"switch",keys:["lock"],suffixes:["_lock","_blocca","_blocco"]},charge_start:{domain:"button",keys:["charge_start"],suffixes:["_charge_start","_avvia_ricarica"]},charge_stop:{domain:"button",keys:["charge_stop"],suffixes:["_charge_stop","_ferma_ricarica","_arresta_ricarica"]},reboot:{domain:"button",keys:["reboot"],suffixes:["_reboot","_restart","_riavvia"]},schedule_override:{domain:"button",keys:["charging_schedule_override"],suffixes:["_charging_schedule_override","_schedule_override"]},force_single_phase:{domain:"switch",keys:["force_single_phase"],suffixes:["_force_single_phase","_forza_monofase"]},update:{domain:"update",keys:["firmware"],suffixes:["_firmware"]}},St={lb_mode:{domain:"select",keys:["lb_mode"],suffixes:["_lb_mode","_load_balancing_mode"]},breaker_current:{domain:"sensor",keys:["breaker_current"],suffixes:["_breaker_current","_corrente_interruttore"]},meter_power:{domain:"sensor",keys:["power"],suffixes:["_power","_potenza"],device_class:"power"},meter_reboot:{domain:"button",keys:["reboot"],suffixes:["_reboot","_restart","_riavvia"]}},Et=["ev_error","ev_diode_short","overheating","thermal_throttling","metering_error","overcurrent","overvoltage","undervoltage","rcd_error","relay_contacts_welded","state_e_activated","overtemp","critical_temp","meter_fault","cp_diode_failure","contactor_failure"],Ct={slowest:6,fastest:2},Ot=[6,10,13,16,20,25,32],zt=[10,25,50,75,100];class Nt extends at{static styles=gt;static properties={hass:{attribute:!1},_config:{state:!0},_openSections:{state:!0},_pendingSlider:{state:!0}};constructor(){super(),this._openSections={},this._pendingSlider={},this._roles=null,this._rolesKey=null}setConfig(t){if(!t.entity)throw new Error("Please define the charger state entity, e.g. entity: sensor.1p7k_state");this._config=t,this._roles=null,this._rolesKey=null,this._meterRoles=null,this._meterKey=null}getCardSize(){return this._config?.compact?4:8}static getStubConfig(t){const e=t?.entities||{},i=Object.values(e).find(t=>"lektrico"===t.platform&&"state"===t.translation_key);return{entity:i?i.entity_id:"sensor.1p7k_state"}}static getConfigElement(){return document.createElement("lektrico-charger-card-editor")}get _lang(){return vt(this._config.language||this.hass?.language)}_t(t){return yt(this._lang,"ui",t)}_stateText(t){const e=this._config.state_text||{};return e[t]?e[t]:yt(this._lang,"states",t)}_errorName(t,e){return(ft[this._lang]?.errors?.[t]??ft.en.errors?.[t])||e?.attributes.friendly_name||t}_matchRoles(t,e,i,s){const r=this.hass,o=Object.entries(t),n={},a=new Set,c=(t,e)=>{n[t]=e,a.add(e)};for(const[t]of o)e[t]&&c(t,e[t]);for(const[t,e]of o){if(n[t]||!i.length)continue;const s=i.find(t=>!a.has(t.entity_id)&&t.entity_id.startsWith(`${e.domain}.`)&&e.keys?.includes(t.translation_key));s&&c(t,s.entity_id)}for(const[t,e]of o)if(!n[t])for(const i of e.suffixes||[]){const o=`${e.domain}.${s}${i}`;if(!a.has(o)&&r.states[o]){c(t,o);break}}const l=o.flatMap(([,t])=>t.suffixes||[]);for(const[t,e]of o){if(n[t])continue;const o=i.length?i.map(t=>t.entity_id):Object.keys(r.states).filter(t=>t.startsWith(`${e.domain}.${s}`));t:for(const i of e.suffixes||[])for(const s of o){if(a.has(s)||!s.startsWith(`${e.domain}.`)||!s.endsWith(i))continue;if(!l.some(t=>t.length>i.length&&!(e.suffixes||[]).includes(t)&&s.endsWith(t))){c(t,s);break t}}}for(const[t,e]of o){if(n[t]||!e.device_class||!i.length)continue;const s=i.filter(t=>!a.has(t.entity_id)&&t.entity_id.startsWith(`${e.domain}.`)&&r.states[t.entity_id]?.attributes.device_class===e.device_class);1===s.length&&c(t,s[0].entity_id)}return n}_deviceEntitiesOf(t){const e=this.hass.entities||{},i=e[t]?.device_id;return{deviceId:i,deviceEntities:i?Object.values(e).filter(t=>t.device_id===i):[]}}_discover(){const t=this._config.entity,{deviceId:e,deviceEntities:i}=this._deviceEntitiesOf(t),s=`${t}|${e||"nodevice"}`;if(this._roles&&this._rolesKey===s)return this._roles;const r=this.hass,o=this._config.entities||{},n=t.split(".")[1].replace(/_(state|stato)$/,""),a=this._matchRoles(At,o,i,n);a.state=a.state||t;let c=[];return c=Array.isArray(o.errors)?o.errors:i.length?i.filter(t=>t.entity_id.startsWith("binary_sensor.")&&(Et.includes(t.translation_key)||Et.some(e=>t.entity_id.endsWith(`_${e}`)))).map(t=>t.entity_id):Et.map(t=>`binary_sensor.${n}_${t}`).filter(t=>r.states[t]),a.errors=c,this._roles=a,this._rolesKey=s,a}_discoverMeter(){const t=this._config.meter_entity;if(!t)return{};const{deviceId:e,deviceEntities:i}=this._deviceEntitiesOf(t),s=`${t}|${e||"nodevice"}`;if(this._meterRoles&&this._meterKey===s)return this._meterRoles;let r=t.split(".")[1];for(const t of Object.values(St))for(const e of t.suffixes||[])if(r.endsWith(e)){r=r.slice(0,-e.length);break}const o=this._matchRoles(St,{},i,r);return this._meterRoles=o,this._meterKey=s,o}_isThreePhase(){const t=this._discover();return Boolean(t.current_l1||t.voltage_l1)}_stateObj(t){if(!t)return;if(t.includes("."))return this.hass.states[t];const e=this._discover()[t]??this._discoverMeter()[t];return e?this.hass.states[e]:void 0}_errorKeyOf(t){const e=Et.find(e=>t.endsWith(`_${e}`));return e||(this.hass.entities?.[t]?.translation_key||t)}_fmt(t){if(!t)return"—";const{state:e,attributes:i}=t;if("unavailable"===e||"unknown"===e)return"—";if("duration"===i.device_class&&!Number.isNaN(Number(e))){const t=Math.round(Number(e));return`${String(Math.floor(t/3600)).padStart(2,"0")}:${String(Math.floor(t%3600/60)).padStart(2,"0")}:${String(t%60).padStart(2,"0")}`}if("function"==typeof this.hass.formatEntityState)try{return this.hass.formatEntityState(t)}catch(t){}return`${e}${i.unit_of_measurement?` ${i.unit_of_measurement}`:""}`}_moreInfo(t){t&&((t,e,i={})=>{const s=new Event(e,{bubbles:!0,composed:!0});s.detail=i,t.dispatchEvent(s)})(this,"hass-more-info",{entityId:t})}_pressButton(t){const e=this._stateObj(t);e&&this.hass.callService("button","press",{entity_id:e.entity_id})}_toggleSwitch(t){const e=this._stateObj(t);e&&this.hass.callService("switch","toggle",{entity_id:e.entity_id})}_setNumber(t,e){const i=this._stateObj(t);i&&this.hass.callService("number","set_value",{entity_id:i.entity_id,value:e})}_sliderInput(t,e){this._pendingSlider={...this._pendingSlider,[t]:Number(e.target.value)}}_sliderChange(t,e){const i=Number(e.target.value),s={...this._pendingSlider};delete s[t],this._pendingSlider=s,this._setNumber(t,i)}_runAction(t){if(!t.service)return void(t.entity&&this._moreInfo(t.entity));if(t.confirm&&!window.confirm(!0===t.confirm?`${t.text}?`:t.confirm))return;const[e,i]=t.service.split("."),s={...t.service_data||t.data||{}};!t.entity||s.entity_id||t.target||(s.entity_id=t.entity),this.hass.callService(e,i,s,t.target)}_toggleSection(t){this._openSections={...this._openSections,[t]:!this._openSections[t]}}render(){if(!this.hass||!this._config)return K;const t=this._discover(),e=this.hass.states[t.state];if(!e)return q`<ha-card>
+    `}_valueChanged(e){e.stopPropagation();const t={...e.detail.value},i=t.compact;i&&""!==i?"compact"===i&&(t.compact=!0):delete t.compact;for(const[e,i]of Object.entries(be))t[e]===i&&delete t[e];for(const e of["name","location","substatus_entity","meter_entity","image","language"])""===t[e]&&delete t[e];((e,t,i={})=>{const r=new Event(t,{bubbles:!0,composed:!0});r.detail=i,e.dispatchEvent(r)})(this,"config-changed",{config:t})}}customElements.get("lektrico-charger-card-editor")||customElements.define("lektrico-charger-card-editor",$e);const xe="lektrico-charger-card",ke={available:{color:"#4caf50",animation:"none"},connected:{color:"#2196f3",animation:"none"},need_auth:{color:"#2196f3",animation:"pulse"},charging:{color:"#ffffff",animation:"spin"},paused:{color:"#ffffff",animation:"top"},paused_by_scheduler:{color:"#ffffff",animation:"top"},locked:{color:"#ff5722",animation:"none"},error:{color:"#f44336",animation:"pulse"},updating_firmware:{color:"#ab47bc",animation:"pulse"},unavailable:{color:"#616161",animation:"none"},unknown:{color:"#616161",animation:"none"}},Se={state:{domain:"sensor",keys:["state"],suffixes:["_state","_stato"]},charging_time:{domain:"sensor",keys:["charging_time"],suffixes:["_charging_time","_tempo_ricarica","_tempo_di_ricarica"]},session_energy:{domain:"sensor",keys:["session_energy","energy"],suffixes:["_session_energy","_energia","_energia_sessione","_energy"]},lifetime_energy:{domain:"sensor",keys:["lifetime_energy"],suffixes:["_lifetime_energy","_energia_erogata"]},power:{domain:"sensor",keys:["instant_power","power"],suffixes:["_instant_power","_power","_potenza"],device_class:"power"},voltage:{domain:"sensor",keys:["voltage"],suffixes:["_voltage","_tensione"],device_class:"voltage"},current:{domain:"sensor",keys:["current"],suffixes:["_current","_corrente"],device_class:"current"},voltage_l1:{domain:"sensor",keys:["voltage_l1"],suffixes:["_voltage_l1","_tensione_l1"]},voltage_l2:{domain:"sensor",keys:["voltage_l2"],suffixes:["_voltage_l2","_tensione_l2"]},voltage_l3:{domain:"sensor",keys:["voltage_l3"],suffixes:["_voltage_l3","_tensione_l3"]},current_l1:{domain:"sensor",keys:["current_l1"],suffixes:["_current_l1","_corrente_l1"]},current_l2:{domain:"sensor",keys:["current_l2"],suffixes:["_current_l2","_corrente_l2"]},current_l3:{domain:"sensor",keys:["current_l3"],suffixes:["_current_l3","_corrente_l3"]},installation_current:{domain:"sensor",keys:["installation_current"],suffixes:["_installation_current","_corrente_di_installazione"]},limit_reason:{domain:"sensor",keys:["limit_reason"],suffixes:["_limit_reason","_motivo_limitazione"]},temperature:{domain:"sensor",keys:["temperature"],suffixes:["_temperature","_temperatura"],device_class:"temperature"},dynamic_limit:{domain:"number",keys:["dynamic_limit"],suffixes:["_dynamic_limit","_limite_dinamico"]},led_brightness:{domain:"number",keys:["led_max_brightness"],suffixes:["_led_max_brightness","_led_brightness","_luminosita_led","_luminosita_massima_led"]},authentication:{domain:"switch",keys:["authentication"],suffixes:["_authentication","_autenticazione"]},lock:{domain:"switch",keys:["lock"],suffixes:["_lock","_blocca","_blocco"]},charge_start:{domain:"button",keys:["charge_start"],suffixes:["_charge_start","_avvia_ricarica"]},charge_stop:{domain:"button",keys:["charge_stop"],suffixes:["_charge_stop","_ferma_ricarica","_arresta_ricarica"]},reboot:{domain:"button",keys:["reboot"],suffixes:["_reboot","_restart","_riavvia"]},schedule_override:{domain:"button",keys:["charging_schedule_override"],suffixes:["_charging_schedule_override","_schedule_override"]},force_single_phase:{domain:"switch",keys:["force_single_phase"],suffixes:["_force_single_phase","_forza_monofase"]},update:{domain:"update",keys:["firmware"],suffixes:["_firmware"]}},Ae={lb_mode:{domain:"select",keys:["lb_mode"],suffixes:["_lb_mode","_load_balancing_mode"]},breaker_current:{domain:"sensor",keys:["breaker_current"],suffixes:["_breaker_current","_corrente_interruttore"]},meter_power:{domain:"sensor",keys:["power"],suffixes:["_power","_potenza"],device_class:"power"},meter_reboot:{domain:"button",keys:["reboot"],suffixes:["_reboot","_restart","_riavvia"]}},Ee=["ev_error","ev_diode_short","overheating","thermal_throttling","metering_error","overcurrent","overvoltage","undervoltage","rcd_error","relay_contacts_welded","state_e_activated","overtemp","critical_temp","meter_fault","cp_diode_failure","contactor_failure"],Le={slowest:6,fastest:2},Ce=[6,10,13,16,20,25,32],ze=[10,25,50,75,100];class Oe extends ae{static styles=ge;static properties={hass:{attribute:!1},_config:{state:!0},_openSections:{state:!0},_pendingSlider:{state:!0}};constructor(){super(),this._openSections={},this._pendingSlider={},this._roles=null,this._rolesKey=null}setConfig(e){if(!e.entity)throw new Error("Please define the charger state entity, e.g. entity: sensor.1p7k_state");this._config=e,this._roles=null,this._rolesKey=null,this._meterRoles=null,this._meterKey=null}getCardSize(){const e=this._config?.compact;return"ultra"===e?2:!0===e?4:8}static getStubConfig(e){const t=e?.entities||{},i=Object.values(t).find(e=>"lektrico"===e.platform&&"state"===e.translation_key);return{entity:i?i.entity_id:"sensor.1p7k_state"}}static getConfigElement(){return document.createElement("lektrico-charger-card-editor")}get _lang(){return ve(this._config.language||this.hass?.language)}_t(e){return ye(this._lang,"ui",e)}_stateText(e){const t=this._config.state_text||{};return t[e]?t[e]:ye(this._lang,"states",e)}_errorName(e,t){return(fe[this._lang]?.errors?.[e]??fe.en.errors?.[e])||t?.attributes.friendly_name||e}_matchRoles(e,t,i,r){const s=this.hass,n=Object.entries(e),o={},a=new Set,c=(e,t)=>{o[e]=t,a.add(t)};for(const[e]of n)t[e]&&c(e,t[e]);for(const[e,t]of n){if(o[e]||!i.length)continue;const r=i.find(e=>!a.has(e.entity_id)&&e.entity_id.startsWith(`${t.domain}.`)&&t.keys?.includes(e.translation_key));r&&c(e,r.entity_id)}for(const[e,t]of n)if(!o[e])for(const i of t.suffixes||[]){const n=`${t.domain}.${r}${i}`;if(!a.has(n)&&s.states[n]){c(e,n);break}}const l=n.flatMap(([,e])=>e.suffixes||[]);for(const[e,t]of n){if(o[e])continue;const n=i.length?i.map(e=>e.entity_id):Object.keys(s.states).filter(e=>e.startsWith(`${t.domain}.${r}`));e:for(const i of t.suffixes||[])for(const r of n){if(a.has(r)||!r.startsWith(`${t.domain}.`)||!r.endsWith(i))continue;if(!l.some(e=>e.length>i.length&&!(t.suffixes||[]).includes(e)&&r.endsWith(e))){c(e,r);break e}}}for(const[e,t]of n){if(o[e]||!t.device_class||!i.length)continue;const r=i.filter(e=>!a.has(e.entity_id)&&e.entity_id.startsWith(`${t.domain}.`)&&s.states[e.entity_id]?.attributes.device_class===t.device_class);1===r.length&&c(e,r[0].entity_id)}return o}_deviceEntitiesOf(e){const t=this.hass.entities||{},i=t[e]?.device_id;return{deviceId:i,deviceEntities:i?Object.values(t).filter(e=>e.device_id===i):[]}}_discover(){const e=this._config.entity,{deviceId:t,deviceEntities:i}=this._deviceEntitiesOf(e),r=`${e}|${t||"nodevice"}`;if(this._roles&&this._rolesKey===r)return this._roles;const s=this.hass,n=this._config.entities||{},o=e.split(".")[1].replace(/_(state|stato)$/,""),a=this._matchRoles(Se,n,i,o);a.state=a.state||e;let c=[];return c=Array.isArray(n.errors)?n.errors:i.length?i.filter(e=>e.entity_id.startsWith("binary_sensor.")&&(Ee.includes(e.translation_key)||Ee.some(t=>e.entity_id.endsWith(`_${t}`)))).map(e=>e.entity_id):Ee.map(e=>`binary_sensor.${o}_${e}`).filter(e=>s.states[e]),a.errors=c,this._roles=a,this._rolesKey=r,a}_discoverMeter(){const e=this._config.meter_entity;if(!e)return{};const{deviceId:t,deviceEntities:i}=this._deviceEntitiesOf(e),r=`${e}|${t||"nodevice"}`;if(this._meterRoles&&this._meterKey===r)return this._meterRoles;let s=e.split(".")[1];for(const e of Object.values(Ae))for(const t of e.suffixes||[])if(s.endsWith(t)){s=s.slice(0,-t.length);break}const n=this._matchRoles(Ae,{},i,s);return this._meterRoles=n,this._meterKey=r,n}_isThreePhase(){const e=this._discover();return Boolean(e.current_l1||e.voltage_l1)}_stateObj(e){if(!e)return;if(e.includes("."))return this.hass.states[e];const t=this._discover()[e]??this._discoverMeter()[e];return t?this.hass.states[t]:void 0}_errorKeyOf(e){const t=Ee.find(t=>e.endsWith(`_${t}`));return t||(this.hass.entities?.[e]?.translation_key||e)}_fmt(e){if(!e)return"—";const{state:t,attributes:i}=e;if("unavailable"===t||"unknown"===t)return"—";if("duration"===i.device_class&&!Number.isNaN(Number(t))){const e=Math.round(Number(t));return`${String(Math.floor(e/3600)).padStart(2,"0")}:${String(Math.floor(e%3600/60)).padStart(2,"0")}:${String(e%60).padStart(2,"0")}`}if("function"==typeof this.hass.formatEntityState)try{return this.hass.formatEntityState(e)}catch(e){}return`${t}${i.unit_of_measurement?` ${i.unit_of_measurement}`:""}`}_moreInfo(e){e&&((e,t,i={})=>{const r=new Event(t,{bubbles:!0,composed:!0});r.detail=i,e.dispatchEvent(r)})(this,"hass-more-info",{entityId:e})}_pressButton(e){const t=this._stateObj(e);t&&this.hass.callService("button","press",{entity_id:t.entity_id})}_toggleSwitch(e){const t=this._stateObj(e);t&&this.hass.callService("switch","toggle",{entity_id:t.entity_id})}_setNumber(e,t){const i=this._stateObj(e);i&&this.hass.callService("number","set_value",{entity_id:i.entity_id,value:t})}_sliderInput(e,t){this._pendingSlider={...this._pendingSlider,[e]:Number(t.target.value)}}_sliderChange(e,t){const i=Number(t.target.value),r={...this._pendingSlider};delete r[e],this._pendingSlider=r,this._setNumber(e,i)}_runAction(e){if(!e.service)return void(e.entity&&this._moreInfo(e.entity));if(e.confirm&&!window.confirm(!0===e.confirm?`${e.text}?`:e.confirm))return;const[t,i]=e.service.split("."),r={...e.service_data||e.data||{}};!e.entity||r.entity_id||e.target||(r.entity_id=e.entity),this.hass.callService(t,i,r,e.target)}_toggleSection(e){this._openSections={...this._openSections,[e]:!this._openSections[e]}}render(){if(!this.hass||!this._config)return F;const e=this._discover(),t=this.hass.states[e.state];if(!t)return q`<ha-card>
         <div style="padding:16px;color:var(--error-color,#f44336)">
-          ${this._t("entity_missing")}: ${t.state}
+          ${this._t("entity_missing")}: ${e.state}
         </div>
-      </ha-card>`;const i=e.state,s=!0===this._config.compact,r=(t.errors||[]).map(t=>this.hass.states[t]).filter(t=>t&&"on"===t.state),o=this._computeSections(s);return q`
-      <ha-card class=${pt({compact:s})}>
-        ${s?q`${this._renderCompactTop(e,i)}
-            ${this._renderSectionToggleBar(o,!0)}`:q`${this._renderTop(i)}
-            <div class="status-line">
-              ${this._renderStatus(e,i)}
-              ${this._renderSectionToggleBar(o)}
-            </div>`}
-        ${r.length?this._renderErrors(r):K}
-        ${!1!==this._config.show_quick_actions?this._renderQuickActions(i):K}
-        ${this._renderSectionBodies(o)}
-        ${!1!==this._config.show_stats?this._renderStats(i,r):K}
+      </ha-card>`;const i=t.state,r=this._config.compact,s="ultra"===r,n=!0===r,o=(e.errors||[]).map(e=>this.hass.states[e]).filter(e=>e&&"on"===e.state),a=s?[]:this._computeSections(n);return q`
+      <ha-card class=${ue({compact:n,ultra:s})}>
+        ${s?this._renderUltraCompact(t,i,o):n?q`${this._renderCompactTop(t,i)}
+              ${this._renderSectionToggleBar(a,!0)}`:q`${this._renderTop(i)}
+              <div class="status-line">
+                ${this._renderStatus(t,i)}
+                ${this._renderSectionToggleBar(a)}
+              </div>`}
+        ${s?F:o.length?this._renderErrors(o):F}
+        ${s||!1===this._config.show_quick_actions?F:this._renderQuickActions(i)}
+        ${s?F:this._renderSectionBodies(a)}
+        ${s||!1===this._config.show_stats?F:this._renderStats(i,o)}
       </ha-card>
-    `}_defaultInfoColumns(){return this._isThreePhase()?{left:[{entity:"current_l1",decimals:1},{entity:"current_l2",decimals:1},{entity:"current_l3",decimals:1},"dynamic_limit"],right:["voltage_l1","voltage_l2","voltage_l3","power"]}:{left:[{entity:"current",decimals:1},"dynamic_limit"],right:["voltage","power"]}}_renderTop(t){if(!1===this._config.show_image)return K;const e=this._defaultInfoColumns(),i=this._config.info_left??e.left,s=this._config.info_right??e.right;return q`
+    `}_defaultInfoColumns(){return this._isThreePhase()?{left:[{entity:"current_l1",decimals:1},{entity:"current_l2",decimals:1},{entity:"current_l3",decimals:1},"dynamic_limit"],right:["voltage_l1","voltage_l2","voltage_l3","power"]}:{left:[{entity:"current",decimals:1},"dynamic_limit"],right:["voltage","power"]}}_renderTop(e){if(!1===this._config.show_image)return F;const t=this._defaultInfoColumns(),i=this._config.info_left??t.left,r=this._config.info_right??t.right;return q`
       <div class="top">
         <div class="side-info left">
-          ${i.map(t=>this._renderInfoItem(t))}
+          ${i.map(e=>this._renderInfoItem(e))}
         </div>
-        ${this._renderImage(t)}
-        <div class="side-info right">
-          ${s.map(t=>this._renderInfoItem(t))}
-        </div>
-      </div>
-    `}_renderCompactTop(t,e){const i=this._isThreePhase(),s=this._config.info_right??(i?[{entity:"current_l1",decimals:1},{entity:"current_l2",decimals:1},{entity:"current_l3",decimals:1},"dynamic_limit"]:[{entity:"current",decimals:1},"dynamic_limit","voltage"]);return q`
-      <div class="compact-top">
         ${this._renderImage(e)}
-        ${this._renderStatus(t,e,{showLocation:!1})}
         <div class="side-info right">
-          ${s.map(t=>this._renderInfoItem(t))}
+          ${r.map(e=>this._renderInfoItem(e))}
         </div>
       </div>
-    `}_renderInfoItem(t){const e="string"==typeof t?{entity:t}:t,i=this._stateObj(e.entity);if(!i)return K;const s=e.label||(ft.en.ui[e.entity]?this._t(e.entity):i.attributes.friendly_name);let r;const o=Number(i.state);if(null==e.decimals||""===i.state||Number.isNaN(o)||"unavailable"===i.state||"unknown"===i.state)r=this._fmt(i);else{const t=i.attributes.unit_of_measurement;r=`${o.toFixed(e.decimals)}${t?` ${t}`:""}`}return q`
+    `}_renderCompactTop(e,t){const i=this._isThreePhase(),r=this._config.info_right??(i?[{entity:"current_l1",decimals:1},{entity:"current_l2",decimals:1},{entity:"current_l3",decimals:1},"dynamic_limit"]:[{entity:"current",decimals:1},"dynamic_limit","voltage"]);return q`
+      <div class="compact-top">
+        ${this._renderImage(t)}
+        ${this._renderStatus(e,t,{showLocation:!1})}
+        <div class="side-info right">
+          ${r.map(e=>this._renderInfoItem(e))}
+        </div>
+      </div>
+    `}_renderUltraCompact(e,t,i){const r=this._substatusText(),s=this._stateObj("dynamic_limit"),n=s?this._fmt(s):null,o=this._stateObj("charge_start")&&"charging"!==t&&"paused"!==t,a=this._stateObj("charge_stop")&&("charging"===t||"paused"===t);return q`
+      <div class="ultra-top">
+        ${this._renderImage(t)}
+        <div
+          class="ultra-center"
+          @click=${()=>this._moreInfo(this._config.entity)}
+        >
+          <div
+            class=${ue({"ultra-state":!0,"state-error":"error"===t,"state-charging":"charging"===t})}
+          >
+            ${this._stateText(t)}
+          </div>
+          ${r?q`<div class="ultra-substatus">${r}</div>`:F}
+          ${n?q`<div class="ultra-limit">${n}</div>`:F}
+        </div>
+        <div class="ultra-stats">
+          ${[{entity:"current",decimals:1},{entity:"session_energy"},{entity:"temperature"}].map(e=>this._renderUltraStat(e))}
+        </div>
+      </div>
+      ${i.length?q`<div
+            class="ultra-error"
+            @click=${()=>this._moreInfo(i[0].entity_id)}
+          >
+            <ha-icon icon="mdi:alert-circle"></ha-icon>
+            ${this._errorName(this._errorKeyOf(i[0].entity_id),i[0])}${i.length>1?q` (+${i.length-1})`:F}
+          </div>`:F}
+      ${o||a?q`<div class="ultra-btn">
+            ${o?q`<button @click=${()=>this._pressButton("charge_start")}>
+                  <ha-icon icon="mdi:play"></ha-icon>${this._t("start")}
+                </button>`:q`<button @click=${()=>this._pressButton("charge_stop")}>
+                  <ha-icon icon="mdi:stop"></ha-icon>${this._t("stop")}
+                </button>`}
+          </div>`:F}
+    `}_renderUltraStat({entity:e,decimals:t}){const i=this._stateObj(e);if(!i)return F;const r=fe.en.ui[e]?this._t(e):i.attributes.friendly_name;let s;if(null!=t){const e=Number(i.state);if(Number.isNaN(e)||"unavailable"===i.state||"unknown"===i.state)s=this._fmt(i);else{const r=i.attributes.unit_of_measurement;s=`${e.toFixed(t)}${r?` ${r}`:""}`}}else s=this._fmt(i);return q`
+      <div
+        class="ultra-stat-item"
+        @click=${()=>this._moreInfo(i.entity_id)}
+      >
+        <div class="v">${s}</div>
+        <div class="l">${r}</div>
+      </div>
+    `}_renderInfoItem(e){const t="string"==typeof e?{entity:e}:e,i=this._stateObj(t.entity);if(!i)return F;const r=t.label||(fe.en.ui[t.entity]?this._t(t.entity):i.attributes.friendly_name);let s;const n=Number(i.state);if(null==t.decimals||""===i.state||Number.isNaN(n)||"unavailable"===i.state||"unknown"===i.state)s=this._fmt(i);else{const e=i.attributes.unit_of_measurement;s=`${n.toFixed(t.decimals)}${e?` ${e}`:""}`}return q`
       <div
         class="info-item"
         @click=${()=>this._moreInfo(i.entity_id)}
       >
         <div class="value">
-          ${e.icon?q`<ha-icon .icon=${e.icon}></ha-icon>`:K}
-          ${r}
+          ${t.icon?q`<ha-icon .icon=${t.icon}></ha-icon>`:F}
+          ${s}
         </div>
-        <div class="label">${s}</div>
+        <div class="label">${r}</div>
       </div>
-    `}_ledConfig(t){const e=this._config.led_states||{};return{...kt[t]||kt.unknown,...e[t]||{}}}_maxAmps(){const t=this._stateObj("dynamic_limit"),e=this._stateObj("installation_current");return Number(t?.attributes.max)||Number(e?.state)||32}_ledPeriod(){const t=this._stateObj("current"),e=this._stateObj("dynamic_limit");let i=Number(t?.state);i&&!Number.isNaN(i)||(i=Number(e?.state)||8);const{slowest:s,fastest:r}={...Ct,...this._config.led_spin||{}},o=this._maxAmps(),n=s-Math.min(i,o)/o*(s-r);return`${Math.max(n,r).toFixed(2)}s`}_renderImage(t){const e=this._ledConfig(t),i={"--led-color":e.color,"--led-period":this._ledPeriod()},s=`leds anim-${e.animation||"none"}`,r=this._config.image,o=!1!==this._config.show_leds;let n;if(r&&"svg"!==r){const t=this._config.led_overlay_position||{},e={...i,"--led-overlay-left":t.left,"--led-overlay-top":t.top,"--led-overlay-size":t.size};n=q`
-        <img class="custom-image" src=${r} alt="charger" />
-        ${o?q`<div class=${s} style=${mt(e)}>
-              ${B`
+    `}_ledConfig(e){const t=this._config.led_states||{};return{...ke[e]||ke.unknown,...t[e]||{}}}_maxAmps(){const e=this._stateObj("dynamic_limit"),t=this._stateObj("installation_current");return Number(e?.attributes.max)||Number(t?.state)||32}_ledPeriod(){const e=this._stateObj("current"),t=this._stateObj("dynamic_limit");let i=Number(e?.state);i&&!Number.isNaN(i)||(i=Number(t?.state)||8);const{slowest:r,fastest:s}={...Le,...this._config.led_spin||{}},n=this._maxAmps(),o=r-Math.min(i,n)/n*(r-s);return`${Math.max(o,s).toFixed(2)}s`}_renderImage(e){const t=this._ledConfig(e),i={"--led-color":t.color,"--led-period":this._ledPeriod()},r=`leds anim-${t.animation||"none"}`,s=this._config.image,n=!1!==this._config.show_leds;let o;if(s&&"svg"!==s){const e=this._config.led_overlay_position||{},t={...i,"--led-overlay-left":e.left,"--led-overlay-top":e.top,"--led-overlay-size":e.size};o=q`
+        <img class="custom-image" src=${s} alt="charger" />
+        ${n?q`<div class=${r} style=${me(t)}>
+              ${H`
   <svg
     class="led-overlay-svg"
     viewBox="0 0 200 200"
@@ -649,13 +801,13 @@ const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow
     </g>
   </svg>
 `}
-            </div>`:K}
-      `}else n=q`
+            </div>`:F}
+      `}else o=q`
         <div
-          class=${o?s:"leds-off"}
-          style=${mt(i)}
+          class=${n?r:"leds-off"}
+          style=${me(i)}
         >
-          ${B`
+          ${H`
   <svg
     class="charger-svg"
     viewBox="0 0 240 240"
@@ -698,163 +850,163 @@ const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow
         class="image-wrap"
         @click=${()=>this._moreInfo(this._config.entity)}
       >
-        ${n}
+        ${o}
       </div>
-    `}_substatusText(){if(this._config.substatus_entity){const t=this.hass.states[this._config.substatus_entity];return t&&t.state&&!["unknown","unavailable"].includes(t.state)?t.state:void 0}if(!1===this._config.substatus_from_actions)return;const t=(this._config.actions||[]).filter(t=>t.entity&&!1!==t.substatus&&"on"===this.hass.states[t.entity]?.state);return t.length?t.map(t=>"string"==typeof t.substatus?t.substatus:t.text||t.name).join(" · "):void 0}_renderStatus(t,e,{showLocation:i=!0}={}){const s=this._config.name||t.attributes.friendly_name,r=i?this._config.location:void 0,o=this._substatusText();return q`
+    `}_substatusText(){if(this._config.substatus_entity){const e=this.hass.states[this._config.substatus_entity];return e&&e.state&&!["unknown","unavailable"].includes(e.state)?e.state:void 0}if(!1===this._config.substatus_from_actions)return;const e=(this._config.actions||[]).filter(e=>e.entity&&!1!==e.substatus&&"on"===this.hass.states[e.entity]?.state);return e.length?e.map(e=>"string"==typeof e.substatus?e.substatus:e.text||e.name).join(" · "):void 0}_renderStatus(e,t,{showLocation:i=!0}={}){const r=this._config.name||e.attributes.friendly_name,s=i?this._config.location:void 0,n=this._substatusText();return q`
       <div class="status" @click=${()=>this._moreInfo(this._config.entity)}>
         ${!1!==this._config.show_name?q`<div class="name">
-              ${s}${r?` — ${r}`:""}
-            </div>`:K}
+              ${r}${s?` — ${s}`:""}
+            </div>`:F}
         <div
-          class=${pt({state:!0,"state-error":"error"===e,"state-charging":"charging"===e})}
+          class=${ue({state:!0,"state-error":"error"===t,"state-charging":"charging"===t})}
         >
-          ${this._stateText(e)}
+          ${this._stateText(t)}
         </div>
-        ${o?q`<div class="substatus">${o}</div>`:K}
+        ${n?q`<div class="substatus">${n}</div>`:F}
       </div>
-    `}_renderErrors(t){return q`
+    `}_renderErrors(e){return q`
       <div class="error-banner">
         <div class="title">
           <ha-icon icon="mdi:alert-circle"></ha-icon>
           ${this._t("errors")}
         </div>
         <ul>
-          ${t.map(t=>q`<li
-              @click=${()=>this._moreInfo(t.entity_id)}
+          ${e.map(e=>q`<li
+              @click=${()=>this._moreInfo(e.entity_id)}
             >
-              ${this._errorName(this._errorKeyOf(t.entity_id),t)}
+              ${this._errorName(this._errorKeyOf(e.entity_id),e)}
             </li>`)}
         </ul>
       </div>
-    `}static QUICK_ACTION_DEFAULTS=["start","stop","authentication","lock"];static QUICK_ACTION_EXCLUDED_DEVICE_IDS=["schedule_override","reboot","meter_reboot"];_quickActionCandidates(t){const e=[];this._stateObj("charge_start")&&e.push({id:"start",render:()=>q`
+    `}static QUICK_ACTION_DEFAULTS=["start","stop","authentication","lock"];static QUICK_ACTION_EXCLUDED_DEVICE_IDS=["schedule_override","reboot","meter_reboot"];_quickActionCandidates(e){const t=[];this._stateObj("charge_start")&&t.push({id:"start",render:()=>q`
           <button
             class="qa-button"
-            .disabled=${"charging"===t}
+            .disabled=${"charging"===e}
             @click=${()=>this._pressButton("charge_start")}
           >
             <ha-icon icon="mdi:play"></ha-icon>${this._t("start")}
           </button>
-        `});this._stateObj("charge_stop")&&e.push({id:"stop",render:()=>q`
+        `});this._stateObj("charge_stop")&&t.push({id:"stop",render:()=>q`
           <button
             class="qa-button"
-            .disabled=${"charging"!==t&&"paused"!==t}
+            .disabled=${"charging"!==e&&"paused"!==e}
             @click=${()=>this._pressButton("charge_stop")}
           >
             <ha-icon icon="mdi:stop"></ha-icon>${this._t("stop")}
           </button>
-        `});const i=this._stateObj("authentication");i&&e.push({id:"authentication",render:()=>q`
+        `});const i=this._stateObj("authentication");i&&t.push({id:"authentication",render:()=>q`
           <button
-            class=${pt({"qa-button":!0,active:"on"===i.state})}
+            class=${ue({"qa-button":!0,active:"on"===i.state})}
             @click=${()=>this._toggleSwitch("authentication")}
           >
             <ha-icon icon="mdi:fingerprint"></ha-icon>${this._t("authentication")}
           </button>
-        `});const s=this._stateObj("lock");s&&e.push({id:"lock",render:()=>q`
+        `});const r=this._stateObj("lock");r&&t.push({id:"lock",render:()=>q`
           <button
-            class=${pt({"qa-button":!0,active:"on"===s.state})}
+            class=${ue({"qa-button":!0,active:"on"===r.state})}
             @click=${()=>this._toggleSwitch("lock")}
           >
             <ha-icon
-              icon=${"on"===s.state?"mdi:lock":"mdi:lock-open-outline"}
+              icon=${"on"===r.state?"mdi:lock":"mdi:lock-open-outline"}
             ></ha-icon
             >${this._t("lock")}
           </button>
-        `});for(const t of this._deviceActions())Nt.QUICK_ACTION_EXCLUDED_DEVICE_IDS.includes(t.id)||e.push({id:t.id,render:()=>q`
+        `});for(const e of this._deviceActions())Oe.QUICK_ACTION_EXCLUDED_DEVICE_IDS.includes(e.id)||t.push({id:e.id,render:()=>q`
           <button
-            class=${pt({"qa-button":!0,active:!!t.active})}
-            @click=${()=>{t.confirm&&!window.confirm(`${t.text}?`)||t.run()}}
+            class=${ue({"qa-button":!0,active:!!e.active})}
+            @click=${()=>{e.confirm&&!window.confirm(`${e.text}?`)||e.run()}}
           >
-            <ha-icon icon=${t.icon}></ha-icon>${t.text}
+            <ha-icon icon=${e.icon}></ha-icon>${e.text}
           </button>
-        `});return(this._config.actions||[]).forEach((t,i)=>{const s=t.entity?this.hass.states[t.entity]:void 0,r="on"===s?.state;e.push({id:t.id||`custom:${i}`,render:()=>q`
+        `});return(this._config.actions||[]).forEach((e,i)=>{const r=e.entity?this.hass.states[e.entity]:void 0,s="on"===r?.state;t.push({id:e.id||`custom:${i}`,render:()=>q`
           <button
-            class=${pt({"qa-button":!0,active:r})}
-            @click=${()=>this._runAction(t)}
+            class=${ue({"qa-button":!0,active:s})}
+            @click=${()=>this._runAction(e)}
           >
-            ${t.icon?q`<ha-icon icon=${t.icon}></ha-icon>`:K}${t.text||t.name||t.entity}
+            ${e.icon?q`<ha-icon icon=${e.icon}></ha-icon>`:F}${e.text||e.name||e.entity}
           </button>
-        `})}),e}_renderQuickActions(t){const e=this._quickActionCandidates(t),i=this._config.quick_actions,s=Array.isArray(i)?i.map(t=>e.find(e=>e.id===t)).filter(Boolean).slice(0,4):e.filter(t=>Nt.QUICK_ACTION_DEFAULTS.includes(t.id));return s.length?q`<div class="quick-actions">
-      ${s.map(t=>t.render())}
-    </div>`:K}_computeSections(t=!1){const e=[];if(t||!1===this._config.show_parameters||e.push({id:"parameters",icon:"mdi:speedometer",title:this._config.section_titles?.parameters||this._t("parameters"),body:()=>this._renderParameters()}),t||!1===this._config.show_info||e.push({id:"info",icon:"mdi:information-outline",title:this._config.section_titles?.info||this._t("info"),body:()=>this._renderInfoList()}),!1!==this._config.show_actions){const t=this._renderActionsGrid();t!==K&&e.push({id:"actions",icon:"mdi:gesture-tap-button",title:this._config.section_titles?.actions||this._t("actions"),body:()=>t})}return e}_renderSectionToggleBar(t,e=!1){return t.length?q`
+        `})}),t}_renderQuickActions(e){const t=this._quickActionCandidates(e),i=this._config.quick_actions,r=Array.isArray(i)?i.map(e=>t.find(t=>t.id===e)).filter(Boolean).slice(0,4):t.filter(e=>Oe.QUICK_ACTION_DEFAULTS.includes(e.id));return r.length?q`<div class="quick-actions">
+      ${r.map(e=>e.render())}
+    </div>`:F}_computeSections(e=!1){const t=[];if(e||!1===this._config.show_parameters||t.push({id:"parameters",icon:"mdi:speedometer",title:this._config.section_titles?.parameters||this._t("parameters"),body:()=>this._renderParameters()}),e||!1===this._config.show_info||t.push({id:"info",icon:"mdi:information-outline",title:this._config.section_titles?.info||this._t("info"),body:()=>this._renderInfoList()}),!1!==this._config.show_actions){const e=this._renderActionsGrid();e!==F&&t.push({id:"actions",icon:"mdi:gesture-tap-button",title:this._config.section_titles?.actions||this._t("actions"),body:()=>e})}return t}_renderSectionToggleBar(e,t=!1){return e.length?q`
       <div
-        class=${pt({"section-toggle-bar":!0,horizontal:e})}
+        class=${ue({"section-toggle-bar":!0,horizontal:t})}
       >
-        ${t.map(t=>q`
+        ${e.map(e=>q`
             <button
-              class=${pt({"section-toggle":!0,active:!!this._openSections[t.id]})}
-              title=${t.title}
-              aria-label=${t.title}
-              @click=${()=>this._toggleSection(t.id)}
+              class=${ue({"section-toggle":!0,active:!!this._openSections[e.id]})}
+              title=${e.title}
+              aria-label=${e.title}
+              @click=${()=>this._toggleSection(e.id)}
             >
-              <ha-icon icon=${t.icon}></ha-icon>
+              <ha-icon icon=${e.icon}></ha-icon>
             </button>
           `)}
       </div>
-    `:K}_renderSectionBodies(t){const e=t.filter(t=>this._openSections[t.id]);return e.length?q`
+    `:F}_renderSectionBodies(e){const t=e.filter(e=>this._openSections[e.id]);return t.length?q`
       <div class="sections">
-        ${e.map((t,e)=>q`
+        ${t.map((e,t)=>q`
             <div
-              class=${pt({"section-body":!0,divider:e>0})}
+              class=${ue({"section-body":!0,divider:t>0})}
             >
-              ${t.body()}
+              ${e.body()}
             </div>
           `)}
       </div>
-    `:K}_renderSlider(t,e,i,s){const r=this._stateObj(t);if(!r)return K;const o=r.attributes,n=Number(o.min??0),a=Number(o.max??100),c=Number(o.step??1),l=Number(r.state),d=this._pendingSlider[t]??(Number.isNaN(l)?n:l),h=s||o.unit_of_measurement||"",p=(i||[]).filter(t=>t>=n&&t<=a);return q`
+    `:F}_renderSlider(e,t,i,r){const s=this._stateObj(e);if(!s)return F;const n=s.attributes,o=Number(n.min??0),a=Number(n.max??100),c=Number(n.step??1),l=Number(s.state),d=this._pendingSlider[e]??(Number.isNaN(l)?o:l),h=r||n.unit_of_measurement||"",u=(i||[]).filter(e=>e>=o&&e<=a);return q`
       <div class="slider-row">
         <div class="slider-head">
-          <span>${this._t(e)}</span>
+          <span>${this._t(t)}</span>
           <span class="val">${d}${h?` ${h}`:""}</span>
         </div>
         <input
           type="range"
-          min=${n}
+          min=${o}
           max=${a}
           step=${c}
           .value=${String(d)}
-          @input=${e=>this._sliderInput(t,e)}
-          @change=${e=>this._sliderChange(t,e)}
+          @input=${t=>this._sliderInput(e,t)}
+          @change=${t=>this._sliderChange(e,t)}
         />
-        ${p.length?q`<div class="presets">
-              ${p.map(e=>q`
+        ${u.length?q`<div class="presets">
+              ${u.map(t=>q`
                   <button
-                    class=${pt({"preset-chip":!0,active:Number(d)===e})}
-                    @click=${()=>this._setNumber(t,e)}
+                    class=${ue({"preset-chip":!0,active:Number(d)===t})}
+                    @click=${()=>this._setNumber(e,t)}
                   >
-                    ${e}${h?` ${h}`:""}
+                    ${t}${h?` ${h}`:""}
                   </button>
                 `)}
-            </div>`:K}
+            </div>`:F}
       </div>
-    `}_renderParameters(){const t=this._stateObj("authentication"),e=this._stateObj("lock"),i=this._stateObj("force_single_phase");return q`
-      ${this._renderSlider("dynamic_limit","dynamic_limit",this._config.current_presets??Ot,"A")}
-      ${this._renderSlider("led_brightness","led_brightness",this._config.brightness_presets??zt,"%")}
+    `}_renderParameters(){const e=this._stateObj("authentication"),t=this._stateObj("lock"),i=this._stateObj("force_single_phase");return q`
+      ${this._renderSlider("dynamic_limit","dynamic_limit",this._config.current_presets??Ce,"A")}
+      ${this._renderSlider("led_brightness","led_brightness",this._config.brightness_presets??ze,"%")}
       <div class="toggle-list">
-        ${t?this._renderToggle("authentication",t,"mdi:fingerprint"):K}
-        ${e?this._renderToggle("lock",e,"mdi:lock-outline"):K}
-        ${i?this._renderToggle("force_single_phase",i,"mdi:sine-wave"):K}
+        ${e?this._renderToggle("authentication",e,"mdi:fingerprint"):F}
+        ${t?this._renderToggle("lock",t,"mdi:lock-outline"):F}
+        ${i?this._renderToggle("force_single_phase",i,"mdi:sine-wave"):F}
       </div>
-    `}_renderToggle(t,e,i){return q`
+    `}_renderToggle(e,t,i){return q`
       <div class="toggle-row">
         <ha-icon icon=${i}></ha-icon>
-        <span class="grow" @click=${()=>this._moreInfo(e.entity_id)}>
-          ${this._t(t)}
+        <span class="grow" @click=${()=>this._moreInfo(t.entity_id)}>
+          ${this._t(e)}
         </span>
         <ha-switch
-          .checked=${"on"===e.state}
-          @change=${()=>this._toggleSwitch(t)}
+          .checked=${"on"===t.state}
+          @change=${()=>this._toggleSwitch(e)}
         ></ha-switch>
       </div>
-    `}_renderInfoList(){const t=[{entity:"installation_current",icon:"mdi:gauge"},{entity:"lifetime_energy",icon:"mdi:counter"},{entity:"limit_reason",icon:"mdi:information-outline"},{entity:"temperature",icon:"mdi:thermometer"}];this._stateObj("breaker_current")&&t.push({entity:"breaker_current",icon:"mdi:fuse"}),this._stateObj("meter_power")&&t.push({entity:"meter_power",icon:"mdi:flash"});const e=(this._config.info_items??t).map(t=>{const e="string"==typeof t?{entity:t}:t,i=this._stateObj(e.entity);if(!i)return K;const s=e.label||(ft.en.ui[e.entity]?this._t(e.entity):i.attributes.friendly_name);return q`
+    `}_renderInfoList(){const e=[{entity:"installation_current",icon:"mdi:gauge"},{entity:"lifetime_energy",icon:"mdi:counter"},{entity:"limit_reason",icon:"mdi:information-outline"},{entity:"temperature",icon:"mdi:thermometer"}];this._stateObj("breaker_current")&&e.push({entity:"breaker_current",icon:"mdi:fuse"}),this._stateObj("meter_power")&&e.push({entity:"meter_power",icon:"mdi:flash"});const t=(this._config.info_items??e).map(e=>{const t="string"==typeof e?{entity:e}:e,i=this._stateObj(t.entity);if(!i)return F;const r=t.label||(fe.en.ui[t.entity]?this._t(t.entity):i.attributes.friendly_name);return q`
           <div
             class="info-row"
             @click=${()=>this._moreInfo(i.entity_id)}
           >
-            <ha-icon icon=${e.icon||"mdi:information-outline"}></ha-icon>
-            <span class="name">${s}</span>
+            <ha-icon icon=${t.icon||"mdi:information-outline"}></ha-icon>
+            <span class="name">${r}</span>
             <span class="val">${this._fmt(i)}</span>
           </div>
-        `}).filter(t=>t!==K),i=this._stateObj("update");return i&&e.push(q`
+        `}).filter(e=>e!==F),i=this._stateObj("update");return i&&t.push(q`
         <div
           class="info-row"
           @click=${()=>this._moreInfo(i.entity_id)}
@@ -866,43 +1018,43 @@ const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow
             ${"on"===i.state?" ⬆":""}
           </span>
         </div>
-      `),q`<div class="info-list">${e}</div>`}_deviceActions(){if(!1===this._config.show_device_actions)return[];const t=[];this._stateObj("schedule_override")&&t.push({id:"schedule_override",text:this._t("schedule_override"),icon:"mdi:calendar-clock",run:()=>this._pressButton("schedule_override")});const e=this._stateObj("force_single_phase");e&&t.push({id:"force_single_phase",text:this._t("force_single_phase"),icon:"mdi:sine-wave",active:"on"===e.state,run:()=>this._toggleSwitch("force_single_phase")});const i=this._stateObj("lb_mode");if(i&&Array.isArray(i.attributes.options))for(const e of i.attributes.options)t.push({id:`lb_mode:${e}`,text:`${this._t("lb_mode")}: ${e}`,icon:"mdi:scale-balance",active:i.state===e,run:()=>this.hass.callService("select","select_option",{entity_id:i.entity_id,option:e})});const s=this._stateObj("reboot");s&&t.push({id:"reboot",text:this._t("reboot"),icon:"mdi:restart",confirm:!0,run:()=>this._pressButton("reboot")});const r=this._stateObj("meter_reboot");return r&&r.entity_id!==s?.entity_id&&t.push({id:"meter_reboot",text:this._t("meter_reboot"),icon:"mdi:restart",confirm:!0,run:()=>this._pressButton("meter_reboot")}),t}_renderActionsGrid(){const t=this._config.actions||[],e=this._deviceActions();if(!t.length&&!e.length)return K;const i=t.length>0&&e.length>0;return q`
+      `),q`<div class="info-list">${t}</div>`}_deviceActions(){if(!1===this._config.show_device_actions)return[];const e=[];this._stateObj("schedule_override")&&e.push({id:"schedule_override",text:this._t("schedule_override"),icon:"mdi:calendar-clock",run:()=>this._pressButton("schedule_override")});const t=this._stateObj("force_single_phase");t&&e.push({id:"force_single_phase",text:this._t("force_single_phase"),icon:"mdi:sine-wave",active:"on"===t.state,run:()=>this._toggleSwitch("force_single_phase")});const i=this._stateObj("lb_mode");if(i&&Array.isArray(i.attributes.options))for(const t of i.attributes.options)e.push({id:`lb_mode:${t}`,text:`${this._t("lb_mode")}: ${t}`,icon:"mdi:scale-balance",active:i.state===t,run:()=>this.hass.callService("select","select_option",{entity_id:i.entity_id,option:t})});const r=this._stateObj("reboot");r&&e.push({id:"reboot",text:this._t("reboot"),icon:"mdi:restart",confirm:!0,run:()=>this._pressButton("reboot")});const s=this._stateObj("meter_reboot");return s&&s.entity_id!==r?.entity_id&&e.push({id:"meter_reboot",text:this._t("meter_reboot"),icon:"mdi:restart",confirm:!0,run:()=>this._pressButton("meter_reboot")}),e}_renderActionsGrid(){const e=this._config.actions||[],t=this._deviceActions();if(!e.length&&!t.length)return F;const i=e.length>0&&t.length>0;return q`
       <div class="actions-grid">
         ${i?q`<div class="actions-caption">
               ${this._t("device_actions")}
-            </div>`:K}
-        ${e.map(t=>q`
+            </div>`:F}
+        ${t.map(e=>q`
             <button
-              class=${pt({"action-chip":!0,device:!0,active:!!t.active})}
-              @click=${()=>{t.confirm&&!window.confirm(`${t.text}?`)||t.run()}}
+              class=${ue({"action-chip":!0,device:!0,active:!!e.active})}
+              @click=${()=>{e.confirm&&!window.confirm(`${e.text}?`)||e.run()}}
             >
-              <ha-icon icon=${t.icon}></ha-icon>
-              ${t.text}
+              <ha-icon icon=${e.icon}></ha-icon>
+              ${e.text}
             </button>
           `)}
         ${i?q`<div class="actions-caption">
               ${this._t("custom_actions")}
-            </div>`:K}
-        ${t.map(t=>{const e=t.entity?this.hass.states[t.entity]:void 0;return q`
+            </div>`:F}
+        ${e.map(e=>{const t=e.entity?this.hass.states[e.entity]:void 0;return q`
             <button
-              class=${pt({"action-chip":!0,active:"on"===e?.state})}
-              @click=${()=>this._runAction(t)}
+              class=${ue({"action-chip":!0,active:"on"===t?.state})}
+              @click=${()=>this._runAction(e)}
             >
-              ${t.icon?q`<ha-icon icon=${t.icon}></ha-icon>`:K}
-              ${t.text||t.name||t.entity}
+              ${e.icon?q`<ha-icon icon=${e.icon}></ha-icon>`:F}
+              ${e.text||e.name||e.entity}
             </button>
           `})}
       </div>
-    `}_renderStats(t,e){const i=[{entity:"session_energy",label:this._t("energy")},{entity:"charging_time",label:this._t("charging_time")},{entity:"temperature",label:this._t("temperature")}],s=this._config.stats||{};let r=Array.isArray(s)?s:s[t]||s.default||i;return"error"===t&&e.length&&!s.error&&(r=e.map(t=>({entity:t.entity_id,label:this._errorName(this._errorKeyOf(t.entity_id),t),value:"⚠"}))),q`
+    `}_renderStats(e,t){const i=[{entity:"session_energy",label:this._t("energy")},{entity:"charging_time",label:this._t("charging_time")},{entity:"temperature",label:this._t("temperature")}],r=this._config.stats||{};let s=Array.isArray(r)?r:r[e]||r.default||i;return"error"===e&&t.length&&!r.error&&(s=t.map(e=>({entity:e.entity_id,label:this._errorName(this._errorKeyOf(e.entity_id),e),value:"⚠"}))),q`
       <div class="stats">
-        ${r.map(t=>{const e="string"==typeof t?{entity:t}:t,i=this._stateObj(e.entity);if(!i)return K;const s=e.label||(ft.en.ui[e.entity]?this._t(e.entity):i.attributes.friendly_name);return q`
+        ${s.map(e=>{const t="string"==typeof e?{entity:e}:e,i=this._stateObj(t.entity);if(!i)return F;const r=t.label||(fe.en.ui[t.entity]?this._t(t.entity):i.attributes.friendly_name);return q`
             <div
               class="stat"
               @click=${()=>this._moreInfo(i.entity_id)}
             >
-              <div class="value">${e.value||this._fmt(i)}</div>
-              <div class="label">${s}</div>
+              <div class="value">${t.value||this._fmt(i)}</div>
+              <div class="label">${r}</div>
             </div>
           `})}
       </div>
-    `}}customElements.get(wt)||customElements.define(wt,Nt),window.customCards=window.customCards||[],window.customCards.some(t=>t.type===wt)||window.customCards.push({type:wt,name:"Lektri.co Charger Card",description:"Card for Lektri.co EV chargers (1P7K / One / 3P22K / Tri) with animated status LEDs.",preview:!0}),console.info("%c LEKTRICO-CHARGER-CARD %c v1.4.0 ","color: white; background: #1b1c1e; font-weight: 700;","color: #4caf50; background: #26282a; font-weight: 700;");
+    `}}customElements.get(xe)||customElements.define(xe,Oe),window.customCards=window.customCards||[],window.customCards.some(e=>e.type===xe)||window.customCards.push({type:xe,name:"Lektri.co Charger Card",description:"Card for Lektri.co EV chargers (1P7K / One / 3P22K / Tri) with animated status LEDs.",preview:!0}),console.info("%c LEKTRICO-CHARGER-CARD %c v1.4.0 ","color: white; background: #1b1c1e; font-weight: 700;","color: #4caf50; background: #26282a; font-weight: 700;");
