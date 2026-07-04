@@ -193,4 +193,102 @@ assert(card2.shadowRoot.textContent.includes('234.8 V'), 'suffix-fallback finds 
 assert(card2.shadowRoot.querySelector('.side-info.left').textContent.includes('16.0 A'), 'suffix-fallback current is sensor.1p7k_corrente, not installation_current');
 assert(card2.shadowRoot.querySelector('.substatus')?.textContent.trim() === 'Costo Zero', 'substatus derived from active action entity');
 
+
+// ---------- paused: only top LED, steady white ----------
+hass.states['sensor.1p7k_state'] = { ...states['sensor.1p7k_state'], state: 'paused' };
+card.hass = { ...hass };
+await card.updateComplete;
+const ledsTop = card.shadowRoot.querySelector('.leds.anim-top');
+assert(ledsTop && /--led-color:\s*#ffffff/.test(ledsTop.getAttribute('style') || ''), 'paused -> top LED only, white');
+
+// ---------- three-phase charger + meter + compact ----------
+const mk3 = (eid, state, attributes = {}) => ({ entity_id: eid, state, attributes });
+const states3 = {
+  'sensor.tri_state': mk3('sensor.tri_state', 'charging', {}),
+  'sensor.tri_charging_time': mk3('sensor.tri_charging_time', '60', { device_class: 'duration', unit_of_measurement: 's' }),
+  'sensor.tri_energy': mk3('sensor.tri_energy', '1.5', { unit_of_measurement: 'kWh' }),
+  'sensor.tri_temperature': mk3('sensor.tri_temperature', '40', { device_class: 'temperature', unit_of_measurement: '°C' }),
+  'sensor.tri_power': mk3('sensor.tri_power', '11', { device_class: 'power', unit_of_measurement: 'kW' }),
+  'sensor.tri_voltage_l1': mk3('sensor.tri_voltage_l1', '231', { unit_of_measurement: 'V' }),
+  'sensor.tri_voltage_l2': mk3('sensor.tri_voltage_l2', '232', { unit_of_measurement: 'V' }),
+  'sensor.tri_voltage_l3': mk3('sensor.tri_voltage_l3', '233', { unit_of_measurement: 'V' }),
+  'sensor.tri_current_l1': mk3('sensor.tri_current_l1', '16', { unit_of_measurement: 'A' }),
+  'sensor.tri_current_l2': mk3('sensor.tri_current_l2', '15.5', { unit_of_measurement: 'A' }),
+  'sensor.tri_current_l3': mk3('sensor.tri_current_l3', '16.2', { unit_of_measurement: 'A' }),
+  'number.tri_dynamic_limit': mk3('number.tri_dynamic_limit', '16', { min: 6, max: 32, step: 1, unit_of_measurement: 'A' }),
+  'switch.tri_force_single_phase': mk3('switch.tri_force_single_phase', 'off', {}),
+  'button.tri_charge_start': mk3('button.tri_charge_start', 'unknown', {}),
+  'button.tri_charge_stop': mk3('button.tri_charge_stop', 'unknown', {}),
+  'button.tri_reboot': mk3('button.tri_reboot', 'unknown', {}),
+  'select.em_lb_mode': mk3('select.em_lb_mode', 'power', { options: ['disabled', 'power', 'hybrid', 'green'] }),
+  'sensor.em_breaker_current': mk3('sensor.em_breaker_current', '40', { unit_of_measurement: 'A' }),
+  'sensor.em_power': mk3('sensor.em_power', '3.1', { device_class: 'power', unit_of_measurement: 'kW' }),
+  'button.em_reboot': mk3('button.em_reboot', 'unknown', {}),
+};
+const entities3 = {};
+for (const [eid, key] of Object.entries({
+  'sensor.tri_state': 'state', 'sensor.tri_charging_time': 'charging_time', 'sensor.tri_energy': 'energy',
+  'sensor.tri_temperature': 'temperature', 'sensor.tri_power': 'instant_power',
+  'sensor.tri_voltage_l1': 'voltage_l1', 'sensor.tri_voltage_l2': 'voltage_l2', 'sensor.tri_voltage_l3': 'voltage_l3',
+  'sensor.tri_current_l1': 'current_l1', 'sensor.tri_current_l2': 'current_l2', 'sensor.tri_current_l3': 'current_l3',
+  'number.tri_dynamic_limit': 'dynamic_limit', 'switch.tri_force_single_phase': 'force_single_phase',
+  'button.tri_charge_start': 'charge_start', 'button.tri_charge_stop': 'charge_stop', 'button.tri_reboot': 'reboot',
+})) entities3[eid] = { entity_id: eid, device_id: 'devTri', platform: 'lektrico', translation_key: key };
+for (const [eid, key] of Object.entries({
+  'select.em_lb_mode': 'lb_mode', 'sensor.em_breaker_current': 'breaker_current',
+  'sensor.em_power': 'power', 'button.em_reboot': 'reboot',
+})) entities3[eid] = { entity_id: eid, device_id: 'devEm', platform: 'lektrico', translation_key: key };
+
+const calls3 = [];
+const hass3 = {
+  language: 'en', states: states3, entities: entities3,
+  callService: (d, s, data) => calls3.push([d, s, data]),
+  formatEntityState: (st) => st.attributes.unit_of_measurement ? `${st.state} ${st.attributes.unit_of_measurement}` : st.state,
+};
+const card3 = document.createElement('lektrico-charger-card');
+card3.setConfig({ entity: 'sensor.tri_state', meter_entity: 'select.em_lb_mode' });
+card3.hass = hass3;
+document.body.appendChild(card3);
+await card3.updateComplete;
+const sr3 = card3.shadowRoot;
+const left3 = sr3.querySelector('.side-info.left').textContent;
+const right3 = sr3.querySelector('.side-info.right').textContent;
+assert(left3.includes('16.0 A') && left3.includes('15.5 A') && left3.includes('16.2 A'), 'three-phase: three currents on the left');
+assert(right3.includes('231 V') && right3.includes('232 V') && right3.includes('233 V'), 'three-phase: three voltages on the right');
+
+// device actions: force_single_phase + lb_mode chips + reboots
+sr3.querySelectorAll('.section-header')[2].click();
+await card3.updateComplete;
+const deviceChips = [...sr3.querySelectorAll('.action-chip.device')];
+assert(deviceChips.length === 7, `7 device chips (single-phase toggle + 4 lb + 2 reboots), got ${deviceChips.length}`);
+const lbPower = deviceChips.find((c) => c.textContent.includes('Load balancing: power'));
+assert(lbPower?.classList.contains('active'), 'active lb_mode chip highlighted');
+deviceChips.find((c) => c.textContent.includes('Load balancing: green')).click();
+assert(calls3.some((c) => c[0] === 'select' && c[1] === 'select_option' && c[2].option === 'green' && c[2].entity_id === 'select.em_lb_mode'), 'lb chip selects option on meter');
+deviceChips.find((c) => c.textContent.includes('Single phase')).click();
+assert(calls3.some((c) => c[0] === 'switch' && c[1] === 'toggle' && c[2].entity_id === 'switch.tri_force_single_phase'), 'single-phase chip toggles switch');
+
+// meter rows in info section
+sr3.querySelectorAll('.section-header')[1].click();
+await card3.updateComplete;
+assert(sr3.textContent.includes('Breaker current'), 'meter breaker current in info list');
+
+// ---------- compact mode ----------
+const card4 = document.createElement('lektrico-charger-card');
+card4.setConfig({
+  entity: 'sensor.1p7k_state', compact: true, location: 'Carport',
+  actions: [{ text: 'Green Mode', entity: 'automation.caricatore_costo_zero', service: 'automation.turn_on' }],
+});
+hass.states['sensor.1p7k_state'] = { ...states['sensor.1p7k_state'], state: 'charging' };
+card4.hass = { ...hass };
+document.body.appendChild(card4);
+await card4.updateComplete;
+const sr4 = card4.shadowRoot;
+assert(sr4.querySelector('.compact-top'), 'compact top layout rendered');
+assert(!sr4.querySelector('.sections'), 'compact: no accordion sections');
+assert(sr4.querySelector('.actions-grid'), 'compact: action chips inline');
+assert(!sr4.textContent.includes('Carport'), 'compact: location hidden');
+assert(!sr4.querySelector('.compact-top').textContent.includes('kW'), 'compact: power hidden');
+assert(sr4.querySelectorAll('.qa-button').length === 4, 'compact: quick actions available');
+
 console.log(process.exitCode ? '\nSMOKE TEST FAILED' : '\nSMOKE TEST PASSED');

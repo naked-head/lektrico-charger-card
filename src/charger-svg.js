@@ -32,10 +32,10 @@ export const chargerSvg = () => svg`
 
     <!-- LED cross: top / right / bottom / left -->
     <g class="leds">
-      <rect class="led led-0" x="117" y="42" width="6" height="54" rx="3"></rect>
-      <rect class="led led-1" x="144" y="117" width="54" height="6" rx="3"></rect>
-      <rect class="led led-2" x="117" y="144" width="6" height="54" rx="3"></rect>
-      <rect class="led led-3" x="42" y="117" width="54" height="6" rx="3"></rect>
+      <rect class="led led-0" x="117.5" y="42" width="5" height="54" rx="2.5"></rect>
+      <rect class="led led-1" x="144" y="117.5" width="54" height="5" rx="2.5"></rect>
+      <rect class="led led-2" x="117.5" y="144" width="5" height="54" rx="2.5"></rect>
+      <rect class="led led-3" x="42" y="117.5" width="54" height="5" rx="2.5"></rect>
     </g>
 
     <text x="120" y="216" text-anchor="middle" class="brand-text">LEKTRI.CO</text>
@@ -52,10 +52,10 @@ export const ledOverlaySvg = () => svg`
     aria-hidden="true"
   >
     <g class="leds">
-      <rect class="led led-0" x="97" y="22" width="6" height="54" rx="3"></rect>
-      <rect class="led led-1" x="124" y="97" width="54" height="6" rx="3"></rect>
-      <rect class="led led-2" x="97" y="124" width="6" height="54" rx="3"></rect>
-      <rect class="led led-3" x="22" y="97" width="54" height="6" rx="3"></rect>
+      <rect class="led led-0" x="97.5" y="22" width="5" height="54" rx="2.5"></rect>
+      <rect class="led led-1" x="124" y="97.5" width="54" height="5" rx="2.5"></rect>
+      <rect class="led led-2" x="97.5" y="124" width="5" height="54" rx="2.5"></rect>
+      <rect class="led led-3" x="22" y="97.5" width="54" height="5" rx="2.5"></rect>
     </g>
   </svg>
 `;

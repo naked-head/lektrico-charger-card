@@ -10,6 +10,7 @@ import {
   CARD_NAME,
   DEFAULT_LED_STATES,
   ENTITY_ROLES,
+  METER_ROLES,
   ERROR_KEYS,
   DEFAULT_CURRENT_PRESETS,
   DEFAULT_BRIGHTNESS_PRESETS,
@@ -49,6 +50,8 @@ class LektricoChargerCard extends LitElement {
     this._config = config;
     this._roles = null;
     this._rolesKey = null;
+    this._meterRoles = null;
+    this._meterKey = null;
   }
 
   getCardSize() {
@@ -95,25 +98,11 @@ class LektricoChargerCard extends LitElement {
   /* entity discovery                                                    */
   /* ------------------------------------------------------------------ */
 
-  _discover() {
+  // Shared role-matching engine, used for the charger device and for the
+  // optional paired energy meter.
+  _matchRoles(rolesSpec, overrides, deviceEntities, prefix) {
     const hass = this.hass;
-    const stateEid = this._config.entity;
-    const registry = hass.entities || {};
-    const deviceId = registry[stateEid]?.device_id;
-
-    // Cache: recompute only when the device (or config) changes.
-    const key = `${stateEid}|${deviceId || 'nodevice'}`;
-    if (this._roles && this._rolesKey === key) return this._roles;
-
-    const overrides = this._config.entities || {};
-    const deviceEntities = deviceId
-      ? Object.values(registry).filter((e) => e.device_id === deviceId)
-      : [];
-    const prefix = stateEid
-      .split('.')[1]
-      .replace(/_(state|stato)$/, '');
-
-    const roleEntries = Object.entries(ENTITY_ROLES);
+    const roleEntries = Object.entries(rolesSpec);
     const roles = {};
     const claimed = new Set();
     const claim = (role, eid) => {
@@ -191,6 +180,38 @@ class LektricoChargerCard extends LitElement {
       );
       if (candidates.length === 1) claim(role, candidates[0].entity_id);
     }
+    return roles;
+  }
+
+  _deviceEntitiesOf(anchorEid) {
+    const registry = this.hass.entities || {};
+    const deviceId = registry[anchorEid]?.device_id;
+    return {
+      deviceId,
+      deviceEntities: deviceId
+        ? Object.values(registry).filter((e) => e.device_id === deviceId)
+        : [],
+    };
+  }
+
+  _discover() {
+    const stateEid = this._config.entity;
+    const { deviceId, deviceEntities } = this._deviceEntitiesOf(stateEid);
+
+    // Cache: recompute only when the device (or config) changes.
+    const key = `${stateEid}|${deviceId || 'nodevice'}`;
+    if (this._roles && this._rolesKey === key) return this._roles;
+
+    const hass = this.hass;
+    const overrides = this._config.entities || {};
+    const prefix = stateEid.split('.')[1].replace(/_(state|stato)$/, '');
+
+    const roles = this._matchRoles(
+      ENTITY_ROLES,
+      overrides,
+      deviceEntities,
+      prefix
+    );
     roles.state = roles.state || stateEid;
 
     // Diagnostic binary sensors -> error list
@@ -218,11 +239,40 @@ class LektricoChargerCard extends LitElement {
     return roles;
   }
 
+  // Roles of the paired Lektri.co energy meter (EM / 3EM), attached via
+  // `meter_entity` (any entity of the meter device).
+  _discoverMeter() {
+    const anchor = this._config.meter_entity;
+    if (!anchor) return {};
+    const { deviceId, deviceEntities } = this._deviceEntitiesOf(anchor);
+    const key = `${anchor}|${deviceId || 'nodevice'}`;
+    if (this._meterRoles && this._meterKey === key) return this._meterRoles;
+
+    let prefix = anchor.split('.')[1];
+    for (const spec of Object.values(METER_ROLES)) {
+      for (const suffix of spec.suffixes || []) {
+        if (prefix.endsWith(suffix)) {
+          prefix = prefix.slice(0, -suffix.length);
+          break;
+        }
+      }
+    }
+    const roles = this._matchRoles(METER_ROLES, {}, deviceEntities, prefix);
+    this._meterRoles = roles;
+    this._meterKey = key;
+    return roles;
+  }
+
+  _isThreePhase() {
+    const roles = this._discover();
+    return Boolean(roles.current_l1 || roles.voltage_l1);
+  }
+
   _stateObj(roleOrEntity) {
     if (!roleOrEntity) return undefined;
     if (roleOrEntity.includes('.')) return this.hass.states[roleOrEntity];
-    const roles = this._discover();
-    const eid = roles[roleOrEntity];
+    const eid =
+      this._discover()[roleOrEntity] ?? this._discoverMeter()[roleOrEntity];
     return eid ? this.hass.states[eid] : undefined;
   }
 
@@ -365,13 +415,17 @@ class LektricoChargerCard extends LitElement {
 
     return html`
       <ha-card class=${classMap({ compact })}>
-        ${this._renderTop(state)}
-        ${this._renderStatus(stateObj, state)}
+        ${compact
+          ? this._renderCompactTop(stateObj, state)
+          : html`${this._renderTop(state)}${this._renderStatus(
+              stateObj,
+              state
+            )}`}
         ${activeErrors.length ? this._renderErrors(activeErrors) : nothing}
         ${this._config.show_quick_actions !== false
           ? this._renderQuickActions(state)
           : nothing}
-        ${compact ? nothing : this._renderSections()}
+        ${compact ? this._renderActionsGrid() : this._renderSections()}
         ${this._config.show_stats !== false
           ? this._renderStats(state, activeErrors)
           : nothing}
@@ -381,13 +435,31 @@ class LektricoChargerCard extends LitElement {
 
   /* ---------- top: side infos + charger image ---------- */
 
+  _defaultInfoColumns() {
+    // Three-phase chargers show the three per-phase currents/voltages in
+    // the side columns; single-phase ones the plain current/voltage.
+    if (this._isThreePhase()) {
+      return {
+        left: [
+          { entity: 'current_l1', decimals: 1 },
+          { entity: 'current_l2', decimals: 1 },
+          { entity: 'current_l3', decimals: 1 },
+          'dynamic_limit',
+        ],
+        right: ['voltage_l1', 'voltage_l2', 'voltage_l3', 'power'],
+      };
+    }
+    return {
+      left: [{ entity: 'current', decimals: 1 }, 'dynamic_limit'],
+      right: ['voltage', 'power'],
+    };
+  }
+
   _renderTop(state) {
     if (this._config.show_image === false) return nothing;
-    const left = this._config.info_left ?? [
-      { entity: 'current', decimals: 1 },
-      'dynamic_limit',
-    ];
-    const right = this._config.info_right ?? ['voltage', 'power'];
+    const defaults = this._defaultInfoColumns();
+    const left = this._config.info_left ?? defaults.left;
+    const right = this._config.info_right ?? defaults.right;
     return html`
       <div class="top">
         <div class="side-info left">
@@ -396,6 +468,31 @@ class LektricoChargerCard extends LitElement {
         ${this._renderImage(state)}
         <div class="side-info right">
           ${right.map((item) => this._renderInfoItem(item))}
+        </div>
+      </div>
+    `;
+  }
+
+  // Compact: small image beside the status, one info column with the
+  // currents and the dynamic limit (no location, no power).
+  _renderCompactTop(stateObj, state) {
+    const three = this._isThreePhase();
+    const infos =
+      this._config.info_right ??
+      (three
+        ? [
+            { entity: 'current_l1', decimals: 1 },
+            { entity: 'current_l2', decimals: 1 },
+            { entity: 'current_l3', decimals: 1 },
+            'dynamic_limit',
+          ]
+        : [{ entity: 'current', decimals: 1 }, 'dynamic_limit', 'voltage']);
+    return html`
+      <div class="compact-top">
+        ${this._renderImage(state)}
+        ${this._renderStatus(stateObj, state, { showLocation: false })}
+        <div class="side-info right">
+          ${infos.map((item) => this._renderInfoItem(item))}
         </div>
       </div>
     `;
@@ -554,9 +651,9 @@ class LektricoChargerCard extends LitElement {
       .join(' · ');
   }
 
-  _renderStatus(stateObj, state) {
+  _renderStatus(stateObj, state, { showLocation = true } = {}) {
     const name = this._config.name || stateObj.attributes.friendly_name;
-    const location = this._config.location;
+    const location = showLocation ? this._config.location : undefined;
     const substatus = this._substatusText();
     return html`
       <div class="status" @click=${() => this._moreInfo(this._config.entity)}>
@@ -664,7 +761,7 @@ class LektricoChargerCard extends LitElement {
   /* ---------- accordion sections ---------- */
 
   _renderSections() {
-    const actions = this._config.actions || [];
+    const actionsGrid = this._renderActionsGrid();
     const sections = [
       {
         id: 'parameters',
@@ -680,12 +777,12 @@ class LektricoChargerCard extends LitElement {
         body: () => this._renderInfoList(),
       },
     ];
-    if (actions.length) {
+    if (actionsGrid !== nothing) {
       sections.push({
         id: 'actions',
         icon: 'mdi:gesture-tap-button',
         title: this._config.section_titles?.actions || this._t('actions'),
-        body: () => this._renderActions(actions),
+        body: () => actionsGrid,
       });
     }
 
@@ -773,6 +870,7 @@ class LektricoChargerCard extends LitElement {
   _renderParameters() {
     const auth = this._stateObj('authentication');
     const lock = this._stateObj('lock');
+    const forceSinglePhase = this._stateObj('force_single_phase');
     return html`
       ${this._renderSlider(
         'dynamic_limit',
@@ -789,6 +887,9 @@ class LektricoChargerCard extends LitElement {
       <div class="toggle-list">
         ${auth ? this._renderToggle('authentication', auth, 'mdi:fingerprint') : nothing}
         ${lock ? this._renderToggle('lock', lock, 'mdi:lock-outline') : nothing}
+        ${forceSinglePhase
+          ? this._renderToggle('force_single_phase', forceSinglePhase, 'mdi:sine-wave')
+          : nothing}
       </div>
     `;
   }
@@ -817,6 +918,13 @@ class LektricoChargerCard extends LitElement {
       { entity: 'limit_reason', icon: 'mdi:information-outline' },
       { entity: 'temperature', icon: 'mdi:thermometer' },
     ];
+    // Paired energy meter, when attached via `meter_entity`.
+    if (this._stateObj('breaker_current')) {
+      defaults.push({ entity: 'breaker_current', icon: 'mdi:fuse' });
+    }
+    if (this._stateObj('meter_power')) {
+      defaults.push({ entity: 'meter_power', icon: 'mdi:flash' });
+    }
     const items = this._config.info_items ?? defaults;
     const rows = items
       .map((item) => {
@@ -860,12 +968,102 @@ class LektricoChargerCard extends LitElement {
     return html`<div class="info-list">${rows}</div>`;
   }
 
-  /* ---------- custom actions ---------- */
+  /* ---------- actions: device chips + custom chips ---------- */
 
-  _renderActions(actions) {
+  // Chips auto-discovered from the charger and the optional energy
+  // meter; rendered with a distinct (filled) style.
+  _deviceActions() {
+    if (this._config.show_device_actions === false) return [];
+    const chips = [];
+    const scheduleOverride = this._stateObj('schedule_override');
+    if (scheduleOverride) {
+      chips.push({
+        text: this._t('schedule_override'),
+        icon: 'mdi:calendar-clock',
+        run: () => this._pressButton('schedule_override'),
+      });
+    }
+    const forceSinglePhase = this._stateObj('force_single_phase');
+    if (forceSinglePhase) {
+      chips.push({
+        text: this._t('force_single_phase'),
+        icon: 'mdi:sine-wave',
+        active: forceSinglePhase.state === 'on',
+        run: () => this._toggleSwitch('force_single_phase'),
+      });
+    }
+    const lbMode = this._stateObj('lb_mode');
+    if (lbMode && Array.isArray(lbMode.attributes.options)) {
+      for (const option of lbMode.attributes.options) {
+        chips.push({
+          text: `${this._t('lb_mode')}: ${option}`,
+          icon: 'mdi:scale-balance',
+          active: lbMode.state === option,
+          run: () =>
+            this.hass.callService('select', 'select_option', {
+              entity_id: lbMode.entity_id,
+              option,
+            }),
+        });
+      }
+    }
+    const reboot = this._stateObj('reboot');
+    if (reboot) {
+      chips.push({
+        text: this._t('reboot'),
+        icon: 'mdi:restart',
+        confirm: true,
+        run: () => this._pressButton('reboot'),
+      });
+    }
+    const meterReboot = this._stateObj('meter_reboot');
+    if (meterReboot && meterReboot.entity_id !== reboot?.entity_id) {
+      chips.push({
+        text: this._t('meter_reboot'),
+        icon: 'mdi:restart',
+        confirm: true,
+        run: () => this._pressButton('meter_reboot'),
+      });
+    }
+    return chips;
+  }
+
+  _renderActionsGrid() {
+    const custom = this._config.actions || [];
+    const device = this._deviceActions();
+    if (!custom.length && !device.length) return nothing;
+    const both = custom.length > 0 && device.length > 0;
     return html`
       <div class="actions-grid">
-        ${actions.map((action) => {
+        ${both
+          ? html`<div class="actions-caption">
+              ${this._t('device_actions')}
+            </div>`
+          : nothing}
+        ${device.map(
+          (chip) => html`
+            <button
+              class=${classMap({
+                'action-chip': true,
+                device: true,
+                active: !!chip.active,
+              })}
+              @click=${() => {
+                if (chip.confirm && !window.confirm(`${chip.text}?`)) return;
+                chip.run();
+              }}
+            >
+              <ha-icon icon=${chip.icon}></ha-icon>
+              ${chip.text}
+            </button>
+          `
+        )}
+        ${both
+          ? html`<div class="actions-caption">
+              ${this._t('custom_actions')}
+            </div>`
+          : nothing}
+        ${custom.map((action) => {
           const stateObj = action.entity
             ? this.hass.states[action.entity]
             : undefined;

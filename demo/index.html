@@ -67,6 +67,7 @@
     <button data-w="280">280px (narrow)</button>
     <button id="themeBtn">☀ / 🌙</button>
     <button id="langBtn">EN / IT</button>
+    <button id="compactBtn">Compact</button>
   </div>
   <div id="holder"></div>
 
@@ -122,6 +123,11 @@
     'switch.1p7k_blocca': mk('switch.1p7k_blocca', 'off', {}),
     'button.1p7k_charge_start': mk('button.1p7k_charge_start', 'unknown', {}),
     'button.1p7k_charge_stop': mk('button.1p7k_charge_stop', 'unknown', {}),
+    'select.em_lb_mode': mk('select.em_lb_mode', 'power', { options: ['disabled', 'power', 'hybrid', 'green'] }),
+    'sensor.em_breaker_current': mk('sensor.em_breaker_current', '40', { unit_of_measurement: 'A' }),
+    'sensor.em_power': mk('sensor.em_power', '3.1', { device_class: 'power', unit_of_measurement: 'kW' }),
+    'button.em_reboot': mk('button.em_reboot', 'unknown', {}),
+    'button.1p7k_reboot': mk('button.1p7k_reboot', 'unknown', {}),
     'binary_sensor.1p7k_overheating': mk('binary_sensor.1p7k_overheating', 'off', {}),
     'binary_sensor.1p7k_rcd_error': mk('binary_sensor.1p7k_rcd_error', 'off', {}),
     'automation.caricatore_costo_zero': mk('automation.caricatore_costo_zero', 'on', {}),
@@ -139,11 +145,18 @@
     'number.1p7k_limite_dinamico': 'dynamic_limit', 'number.1p7k_led_brightness': 'led_max_brightness',
     'switch.1p7k_autenticazione': 'authentication', 'switch.1p7k_blocca': 'lock',
     'button.1p7k_charge_start': 'charge_start', 'button.1p7k_charge_stop': 'charge_stop',
+    'button.1p7k_reboot': 'reboot',
     'binary_sensor.1p7k_overheating': 'overheating', 'binary_sensor.1p7k_rcd_error': 'rcd_error',
   };
   const entities = {};
   for (const [eid, key] of Object.entries(tk)) {
     entities[eid] = { entity_id: eid, device_id: 'dev1', platform: 'lektrico', translation_key: key };
+  }
+  for (const [eid, key] of Object.entries({
+    'select.em_lb_mode': 'lb_mode', 'sensor.em_breaker_current': 'breaker_current',
+    'sensor.em_power': 'power', 'button.em_reboot': 'reboot',
+  })) {
+    entities[eid] = { entity_id: eid, device_id: 'dev2', platform: 'lektrico', translation_key: key };
   }
 
   let states = baseStates();
@@ -165,6 +178,9 @@
         const cur = states[data.entity_id].state;
         states[data.entity_id] = { ...states[data.entity_id], state: cur === 'on' ? 'off' : 'on' };
       }
+      if (domain === 'select' && service === 'select_option') {
+        states[data.entity_id] = { ...states[data.entity_id], state: data.option };
+      }
       if (domain === 'automation' && service === 'turn_on') {
         // demo behaviour: mode automations are mutually exclusive
         for (const id of Object.keys(states)) {
@@ -178,10 +194,13 @@
   });
 
   const card = document.createElement('lektrico-charger-card');
-  card.setConfig({
+  let compact = false;
+  const cardConfig = () => ({
     entity: 'sensor.1p7k_state',
     name: 'Lektri.co',
     location: 'Carport',
+    compact,
+    meter_entity: 'select.em_lb_mode',
     // substatus is derived automatically from the active mode action below
     actions: [
       { text: 'Zero Cost', icon: 'mdi:currency-eur', entity: 'automation.caricatore_costo_zero', service: 'automation.turn_on' },
@@ -193,6 +212,7 @@
       { text: 'Low 10A', icon: 'mdi:battery-low', service: 'number.set_value', service_data: { entity_id: 'number.1p7k_limite_dinamico', value: 10 } },
     ],
   });
+  card.setConfig(cardConfig());
   document.getElementById('holder').appendChild(card);
   const refresh = () => { card.hass = hass(); };
 
@@ -241,6 +261,12 @@
   });
   document.getElementById('themeBtn').onclick = () => document.body.classList.toggle('light');
   document.getElementById('langBtn').onclick = () => { lang = lang === 'en' ? 'it' : 'en'; refresh(); };
+  document.getElementById('compactBtn').onclick = (ev) => {
+    compact = !compact;
+    ev.target.classList.toggle('on', compact);
+    card.setConfig(cardConfig());
+    refresh();
+  };
 
   btns.firstChild.click();
 </script>

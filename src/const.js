@@ -1,4 +1,4 @@
-export const CARD_VERSION = '1.2.0';
+export const CARD_VERSION = '1.3.0';
 
 export const CARD_NAME = 'lektrico-charger-card';
 
@@ -22,13 +22,15 @@ export const CHARGER_STATES = [
 //   white (spin) = charging, spin speed follows the charging current
 //   red          = error
 // Every entry can be overridden from YAML via `led_states`.
+// Animations: 'spin', 'pulse', 'top' (only the top bar lit, steady,
+// like the real device while paused), 'none'.
 export const DEFAULT_LED_STATES = {
   available: { color: '#4caf50', animation: 'none' },
   connected: { color: '#2196f3', animation: 'none' },
   need_auth: { color: '#2196f3', animation: 'pulse' },
   charging: { color: '#ffffff', animation: 'spin' },
-  paused: { color: '#2196f3', animation: 'pulse' },
-  paused_by_scheduler: { color: '#2196f3', animation: 'pulse' },
+  paused: { color: '#ffffff', animation: 'top' },
+  paused_by_scheduler: { color: '#ffffff', animation: 'top' },
   locked: { color: '#ff5722', animation: 'none' },
   error: { color: '#f44336', animation: 'pulse' },
   updating_firmware: { color: '#ab47bc', animation: 'pulse' },
@@ -55,7 +57,7 @@ export const ENTITY_ROLES = {
   },
   session_energy: {
     domain: 'sensor',
-    keys: ['session_energy'],
+    keys: ['session_energy', 'energy'],
     suffixes: ['_session_energy', '_energia', '_energia_sessione', '_energy'],
   },
   lifetime_energy: {
@@ -80,6 +82,38 @@ export const ENTITY_ROLES = {
     keys: ['current'],
     suffixes: ['_current', '_corrente'],
     device_class: 'current',
+  },
+  // Three-phase chargers (3P22K / Tri) expose per-phase sensors instead
+  // of the single voltage/current ones.
+  voltage_l1: {
+    domain: 'sensor',
+    keys: ['voltage_l1'],
+    suffixes: ['_voltage_l1', '_tensione_l1'],
+  },
+  voltage_l2: {
+    domain: 'sensor',
+    keys: ['voltage_l2'],
+    suffixes: ['_voltage_l2', '_tensione_l2'],
+  },
+  voltage_l3: {
+    domain: 'sensor',
+    keys: ['voltage_l3'],
+    suffixes: ['_voltage_l3', '_tensione_l3'],
+  },
+  current_l1: {
+    domain: 'sensor',
+    keys: ['current_l1'],
+    suffixes: ['_current_l1', '_corrente_l1'],
+  },
+  current_l2: {
+    domain: 'sensor',
+    keys: ['current_l2'],
+    suffixes: ['_current_l2', '_corrente_l2'],
+  },
+  current_l3: {
+    domain: 'sensor',
+    keys: ['current_l3'],
+    suffixes: ['_current_l3', '_corrente_l3'],
   },
   installation_current: {
     domain: 'sensor',
@@ -127,6 +161,22 @@ export const ENTITY_ROLES = {
     keys: ['charge_stop'],
     suffixes: ['_charge_stop', '_ferma_ricarica', '_arresta_ricarica'],
   },
+  reboot: {
+    domain: 'button',
+    keys: ['reboot'],
+    suffixes: ['_reboot', '_restart', '_riavvia'],
+  },
+  schedule_override: {
+    domain: 'button',
+    keys: ['charging_schedule_override'],
+    suffixes: ['_charging_schedule_override', '_schedule_override'],
+  },
+  // Three-phase chargers only.
+  force_single_phase: {
+    domain: 'switch',
+    keys: ['force_single_phase'],
+    suffixes: ['_force_single_phase', '_forza_monofase'],
+  },
   update: {
     domain: 'update',
     keys: ['firmware'],
@@ -134,7 +184,36 @@ export const ENTITY_ROLES = {
   },
 };
 
+// Roles of a paired Lektri.co energy meter (EM / 3EM), a separate device
+// in the integration. Attached to the card via `meter_entity`.
+export const METER_ROLES = {
+  lb_mode: {
+    domain: 'select',
+    keys: ['lb_mode'],
+    suffixes: ['_lb_mode', '_load_balancing_mode'],
+  },
+  breaker_current: {
+    domain: 'sensor',
+    keys: ['breaker_current'],
+    suffixes: ['_breaker_current', '_corrente_interruttore'],
+  },
+  meter_power: {
+    domain: 'sensor',
+    keys: ['power'],
+    suffixes: ['_power', '_potenza'],
+    device_class: 'power',
+  },
+  meter_reboot: {
+    domain: 'button',
+    keys: ['reboot'],
+    suffixes: ['_reboot', '_restart', '_riavvia'],
+  },
+};
+
 // translation_keys / suffixes of the diagnostic (error) binary sensors.
+// Both the core translation keys (ev_error, overheating, ...) and the
+// device keys used in the integration docs (state_e_activated,
+// overtemp, ...) are recognized.
 export const ERROR_KEYS = [
   'ev_error',
   'ev_diode_short',
@@ -146,6 +225,12 @@ export const ERROR_KEYS = [
   'undervoltage',
   'rcd_error',
   'relay_contacts_welded',
+  'state_e_activated',
+  'overtemp',
+  'critical_temp',
+  'meter_fault',
+  'cp_diode_failure',
+  'contactor_failure',
 ];
 
 // Spin animation period bounds (seconds): slowest at minimal current,

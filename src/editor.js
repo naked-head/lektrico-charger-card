@@ -26,6 +26,7 @@ const SCHEMA = [
   { name: 'name', selector: { text: {} } },
   { name: 'location', selector: { text: {} } },
   { name: 'substatus_entity', selector: { entity: {} } },
+  { name: 'meter_entity', selector: { entity: {} } },
   {
     name: '',
     type: 'grid',
@@ -90,7 +91,7 @@ class LektricoChargerCardEditor extends LitElement {
     for (const [key, def] of Object.entries(BOOL_DEFAULTS)) {
       if (config[key] === def) delete config[key];
     }
-    for (const key of ['name', 'location', 'substatus_entity', 'image', 'language']) {
+    for (const key of ['name', 'location', 'substatus_entity', 'meter_entity', 'image', 'language']) {
       if (config[key] === '') delete config[key];
     }
     fireEvent(this, 'config-changed', { config });
