@@ -561,18 +561,18 @@ export default css`
     display: grid;
     grid-template-columns: 60px 1fr auto;
     gap: 10px;
-    align-items: center;
+    align-items: stretch;
   }
   .ultra-top .image-wrap {
     max-width: 60px;
     margin: 0;
+    align-self: center;
   }
   .ultra-center {
     display: flex;
     flex-direction: column;
     gap: 1px;
     min-width: 0;
-    cursor: pointer;
   }
   .ultra-state {
     font-size: 14px;
@@ -640,30 +640,43 @@ export default css`
     --mdc-icon-size: 14px;
     flex-shrink: 0;
   }
-  .ultra-btn {
-    display: flex;
-    justify-content: center;
-    margin-top: 8px;
-  }
-  .ultra-btn button {
-    display: flex;
+  /* Start/stop button lives at the bottom of the center column —
+     no extra vertical space; text hides on very narrow cards. */
+  .ultra-inline-btn {
+    display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 5px 16px;
-    border-radius: 16px;
-    border: 1px solid var(--primary-color);
+    gap: 4px;
+    margin-top: auto;
+    padding-top: 5px;
+    align-self: flex-start;
     background: none;
+    border: 1px solid var(--primary-color);
+    border-radius: 12px;
     color: var(--primary-color);
-    font: inherit;
-    font-size: 12px;
     cursor: pointer;
+    font: inherit;
+    font-size: 11px;
+    padding-inline: 8px;
+    padding-block: 3px;
     transition: background 0.15s ease;
+    max-width: 100%;
+    overflow: hidden;
   }
-  .ultra-btn button:hover {
+  .ultra-inline-btn:hover {
     background: rgba(var(--rgb-primary-color, 33, 150, 243), 0.1);
   }
-  .ultra-btn button ha-icon {
-    --mdc-icon-size: 16px;
+  .ultra-inline-btn ha-icon {
+    --mdc-icon-size: 14px;
+    flex-shrink: 0;
+  }
+  .ultra-inline-btn .btn-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  @container (max-width: 280px) {
+    .ultra-inline-btn .btn-text { display: none; }
+    .ultra-inline-btn { padding-inline: 5px; }
   }
 
   /* ---------- narrow layouts ----------

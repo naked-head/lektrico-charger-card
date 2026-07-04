@@ -511,14 +511,17 @@ class LektricoChargerCard extends LitElement {
     `;
   }
 
-  // Ultra-compact: image | state+substatus+limit | current/energy/temp
+  // Ultra-compact: image | state+substatus+limit[+btn] | current/energy/temp
   // Purely informational; no sliders, no sections, no stats bar.
+  // The start/stop button sits at the bottom of the centre column — it
+  // adds no extra row and is hidden by show_quick_actions: false.
   _renderUltraCompact(stateObj, state, activeErrors) {
     const substatus = this._substatusText();
     const limitObj = this._stateObj('dynamic_limit');
     const limitText = limitObj ? this._fmt(limitObj) : null;
-    const chargeStart = this._stateObj('charge_start');
-    const chargeStop = this._stateObj('charge_stop');
+    const showBtn = this._config.show_quick_actions !== false;
+    const chargeStart = showBtn && this._stateObj('charge_start');
+    const chargeStop = showBtn && this._stateObj('charge_stop');
     const canStart = chargeStart && state !== 'charging' && state !== 'paused';
     const canStop = chargeStop && (state === 'charging' || state === 'paused');
 
@@ -531,24 +534,55 @@ class LektricoChargerCard extends LitElement {
     return html`
       <div class="ultra-top">
         ${this._renderImage(state)}
-        <div
-          class="ultra-center"
-          @click=${() => this._moreInfo(this._config.entity)}
-        >
+        <div class="ultra-center">
           <div
             class=${classMap({
               'ultra-state': true,
               'state-error': state === 'error',
               'state-charging': state === 'charging',
             })}
+            @click=${() => this._moreInfo(this._config.entity)}
           >
             ${this._stateText(state)}
           </div>
           ${substatus
-            ? html`<div class="ultra-substatus">${substatus}</div>`
+            ? html`<div
+                class="ultra-substatus"
+                @click=${() => this._moreInfo(this._config.entity)}
+              >
+                ${substatus}
+              </div>`
             : nothing}
           ${limitText
-            ? html`<div class="ultra-limit">${limitText}</div>`
+            ? html`<div
+                class="ultra-limit"
+                @click=${() => this._moreInfo(this._config.entity)}
+              >
+                ${limitText}
+              </div>`
+            : nothing}
+          ${canStart
+            ? html`<button
+                class="ultra-inline-btn"
+                @click=${(ev) => {
+                  ev.stopPropagation();
+                  this._pressButton('charge_start');
+                }}
+              >
+                <ha-icon icon="mdi:play"></ha-icon>
+                <span class="btn-text">${this._t('start')}</span>
+              </button>`
+            : canStop
+            ? html`<button
+                class="ultra-inline-btn"
+                @click=${(ev) => {
+                  ev.stopPropagation();
+                  this._pressButton('charge_stop');
+                }}
+              >
+                <ha-icon icon="mdi:stop"></ha-icon>
+                <span class="btn-text">${this._t('stop')}</span>
+              </button>`
             : nothing}
         </div>
         <div class="ultra-stats">
@@ -567,17 +601,6 @@ class LektricoChargerCard extends LitElement {
             )}${activeErrors.length > 1
               ? html` (+${activeErrors.length - 1})`
               : nothing}
-          </div>`
-        : nothing}
-      ${canStart || canStop
-        ? html`<div class="ultra-btn">
-            ${canStart
-              ? html`<button @click=${() => this._pressButton('charge_start')}>
-                  <ha-icon icon="mdi:play"></ha-icon>${this._t('start')}
-                </button>`
-              : html`<button @click=${() => this._pressButton('charge_stop')}>
-                  <ha-icon icon="mdi:stop"></ha-icon>${this._t('stop')}
-                </button>`}
           </div>`
         : nothing}
     `;

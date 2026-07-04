@@ -70,6 +70,8 @@ const SCHEMA = [
           { value: 'sv', label: 'Svenska' },
           { value: 'da', label: 'Dansk' },
           { value: 'nb', label: 'Norsk bokmål' },
+          { value: 'ro', label: 'Română' },
+          { value: 'es', label: 'Español' },
         ],
       },
     },
