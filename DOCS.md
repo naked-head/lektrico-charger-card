@@ -11,6 +11,7 @@
   - [Fixed levels](#fixed-levels)
 - [Card configuration for the modes](#card-configuration-for-the-modes)
 - [Using an input_text instead](#using-an-input_text-instead)
+- [Three-phase & energy meter notes](#three-phase--energy-meter-notes)
 - [Adding a language](#adding-a-language)
 
 ## Charging modes: how the pieces fit together
@@ -257,6 +258,27 @@ type: custom:lektrico-charger-card
 entity: sensor.1p7k_state
 substatus_entity: input_text.charger_mode
 ```
+
+## Three-phase & energy meter notes
+
+- **Three-phase discovery is automatic.** A 3P22K/Tri charger's device
+  entities include `voltage_l1/l2/l3` and `current_l1/l2/l3` instead of
+  the single `voltage`/`current` sensors; the card detects them and
+  switches the default side columns to the three-phase values with no
+  configuration.
+- **The energy meter is opt-in, on purpose.** `meter_entity` is never
+  guessed from the charger's device — you set it explicitly. This
+  matters because the load-balancing chips only make sense for
+  Lektri.co's own EM/3EM meter: they call `select.select_option` on the
+  `lb_mode` entity the *official* `lektrico` integration creates for that
+  meter. If you point `meter_entity` at some other brand's meter (or at
+  an entity that doesn't expose `lb_mode`), the load-balancing chips
+  simply won't appear — no `lb_mode` entity, no chips, nothing breaks.
+  Breaker current / meter power rows behave the same way: they only show
+  up if the referenced device actually exposes those entities.
+- In short: quantity-of-features is capability-driven, not
+  brand-assumption-driven. There's no scenario where a third-party meter
+  gets offered load-balancing controls it doesn't support.
 
 ## Adding a language
 
