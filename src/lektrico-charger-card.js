@@ -29,13 +29,13 @@ class LektricoChargerCard extends LitElement {
   static properties = {
     hass: { attribute: false },
     _config: { state: true },
-    _openSection: { state: true },
+    _openSections: { state: true },
     _pendingSlider: { state: true },
   };
 
   constructor() {
     super();
-    this._openSection = null;
+    this._openSections = {};
     this._pendingSlider = {};
     this._roles = null;
     this._rolesKey = null;
@@ -387,7 +387,10 @@ class LektricoChargerCard extends LitElement {
   }
 
   _toggleSection(name) {
-    this._openSection = this._openSection === name ? null : name;
+    this._openSections = {
+      ...this._openSections,
+      [name]: !this._openSections[name],
+    };
   }
 
   /* ------------------------------------------------------------------ */
@@ -412,20 +415,23 @@ class LektricoChargerCard extends LitElement {
     const activeErrors = (roles.errors || [])
       .map((id) => this.hass.states[id])
       .filter((s) => s && s.state === 'on');
+    const sections = this._computeSections(compact);
 
     return html`
       <ha-card class=${classMap({ compact })}>
         ${compact
-          ? this._renderCompactTop(stateObj, state)
-          : html`${this._renderTop(state)}${this._renderStatus(
-              stateObj,
-              state
-            )}`}
+          ? html`${this._renderCompactTop(stateObj, state)}
+            ${this._renderSectionToggleBar(sections, true)}`
+          : html`${this._renderTop(state)}
+            <div class="status-line">
+              ${this._renderStatus(stateObj, state)}
+              ${this._renderSectionToggleBar(sections)}
+            </div>`}
         ${activeErrors.length ? this._renderErrors(activeErrors) : nothing}
         ${this._config.show_quick_actions !== false
           ? this._renderQuickActions(state)
           : nothing}
-        ${this._renderSections(compact)}
+        ${this._renderSectionBodies(sections)}
         ${this._config.show_stats !== false
           ? this._renderStats(state, activeErrors)
           : nothing}
@@ -702,68 +708,167 @@ class LektricoChargerCard extends LitElement {
 
   /* ---------- quick actions ---------- */
 
-  _renderQuickActions(state) {
-    const start = this._stateObj('charge_start');
-    const stop = this._stateObj('charge_stop');
-    const auth = this._stateObj('authentication');
-    const lock = this._stateObj('lock');
-    const buttons = [];
+  // Default 4 built-in candidates, kept for backward compatibility when
+  // `quick_actions` isn't set.
+  static QUICK_ACTION_DEFAULTS = ['start', 'stop', 'authentication', 'lock'];
 
+  // Device action ids excluded from the quick-actions pool: one-off /
+  // destructive operations, not a good fit for a persistent button.
+  static QUICK_ACTION_EXCLUDED_DEVICE_IDS = [
+    'schedule_override',
+    'reboot',
+    'meter_reboot',
+  ];
+
+  // Builds the full pool of buttons the user can pick `quick_actions`
+  // from: the built-in charge/auth/lock controls, the discovered device
+  // chips (minus the one-off ones above), and every configured custom
+  // action (referenced by its `id`, or `custom:<index>` otherwise).
+  _quickActionCandidates(state) {
+    const candidates = [];
+
+    const start = this._stateObj('charge_start');
     if (start) {
-      buttons.push(html`
-        <button
-          class="qa-button"
-          .disabled=${state === 'charging'}
-          @click=${() => this._pressButton('charge_start')}
-        >
-          <ha-icon icon="mdi:play"></ha-icon>${this._t('start')}
-        </button>
-      `);
+      candidates.push({
+        id: 'start',
+        render: () => html`
+          <button
+            class="qa-button"
+            .disabled=${state === 'charging'}
+            @click=${() => this._pressButton('charge_start')}
+          >
+            <ha-icon icon="mdi:play"></ha-icon>${this._t('start')}
+          </button>
+        `,
+      });
     }
+    const stop = this._stateObj('charge_stop');
     if (stop) {
-      buttons.push(html`
-        <button
-          class="qa-button"
-          .disabled=${state !== 'charging' && state !== 'paused'}
-          @click=${() => this._pressButton('charge_stop')}
-        >
-          <ha-icon icon="mdi:stop"></ha-icon>${this._t('stop')}
-        </button>
-      `);
+      candidates.push({
+        id: 'stop',
+        render: () => html`
+          <button
+            class="qa-button"
+            .disabled=${state !== 'charging' && state !== 'paused'}
+            @click=${() => this._pressButton('charge_stop')}
+          >
+            <ha-icon icon="mdi:stop"></ha-icon>${this._t('stop')}
+          </button>
+        `,
+      });
     }
+    const auth = this._stateObj('authentication');
     if (auth) {
-      buttons.push(html`
-        <button
-          class=${classMap({ 'qa-button': true, active: auth.state === 'on' })}
-          @click=${() => this._toggleSwitch('authentication')}
-        >
-          <ha-icon icon="mdi:fingerprint"></ha-icon>${this._t('authentication')}
-        </button>
-      `);
+      candidates.push({
+        id: 'authentication',
+        render: () => html`
+          <button
+            class=${classMap({
+              'qa-button': true,
+              active: auth.state === 'on',
+            })}
+            @click=${() => this._toggleSwitch('authentication')}
+          >
+            <ha-icon icon="mdi:fingerprint"></ha-icon>${this._t(
+              'authentication'
+            )}
+          </button>
+        `,
+      });
     }
+    const lock = this._stateObj('lock');
     if (lock) {
-      buttons.push(html`
-        <button
-          class=${classMap({ 'qa-button': true, active: lock.state === 'on' })}
-          @click=${() => this._toggleSwitch('lock')}
-        >
-          <ha-icon
-            icon=${lock.state === 'on' ? 'mdi:lock' : 'mdi:lock-open-outline'}
-          ></ha-icon
-          >${this._t('lock')}
-        </button>
-      `);
+      candidates.push({
+        id: 'lock',
+        render: () => html`
+          <button
+            class=${classMap({
+              'qa-button': true,
+              active: lock.state === 'on',
+            })}
+            @click=${() => this._toggleSwitch('lock')}
+          >
+            <ha-icon
+              icon=${lock.state === 'on'
+                ? 'mdi:lock'
+                : 'mdi:lock-open-outline'}
+            ></ha-icon
+            >${this._t('lock')}
+          </button>
+        `,
+      });
     }
-    if (!buttons.length) return nothing;
-    return html`<div class="quick-actions">${buttons}</div>`;
+
+    for (const chip of this._deviceActions()) {
+      if (
+        LektricoChargerCard.QUICK_ACTION_EXCLUDED_DEVICE_IDS.includes(chip.id)
+      ) {
+        continue;
+      }
+      candidates.push({
+        id: chip.id,
+        render: () => html`
+          <button
+            class=${classMap({ 'qa-button': true, active: !!chip.active })}
+            @click=${() => {
+              if (chip.confirm && !window.confirm(`${chip.text}?`)) return;
+              chip.run();
+            }}
+          >
+            <ha-icon icon=${chip.icon}></ha-icon>${chip.text}
+          </button>
+        `,
+      });
+    }
+
+    (this._config.actions || []).forEach((action, i) => {
+      const stateObj = action.entity
+        ? this.hass.states[action.entity]
+        : undefined;
+      const active = stateObj?.state === 'on';
+      candidates.push({
+        id: action.id || `custom:${i}`,
+        render: () => html`
+          <button
+            class=${classMap({ 'qa-button': true, active })}
+            @click=${() => this._runAction(action)}
+          >
+            ${action.icon
+              ? html`<ha-icon icon=${action.icon}></ha-icon>`
+              : nothing}${action.text || action.name || action.entity}
+          </button>
+        `,
+      });
+    });
+
+    return candidates;
   }
 
-  /* ---------- accordion sections ---------- */
+  _renderQuickActions(state) {
+    const candidates = this._quickActionCandidates(state);
+    const selected = this._config.quick_actions;
+    const chosen = Array.isArray(selected)
+      ? selected
+          .map((id) => candidates.find((c) => c.id === id))
+          .filter(Boolean)
+          .slice(0, 4)
+      : candidates.filter((c) =>
+          LektricoChargerCard.QUICK_ACTION_DEFAULTS.includes(c.id)
+        );
+    if (!chosen.length) return nothing;
+    return html`<div class="quick-actions">
+      ${chosen.map((c) => c.render())}
+    </div>`;
+  }
+
+  /* ---------- collapsible sections ---------- */
 
   // Each section can be disabled individually (show_parameters /
   // show_info / show_actions: false). In compact view only the Actions
-  // section is kept, still as a collapsed accordion.
-  _renderSections(compact = false) {
+  // section is kept. Sections are toggled from a lateral icon bar (next
+  // to the status text) and any number can be open at once; their
+  // content renders below, in its usual place, separated by a divider.
+  _computeSections(compact = false) {
     const sections = [];
     if (!compact && this._config.show_parameters !== false) {
       sections.push({
@@ -793,30 +898,45 @@ class LektricoChargerCard extends LitElement {
         });
       }
     }
-    if (!sections.length) return nothing;
+    return sections;
+  }
 
+  _renderSectionToggleBar(sections, horizontal = false) {
+    if (!sections.length) return nothing;
     return html`
-      <div class="sections">
+      <div
+        class=${classMap({ 'section-toggle-bar': true, horizontal })}
+      >
         ${sections.map(
           (s) => html`
-            <div class="section">
-              <button
-                class="section-header"
-                @click=${() => this._toggleSection(s.id)}
-              >
-                <ha-icon icon=${s.icon}></ha-icon>
-                ${s.title}
-                <ha-icon
-                  class=${classMap({
-                    chevron: true,
-                    open: this._openSection === s.id,
-                  })}
-                  icon="mdi:chevron-down"
-                ></ha-icon>
-              </button>
-              ${this._openSection === s.id
-                ? html`<div class="section-body">${s.body()}</div>`
-                : nothing}
+            <button
+              class=${classMap({
+                'section-toggle': true,
+                active: !!this._openSections[s.id],
+              })}
+              title=${s.title}
+              aria-label=${s.title}
+              @click=${() => this._toggleSection(s.id)}
+            >
+              <ha-icon icon=${s.icon}></ha-icon>
+            </button>
+          `
+        )}
+      </div>
+    `;
+  }
+
+  _renderSectionBodies(sections) {
+    const open = sections.filter((s) => this._openSections[s.id]);
+    if (!open.length) return nothing;
+    return html`
+      <div class="sections">
+        ${open.map(
+          (s, i) => html`
+            <div
+              class=${classMap({ 'section-body': true, divider: i > 0 })}
+            >
+              ${s.body()}
             </div>
           `
         )}
@@ -987,6 +1107,7 @@ class LektricoChargerCard extends LitElement {
     const scheduleOverride = this._stateObj('schedule_override');
     if (scheduleOverride) {
       chips.push({
+        id: 'schedule_override',
         text: this._t('schedule_override'),
         icon: 'mdi:calendar-clock',
         run: () => this._pressButton('schedule_override'),
@@ -995,6 +1116,7 @@ class LektricoChargerCard extends LitElement {
     const forceSinglePhase = this._stateObj('force_single_phase');
     if (forceSinglePhase) {
       chips.push({
+        id: 'force_single_phase',
         text: this._t('force_single_phase'),
         icon: 'mdi:sine-wave',
         active: forceSinglePhase.state === 'on',
@@ -1005,6 +1127,7 @@ class LektricoChargerCard extends LitElement {
     if (lbMode && Array.isArray(lbMode.attributes.options)) {
       for (const option of lbMode.attributes.options) {
         chips.push({
+          id: `lb_mode:${option}`,
           text: `${this._t('lb_mode')}: ${option}`,
           icon: 'mdi:scale-balance',
           active: lbMode.state === option,
@@ -1019,6 +1142,7 @@ class LektricoChargerCard extends LitElement {
     const reboot = this._stateObj('reboot');
     if (reboot) {
       chips.push({
+        id: 'reboot',
         text: this._t('reboot'),
         icon: 'mdi:restart',
         confirm: true,
@@ -1028,6 +1152,7 @@ class LektricoChargerCard extends LitElement {
     const meterReboot = this._stateObj('meter_reboot');
     if (meterReboot && meterReboot.entity_id !== reboot?.entity_id) {
       chips.push({
+        id: 'meter_reboot',
         text: this._t('meter_reboot'),
         icon: 'mdi:restart',
         confirm: true,

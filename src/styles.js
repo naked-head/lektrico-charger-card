@@ -140,10 +140,19 @@ export default css`
 
   /* ---------- status ---------- */
 
+  /* status text + lateral section-toggle icons, side by side */
+  .status-line {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 6px;
+  }
+
   .status {
     text-align: center;
     margin-top: 8px;
     cursor: pointer;
+    min-width: 0;
   }
   .status .name {
     font-size: 14px;
@@ -238,44 +247,54 @@ export default css`
     cursor: not-allowed;
   }
 
-  /* ---------- accordion sections ---------- */
+  /* ---------- section toggles (lateral icons) + bodies ---------- */
+
+  /* Vertical icon stack beside the status text, like the reference
+     charger-card: minimal footprint when every section is collapsed. */
+  .section-toggle-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .section-toggle-bar.horizontal {
+    flex-direction: row;
+    justify-content: flex-end;
+    margin-top: 8px;
+  }
+  .section-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(127, 127, 127, 0.12);
+    color: var(--secondary-text-color);
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .section-toggle:hover {
+    background: rgba(var(--rgb-primary-color, 33, 150, 243), 0.15);
+  }
+  .section-toggle.active {
+    background: rgba(var(--rgb-primary-color, 33, 150, 243), 0.18);
+    color: var(--primary-color);
+  }
+  .section-toggle ha-icon {
+    --mdc-icon-size: 16px;
+  }
 
   .sections {
     margin-top: 14px;
   }
-  .section {
-    border-top: 1px solid var(--divider-color);
-  }
-  .section:last-child {
-    border-bottom: 1px solid var(--divider-color);
-  }
-  .section-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-    padding: 10px 2px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font: inherit;
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--primary-text-color);
-  }
-  .section-header ha-icon {
-    --mdc-icon-size: 20px;
-    color: var(--secondary-text-color);
-  }
-  .section-header .chevron {
-    margin-inline-start: auto;
-    transition: transform 0.2s ease;
-  }
-  .section-header .chevron.open {
-    transform: rotate(180deg);
-  }
   .section-body {
     padding: 2px 2px 14px;
+  }
+  .section-body.divider {
+    border-top: 1px solid var(--divider-color);
+    padding-top: 14px;
   }
 
   /* ---------- sliders ---------- */
