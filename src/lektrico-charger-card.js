@@ -527,7 +527,7 @@ class LektricoChargerCard extends LitElement {
 
     const rightItems = [
       { entity: 'current', decimals: 1 },
-      { entity: 'session_energy' },
+      { entity: 'session_energy', label: this._t('energy') },
       { entity: 'temperature' },
     ];
 
@@ -606,13 +606,14 @@ class LektricoChargerCard extends LitElement {
     `;
   }
 
-  _renderUltraStat({ entity, decimals }) {
+  _renderUltraStat({ entity, decimals, label: labelOverride }) {
     const stateObj = this._stateObj(entity);
     if (!stateObj) return nothing;
     const label =
-      LANGUAGES.en.ui[entity]
+      labelOverride ||
+      (LANGUAGES.en.ui[entity]
         ? this._t(entity)
-        : stateObj.attributes.friendly_name;
+        : stateObj.attributes.friendly_name);
     let value;
     if (decimals != null) {
       const num = Number(stateObj.state);

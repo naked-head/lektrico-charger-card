@@ -640,15 +640,16 @@ export default css`
     --mdc-icon-size: 14px;
     flex-shrink: 0;
   }
-  /* Start/stop button lives at the bottom of the center column —
-     no extra vertical space; text hides on very narrow cards. */
+  /* Start/stop button lives at the bottom of the center column,
+     horizontally centered — no extra vertical space; text hides on
+     very narrow cards. */
   .ultra-inline-btn {
     display: inline-flex;
     align-items: center;
     gap: 4px;
     margin-top: auto;
     padding-top: 5px;
-    align-self: flex-start;
+    align-self: center;
     background: none;
     border: 1px solid var(--primary-color);
     border-radius: 12px;

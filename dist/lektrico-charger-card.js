@@ -638,15 +638,16 @@ const e=globalThis,t=e.ShadowRoot&&(void 0===e.ShadyCSS||e.ShadyCSS.nativeShadow
     --mdc-icon-size: 14px;
     flex-shrink: 0;
   }
-  /* Start/stop button lives at the bottom of the center column —
-     no extra vertical space; text hides on very narrow cards. */
+  /* Start/stop button lives at the bottom of the center column,
+     horizontally centered — no extra vertical space; text hides on
+     very narrow cards. */
   .ultra-inline-btn {
     display: inline-flex;
     align-items: center;
     gap: 4px;
     margin-top: auto;
     padding-top: 5px;
-    align-self: flex-start;
+    align-self: center;
     background: none;
     border: 1px solid var(--primary-color);
     border-radius: 12px;
@@ -744,7 +745,7 @@ const e=globalThis,t=e.ShadowRoot&&(void 0===e.ShadyCSS||e.ShadyCSS.nativeShadow
           ${r.map(e=>this._renderInfoItem(e))}
         </div>
       </div>
-    `}_renderUltraCompact(e,t,i){const r=this._substatusText(),n=this._stateObj("dynamic_limit"),o=n?this._fmt(n):null,s=!1!==this._config.show_quick_actions,a=s&&this._stateObj("charge_start")&&"charging"!==t&&"paused"!==t,c=s&&this._stateObj("charge_stop")&&("charging"===t||"paused"===t);return q`
+    `}_renderUltraCompact(e,t,i){const r=this._substatusText(),n=this._stateObj("dynamic_limit"),o=n?this._fmt(n):null,s=!1!==this._config.show_quick_actions,a=s&&this._stateObj("charge_start")&&"charging"!==t&&"paused"!==t,c=s&&this._stateObj("charge_stop")&&("charging"===t||"paused"===t),l=[{entity:"current",decimals:1},{entity:"session_energy",label:this._t("energy")},{entity:"temperature"}];return q`
       <div class="ultra-top">
         ${this._renderImage(t)}
         <div class="ultra-center">
@@ -781,7 +782,7 @@ const e=globalThis,t=e.ShadowRoot&&(void 0===e.ShadyCSS||e.ShadyCSS.nativeShadow
               </button>`:H}
         </div>
         <div class="ultra-stats">
-          ${[{entity:"current",decimals:1},{entity:"session_energy"},{entity:"temperature"}].map(e=>this._renderUltraStat(e))}
+          ${l.map(e=>this._renderUltraStat(e))}
         </div>
       </div>
       ${i.length?q`<div
@@ -791,13 +792,13 @@ const e=globalThis,t=e.ShadowRoot&&(void 0===e.ShadyCSS||e.ShadyCSS.nativeShadow
             <ha-icon icon="mdi:alert-circle"></ha-icon>
             ${this._errorName(this._errorKeyOf(i[0].entity_id),i[0])}${i.length>1?q` (+${i.length-1})`:H}
           </div>`:H}
-    `}_renderUltraStat({entity:e,decimals:t}){const i=this._stateObj(e);if(!i)return H;const r=fe.en.ui[e]?this._t(e):i.attributes.friendly_name;let n;if(null!=t){const e=Number(i.state);if(Number.isNaN(e)||"unavailable"===i.state||"unknown"===i.state)n=this._fmt(i);else{const r=i.attributes.unit_of_measurement;n=`${e.toFixed(t)}${r?` ${r}`:""}`}}else n=this._fmt(i);return q`
+    `}_renderUltraStat({entity:e,decimals:t,label:i}){const r=this._stateObj(e);if(!r)return H;const n=i||(fe.en.ui[e]?this._t(e):r.attributes.friendly_name);let o;if(null!=t){const e=Number(r.state);if(Number.isNaN(e)||"unavailable"===r.state||"unknown"===r.state)o=this._fmt(r);else{const i=r.attributes.unit_of_measurement;o=`${e.toFixed(t)}${i?` ${i}`:""}`}}else o=this._fmt(r);return q`
       <div
         class="ultra-stat-item"
-        @click=${()=>this._moreInfo(i.entity_id)}
+        @click=${()=>this._moreInfo(r.entity_id)}
       >
-        <div class="v">${n}</div>
-        <div class="l">${r}</div>
+        <div class="v">${o}</div>
+        <div class="l">${n}</div>
       </div>
     `}_renderInfoItem(e){const t="string"==typeof e?{entity:e}:e,i=this._stateObj(t.entity);if(!i)return H;const r=t.label||(fe.en.ui[t.entity]?this._t(t.entity):i.attributes.friendly_name);let n;const o=Number(i.state);if(null==t.decimals||""===i.state||Number.isNaN(o)||"unavailable"===i.state||"unknown"===i.state)n=this._fmt(i);else{const e=i.attributes.unit_of_measurement;n=`${o.toFixed(t.decimals)}${e?` ${e}`:""}`}return q`
       <div
@@ -1084,4 +1085,4 @@ const e=globalThis,t=e.ShadowRoot&&(void 0===e.ShadyCSS||e.ShadyCSS.nativeShadow
             </div>
           `})}
       </div>
-    `}}customElements.get(xe)||customElements.define(xe,Te),window.customCards=window.customCards||[],window.customCards.some(e=>e.type===xe)||window.customCards.push({type:xe,name:"Lektri.co Charger Card",description:"Card for Lektri.co EV chargers (1P7K / One / 3P22K / Tri) with animated status LEDs.",preview:!0}),console.info("%c LEKTRICO-CHARGER-CARD %c v1.5.0 ","color: white; background: #1b1c1e; font-weight: 700;","color: #4caf50; background: #26282a; font-weight: 700;");
+    `}}customElements.get(xe)||customElements.define(xe,Te),window.customCards=window.customCards||[],window.customCards.some(e=>e.type===xe)||window.customCards.push({type:xe,name:"Lektri.co Charger Card",description:"Card for Lektri.co EV chargers (1P7K / One / 3P22K / Tri) with animated status LEDs.",preview:!0}),console.info("%c LEKTRICO-CHARGER-CARD %c v1.5.1 ","color: white; background: #1b1c1e; font-weight: 700;","color: #4caf50; background: #26282a; font-weight: 700;");
