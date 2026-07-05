@@ -1,4 +1,4 @@
-export const CARD_VERSION = '1.5.1';
+export const CARD_VERSION = '1.5.2';
 
 export const CARD_NAME = 'lektrico-charger-card';
 
@@ -16,26 +16,38 @@ export const CHARGER_STATES = [
   'updating_firmware',
 ];
 
-// Default LED behaviour per charger state, mirroring the real device:
-//   green        = idle / unplugged
-//   blue         = EV connected / charge complete
-//   white (spin) = charging, spin speed follows the charging current
-//   red          = error
+// Default LED behaviour per charger state, mirroring the real device
+// per the manufacturer's manual:
+//   green steady    = ready but not connected to WiFi (repurposed here for
+//                      unavailable/unknown: HA can't confirm the device
+//                      is actually reachable, the closest equivalent)
+//   green pulse     = available, not in use
+//   blue steady     = EV connected, waiting for vehicle recognition
+//   violet steady   = EV connected, waiting for remote-server authorization
+//   white (spin)    = charging, spin speed follows the charging current
+//   white top       = paused (only the top bar lit, steady)
+//   red steady      = generic error, contact support
+//   red pulse       = charger locked
+//   yellow steady   = firmware update in progress
+// Two more device LED states exist per the manual (violet pulse = RFID
+// tag learning mode, yellow pulse on the vertical bars only = factory
+// reset in progress) but have no matching integration state to bind to,
+// so they aren't included here — see DOCS.md.
 // Every entry can be overridden from YAML via `led_states`.
 // Animations: 'spin', 'pulse', 'top' (only the top bar lit, steady,
 // like the real device while paused), 'none'.
 export const DEFAULT_LED_STATES = {
-  available: { color: '#4caf50', animation: 'none' },
+  available: { color: '#4caf50', animation: 'pulse' },
   connected: { color: '#2196f3', animation: 'none' },
-  need_auth: { color: '#2196f3', animation: 'pulse' },
+  need_auth: { color: '#ab47bc', animation: 'none' },
   charging: { color: '#ffffff', animation: 'spin' },
   paused: { color: '#ffffff', animation: 'top' },
   paused_by_scheduler: { color: '#ffffff', animation: 'top' },
-  locked: { color: '#ff5722', animation: 'none' },
-  error: { color: '#f44336', animation: 'pulse' },
-  updating_firmware: { color: '#ab47bc', animation: 'pulse' },
-  unavailable: { color: '#616161', animation: 'none' },
-  unknown: { color: '#616161', animation: 'none' },
+  locked: { color: '#f44336', animation: 'pulse' },
+  error: { color: '#f44336', animation: 'none' },
+  updating_firmware: { color: '#ffeb3b', animation: 'none' },
+  unavailable: { color: '#4caf50', animation: 'none' },
+  unknown: { color: '#4caf50', animation: 'none' },
 };
 
 // How card roles map onto the entities created by the `lektrico`

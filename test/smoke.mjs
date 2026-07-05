@@ -155,21 +155,21 @@ assert(chip.classList.contains('active'), 'action chip active (automation on)');
 chip.click();
 assert(calls.some((c) => c[0] === 'automation' && c[1] === 'turn_on' && c[2].entity_id === 'automation.caricatore_costo_zero'), 'action entity used as default service target');
 
-// available state -> green steady
+// available state -> green pulse
 hass.states['sensor.1p7k_state'] = { ...states['sensor.1p7k_state'], state: 'available' };
 card.hass = { ...hass };
 await card.updateComplete;
 const t2 = card.shadowRoot.textContent;
 assert(t2.includes('Scollegato'), 'available -> Scollegato');
-const leds2 = card.shadowRoot.querySelector('.leds.anim-none');
-assert(leds2 && (leds2.getAttribute('style') || '').includes('#4caf50'), 'available -> green steady LED');
+const leds2 = card.shadowRoot.querySelector('.leds.anim-pulse');
+assert(leds2 && (leds2.getAttribute('style') || '').includes('#4caf50'), 'available -> green pulse LED');
 
 // error state
 hass.states['sensor.1p7k_state'] = { ...states['sensor.1p7k_state'], state: 'error' };
 card.hass = { ...hass };
 await card.updateComplete;
 assert(card.shadowRoot.textContent.includes('Errore'), 'error state text');
-const leds3 = card.shadowRoot.querySelector('.leds.anim-pulse');
+const leds3 = card.shadowRoot.querySelector('.leds.anim-none');
 assert(leds3 && (leds3.getAttribute('style') || '').includes('#f44336'), 'error -> red LED');
 // error stats replaced by active errors
 assert([...card.shadowRoot.querySelectorAll('.stat .label')].some((l) => l.textContent.includes('Surriscaldamento')), 'error stats show active errors');

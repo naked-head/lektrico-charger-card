@@ -5,13 +5,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.5.2] - 2026-07-05
+
+### Fixed
+- Default LED colors/animations corrected against the manufacturer's manual:
+  `available` now pulses green (was steady), `need_auth` (waiting for
+  remote-server authorization) is a steady violet instead of a pulsing
+  blue, `locked` pulses red instead of a steady orange, `updating_firmware`
+  is a steady yellow instead of pulsing purple, `error` is a steady red
+  instead of pulsing, and `unavailable`/`unknown` reuse the device's
+  "ready but no WiFi" steady green instead of gray.
+- `DOCS.md` gains a full LED-states reference table, including the two
+  device LED states (RFID tag learning, factory reset) that have no
+  matching integration state and so aren't implemented.
+
 ## [1.5.1] - 2026-07-05
 
 ### Fixed
 - Ultra-compact view: the start/stop button was left-aligned instead of
   centered in the middle column.
 - Ultra-compact view: the energy figure showed the entity's full friendly
-  name (device name included) instead of just "Energy", unlike
+  name (device name included) instead of just "Energy"/"Energia", unlike
   the standard stats row.
 
 ## [1.5.0] - 2026-07-04
@@ -127,7 +141,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   from the diagnostic sensors, quick actions, custom action chips,
   en/it localization, jsdom smoke test and standalone demo page.
 
-[Unreleased]: https://github.com/naked-head/lektrico-charger-card/compare/v1.5.1...HEAD
+[Unreleased]: https://github.com/naked-head/lektrico-charger-card/compare/v1.5.2...HEAD
+[1.5.2]: https://github.com/naked-head/lektrico-charger-card/compare/v1.5.1...v1.5.2
 [1.5.1]: https://github.com/naked-head/lektrico-charger-card/compare/v1.5.0...v1.5.1
 [1.5.0]: https://github.com/naked-head/lektrico-charger-card/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/naked-head/lektrico-charger-card/compare/v1.3.0...v1.4.0

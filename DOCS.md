@@ -12,6 +12,7 @@
 - [Card configuration for the modes](#card-configuration-for-the-modes)
 - [Using an input_text instead](#using-an-input_text-instead)
 - [Three-phase & energy meter notes](#three-phase--energy-meter-notes)
+- [LED states](#led-states)
 - [Adding a language](#adding-a-language)
 
 ## Charging modes: how the pieces fit together
@@ -279,6 +280,32 @@ substatus_entity: input_text.charger_mode
 - In short: quantity-of-features is capability-driven, not
   brand-assumption-driven. There's no scenario where a third-party meter
   gets offered load-balancing controls it doesn't support.
+
+## LED states
+
+The colors/animations below are the card's defaults, taken from the
+manufacturer's manual, and can be overridden per state with `led_states`
+(see the README's options table). "Pulse" means the whole cross blinks;
+"steady" means it stays lit with no animation.
+
+| Device LED | Meaning (per the manual) | Card state | Implemented |
+| --- | --- | --- | --- |
+| Green, steady | Ready but not connected to WiFi | *(repurposed)* `unavailable` / `unknown` | ✅ — closest equivalent to "HA can't confirm the device is reachable" |
+| Green, pulsing | Available, not in use | `available` | ✅ |
+| Blue, steady | Connected to the car, not charging | `connected` | ✅ |
+| Violet, steady | Connected, waiting for remote-server authorization | `need_auth` | ✅ |
+| Violet, pulsing | RFID tag learning mode | — | ❌ not implemented — no matching integration state |
+| White, rotating | Charging (speed follows the current) | `charging` | ✅ |
+| White, top bar only, steady | Paused | `paused` / `paused_by_scheduler` | ✅ |
+| Red, steady | Generic error — contact support | `error` | ✅ |
+| Red, pulsing | Charger locked | `locked` | ✅ |
+| Yellow, steady | Firmware update in progress | `updating_firmware` | ✅ |
+| Yellow, pulsing (vertical bars only) | Factory reset in progress | — | ❌ not implemented — no matching integration state |
+
+The two unimplemented rows are transient, device-only conditions with no
+corresponding value on the `state` sensor the `lektrico` integration
+exposes, so the card has nothing to bind them to — they're listed here
+only for completeness.
 
 ## Adding a language
 

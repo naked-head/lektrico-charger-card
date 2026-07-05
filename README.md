@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/naked-head/lektrico-charger-card/main/docs/images/logo.png" width="140" alt="Lektri.co Charger Card" />
+  <img src="docs/images/logo.png" width="140" alt="Lektri.co Charger Card" />
 </p>
 
 # Lektri.co Charger Card
@@ -7,7 +7,7 @@
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
 [![GitHub Release](https://img.shields.io/github/release/naked-head/lektrico-charger-card.svg)](https://github.com/naked-head/lektrico-charger-card/releases)
 [![Validate](https://github.com/naked-head/lektrico-charger-card/actions/workflows/validate.yml/badge.svg)](https://github.com/naked-head/lektrico-charger-card/actions/workflows/validate.yml)
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/naked-head/lektrico-charger-card/blob/main/LICENSE)
+[![License](https://img.shields.io/github/license/naked-head/lektrico-charger-card.svg)](https://github.com/naked-head/lektrico-charger-card/blob/main/LICENSE)
 
 [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=naked-head&repository=lektrico-charger-card&category=plugin)
 
@@ -23,11 +23,17 @@ hardware in mind.
 
 - 📱 **Fully responsive** — the charger is drawn as an SVG, it scales with
   the card width and never overlaps the surrounding text, on any device.
-- 💡 **Real LED behaviour** — the four LED bars mirror the physical device:
-  green when idle, blue when connected, white spinning while charging (the
-  spin speed follows the actual current, normalized to the charger's real
-  maximum), a single steady white bar while paused, red on error. Colors
-  and animations are overridable per state.
+- 💡 **Real LED behaviour** — the four LED bars mirror the physical device,
+  per the manufacturer's manual: green pulsing when available, blue when
+  connected and waiting for vehicle recognition, violet while waiting for
+  remote-server authorization, white spinning while charging (the spin
+  speed follows the actual current, normalized to the charger's real
+  maximum), a single steady white bar while paused, red on error, red
+  pulsing when locked, yellow during a firmware update. Colors and
+  animations are overridable per state — see
+  [DOCS.md](DOCS.md#led-states) for the full mapping (including two
+  device LED states that have no matching integration state, so the card
+  can't display them).
 - 🔌 **Three-phase & energy meter aware** — 3P22K/Tri chargers show the
   three per-phase currents and voltages automatically (per the
   [integration's docs](https://www.home-assistant.io/integrations/lektrico/));
@@ -69,19 +75,19 @@ hardware in mind.
 
 <table>
   <tr>
-    <td align="center"><img src="https://raw.githubusercontent.com/naked-head/lektrico-charger-card/main/docs/images/charging.png" width="320" alt="Charging"><br>Charging (dark)</td>
-    <td align="center"><img src="https://raw.githubusercontent.com/naked-head/lektrico-charger-card/main/docs/images/parameters.png" width="320" alt="Parameters"><br>Parameters</td>
+    <td align="center"><img src="docs/images/charging.png" width="320" alt="Charging"><br>Charging (dark)</td>
+    <td align="center"><img src="docs/images/parameters.png" width="320" alt="Parameters"><br>Parameters</td>
   </tr>
   <tr>
-    <td align="center"><img src="https://raw.githubusercontent.com/naked-head/lektrico-charger-card/main/docs/images/error.png" width="320" alt="Error"><br>Error state</td>
-    <td align="center"><img src="https://raw.githubusercontent.com/naked-head/lektrico-charger-card/main/docs/images/light.png" width="320" alt="Actions"><br>Actions (light)</td>
+    <td align="center"><img src="docs/images/error.png" width="320" alt="Error"><br>Error state</td>
+    <td align="center"><img src="docs/images/light.png" width="320" alt="Actions"><br>Actions (light)</td>
   </tr>
   <tr>
-    <td align="center"><img src="https://raw.githubusercontent.com/naked-head/lektrico-charger-card/main/docs/images/compact.png" width="320" alt="Compact"><br>Compact</td>
-    <td align="center"><img src="https://raw.githubusercontent.com/naked-head/lektrico-charger-card/main/docs/images/compact-actions.png" width="320" alt="Compact actions"><br>Compact — actions open</td>
+    <td align="center"><img src="docs/images/compact.png" width="320" alt="Compact"><br>Compact</td>
+    <td align="center"><img src="docs/images/compact-actions.png" width="320" alt="Compact actions"><br>Compact — actions open</td>
   </tr>
   <tr>
-    <td align="center" colspan="2"><img src="https://raw.githubusercontent.com/naked-head/lektrico-charger-card/main/docs/images/ultra-compact.png" width="320" alt="Ultra compact"><br>Ultra compact</td>
+    <td align="center" colspan="2"><img src="docs/images/ultra-compact.png" width="320" alt="Ultra compact"><br>Ultra compact</td>
   </tr>
 </table>
 
@@ -287,7 +293,7 @@ See [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 
-[GPL-3.0-or-later](LICENSE)
+[MIT](LICENSE)
 
 ## Disclaimer
 
