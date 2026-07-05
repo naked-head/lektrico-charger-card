@@ -67,21 +67,23 @@ hardware in mind.
 
 ## Screenshots
 
-| Charging (dark) | Parameters |
-| :---: | :---: |
-| ![Charging](docs/images/charging.png) | ![Parameters](docs/images/parameters.png) |
-
-| Error state | Actions (light) |
-| :---: | :---: |
-| ![Error](docs/images/error.png) | ![Actions](docs/images/light.png) |
-
-| Compact | Compact — actions open |
-| :---: | :---: |
-| ![Compact](docs/images/compact.png) | ![Compact actions](docs/images/compact-actions.png) |
-
-| Ultra compact |
-| :---: |
-| ![Ultra compact](docs/images/ultra-compact.png) |
+<table>
+  <tr>
+    <td align="center"><img src="docs/images/charging.png" width="320" alt="Charging"><br>Charging (dark)</td>
+    <td align="center"><img src="docs/images/parameters.png" width="320" alt="Parameters"><br>Parameters</td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/images/error.png" width="320" alt="Error"><br>Error state</td>
+    <td align="center"><img src="docs/images/light.png" width="320" alt="Actions"><br>Actions (light)</td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/images/compact.png" width="320" alt="Compact"><br>Compact</td>
+    <td align="center"><img src="docs/images/compact-actions.png" width="320" alt="Compact actions"><br>Compact — actions open</td>
+  </tr>
+  <tr>
+    <td align="center" colspan="2"><img src="docs/images/ultra-compact.png" width="320" alt="Ultra compact"><br>Ultra compact</td>
+  </tr>
+</table>
 
 ## Installation
 
@@ -245,12 +247,16 @@ then matches each role by, in order:
 
 1. explicit override in `entities:`
 2. the integration's `translation_key` (language independent, survives renames)
-3. entity id (exact prefix + suffix first, then suffix; English **and**
-   Italian ids are recognized: `_dynamic_limit`/`_limite_dinamico`,
-   `_voltage`/`_tensione`, …)
+3. entity id (exact prefix + suffix first, then suffix; only English
+   **and** Italian suffixes are recognized here — `_dynamic_limit`/
+   `_limite_dinamico`, `_voltage`/`_tensione`, … — since those are the
+   only languages the core `lektrico` integration ships, and are what
+   entity ids get localized to. This is unrelated to the card's own UI
+   language, below, which covers 10 languages.)
 4. unique device class among the device's entities
 
-So it works even if you renamed the entities or your HA is not in English.
+Step 2 already covers every language HA supports (the registry key isn't
+translated), so step 3 only matters if you renamed an entity by hand.
 The paired energy meter (`meter_entity`) uses the same matching engine,
 scoped to its own device, for the `lb_mode`, `breaker_current`,
 `meter_power` and `meter_reboot` roles.
