@@ -7,10 +7,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [1.5.2] - 2026-07-05
 
-### Changed
-- **License changed from MIT to GPL-3.0.** This and all future versions
-  are GPL-3.0-only. See [LICENSE](LICENSE).
-
 ### Fixed
 - Default LED colors/animations corrected against the manufacturer's manual:
   `available` now pulses green (was steady), `need_auth` (waiting for
