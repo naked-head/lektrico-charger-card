@@ -286,7 +286,8 @@ substatus_entity: input_text.charger_mode
 The colors/animations below are the card's defaults, taken from the
 manufacturer's manual, and can be overridden per state with `led_states`
 (see the README's options table). "Pulse" means the whole cross blinks;
-"steady" means it stays lit with no animation.
+"steady" means it stays lit with no animation; "blinking (top bar only)"
+means just the top segment flashes, the rest stay dim.
 
 | Device LED | Meaning (per the manual) | Card state | Implemented |
 | --- | --- | --- | --- |
@@ -296,7 +297,7 @@ manufacturer's manual, and can be overridden per state with `led_states`
 | Violet, steady | Connected, waiting for remote-server authorization | `need_auth` | ✅ |
 | Violet, pulsing | RFID tag learning mode | — | ❌ not implemented — no matching integration state |
 | White, rotating | Charging (speed follows the current) | `charging` | ✅ |
-| White, top bar only, steady | Paused | `paused` / `paused_by_scheduler` | ✅ |
+| White, top bar only, blinking | Paused | `paused` / `paused_by_scheduler` | ✅ |
 | Red, steady | Generic error — contact support | `error` | ✅ |
 | Red, pulsing | Charger locked | `locked` | ✅ |
 | Yellow, steady | Firmware update in progress | `updating_firmware` | ✅ |

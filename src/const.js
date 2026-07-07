@@ -1,4 +1,4 @@
-export const CARD_VERSION = '1.5.2';
+export const CARD_VERSION = '1.5.3';
 
 export const CARD_NAME = 'lektrico-charger-card';
 
@@ -25,7 +25,7 @@ export const CHARGER_STATES = [
 //   blue steady     = EV connected, waiting for vehicle recognition
 //   violet steady   = EV connected, waiting for remote-server authorization
 //   white (spin)    = charging, spin speed follows the charging current
-//   white top       = paused (only the top bar lit, steady)
+//   white top       = paused (only the top bar lit, blinking)
 //   red steady      = generic error, contact support
 //   red pulse       = charger locked
 //   yellow steady   = firmware update in progress
@@ -34,7 +34,7 @@ export const CHARGER_STATES = [
 // reset in progress) but have no matching integration state to bind to,
 // so they aren't included here — see DOCS.md.
 // Every entry can be overridden from YAML via `led_states`.
-// Animations: 'spin', 'pulse', 'top' (only the top bar lit, steady,
+// Animations: 'spin', 'pulse', 'top' (only the top bar lit, blinking,
 // like the real device while paused), 'none'.
 export const DEFAULT_LED_STATES = {
   available: { color: '#4caf50', animation: 'pulse' },

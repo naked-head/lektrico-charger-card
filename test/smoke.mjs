@@ -194,7 +194,7 @@ assert(card2.shadowRoot.querySelector('.side-info.left').textContent.includes('1
 assert(card2.shadowRoot.querySelector('.substatus')?.textContent.trim() === 'Costo Zero', 'substatus derived from active action entity');
 
 
-// ---------- paused: only top LED, steady white ----------
+// ---------- paused: only top LED, blinking white ----------
 hass.states['sensor.1p7k_state'] = { ...states['sensor.1p7k_state'], state: 'paused' };
 card.hass = { ...hass };
 await card.updateComplete;

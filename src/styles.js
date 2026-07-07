@@ -95,13 +95,13 @@ export default css`
   .leds-off .led {
     display: none;
   }
-  /* paused: only the top bar stays lit, steady */
+  /* paused: only the top bar stays lit, blinking */
   .leds.anim-top .led {
     opacity: 0.08;
     filter: none;
   }
   .leds.anim-top .led-0 {
-    opacity: 1;
+    animation: led-pulse 2s ease-in-out infinite;
     filter: drop-shadow(0 0 3px var(--led-color, #ffffff));
   }
   .leds.anim-pulse .led {

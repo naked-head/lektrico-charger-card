@@ -93,13 +93,13 @@ const e=globalThis,t=e.ShadowRoot&&(void 0===e.ShadyCSS||e.ShadyCSS.nativeShadow
   .leds-off .led {
     display: none;
   }
-  /* paused: only the top bar stays lit, steady */
+  /* paused: only the top bar stays lit, blinking */
   .leds.anim-top .led {
     opacity: 0.08;
     filter: none;
   }
   .leds.anim-top .led-0 {
-    opacity: 1;
+    animation: led-pulse 2s ease-in-out infinite;
     filter: drop-shadow(0 0 3px var(--led-color, #ffffff));
   }
   .leds.anim-pulse .led {
@@ -1085,4 +1085,4 @@ const e=globalThis,t=e.ShadowRoot&&(void 0===e.ShadyCSS||e.ShadyCSS.nativeShadow
             </div>
           `})}
       </div>
-    `}}customElements.get(xe)||customElements.define(xe,Te),window.customCards=window.customCards||[],window.customCards.some(e=>e.type===xe)||window.customCards.push({type:xe,name:"Lektri.co Charger Card",description:"Card for Lektri.co EV chargers (1P7K / One / 3P22K / Tri) with animated status LEDs.",preview:!0}),console.info("%c LEKTRICO-CHARGER-CARD %c v1.5.2 ","color: white; background: #1b1c1e; font-weight: 700;","color: #4caf50; background: #26282a; font-weight: 700;");
+    `}}customElements.get(xe)||customElements.define(xe,Te),window.customCards=window.customCards||[],window.customCards.some(e=>e.type===xe)||window.customCards.push({type:xe,name:"Lektri.co Charger Card",description:"Card for Lektri.co EV chargers (1P7K / One / 3P22K / Tri) with animated status LEDs.",preview:!0}),console.info("%c LEKTRICO-CHARGER-CARD %c v1.5.3 ","color: white; background: #1b1c1e; font-weight: 700;","color: #4caf50; background: #26282a; font-weight: 700;");
