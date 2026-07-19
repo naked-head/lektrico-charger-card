@@ -1,9 +1,13 @@
 name: Validate
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: [main]
   pull_request:
+    branches: [main]
   schedule:
     - cron: "0 4 * * 1"
   workflow_dispatch:
@@ -30,4 +34,8 @@ jobs:
       - run: npm run build
       - run: npm test
       - name: Ensure dist is up to date
-        run: git diff --exit-code dist/
+        run: |
+          if ! git diff --exit-code dist/; then
+            echo "::error::dist/ is out of sync with src/. Run 'npm run build' and commit."
+            exit 1
+          fi
