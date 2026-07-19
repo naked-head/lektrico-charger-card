@@ -22,7 +22,7 @@
   ],
   "license": "GPL-3.0-only",
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15.2.3",
