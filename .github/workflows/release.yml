@@ -12,6 +12,9 @@ on:
   push:
     tags:
       - "v*.*.*"
+  # Manual fallback: pick the tag under "Use workflow from" to (re)create its
+  # release, e.g. after a GitHub Actions outage swallowed the tag push event.
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -23,41 +26,110 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Get version from tag
+      - name: Resolve version from tag
         id: version
-        run: echo "value=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
-
-      - name: Check package.json version matches the tag
         run: |
-          pkg_version=$(node -p "require('./package.json').version")
-          if [ "$pkg_version" != "${{ steps.version.outputs.value }}" ]; then
-            echo "package.json version ($pkg_version) does not match tag ${{ github.ref_name }} — bump it before tagging." >&2
+          if [ "${{ github.ref_type }}" != "tag" ]; then
+            echo "::error::This workflow must run on a tag ref, got '${{ github.ref_name }}'."
             exit 1
           fi
 
-      - name: Extract CHANGELOG.md section
+          # v1.6.0-beta.1 -> VERSION=1.6.0-beta.1, BASE_VERSION=1.6.0
+          # Pre-release notes live under the final version's CHANGELOG
+          # section, so lookups always use BASE_VERSION.
+          VERSION="${GITHUB_REF_NAME#v}"
+          BASE_VERSION="${VERSION%%-*}"
+
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "base_version=$BASE_VERSION" >> "$GITHUB_OUTPUT"
+          echo "Tag $GITHUB_REF_NAME -> version=$VERSION, base=$BASE_VERSION"
+
+      - name: Verify package.json matches the tag
+        env:
+          BASE_VERSION: ${{ steps.version.outputs.base_version }}
         run: |
-          awk -v ver="${{ steps.version.outputs.value }}" '
-            $0 ~ "^## \\[" ver "\\]" { found=1; next }
-            found && /^## \[/ { exit }
-            found { print }
-          ' CHANGELOG.md > release_notes.md
-          if [ ! -s release_notes.md ]; then
-            echo "No CHANGELOG.md section found for version ${{ steps.version.outputs.value }} — add one before tagging." >&2
+          PKG_VERSION="$(node -p "require('./package.json').version")"
+          if [ "$PKG_VERSION" != "$BASE_VERSION" ]; then
+            echo "::error::package.json version is $PKG_VERSION but the tag says $BASE_VERSION. Bump package.json and re-tag."
             exit 1
           fi
+          echo "package.json version $PKG_VERSION matches tag."
 
-      - uses: actions/setup-node@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: "20"
+          cache: "npm"
 
-      - run: npm ci
-      - run: npm run build
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Smoke test
+        run: npm test
+
+      # The release asset is what HACS actually installs: its name has to match
+      # "filename" in hacs.json, and dist/ has to hold that one file only.
+      # A rename would not fail anything — HACS would quietly fall back to
+      # installing from the tagged source. Fail loudly here instead.
+      - name: Verify the built asset matches hacs.json
+        run: |
+          mapfile -t FILES < <(find dist -type f | sort)
+          if [ "${#FILES[@]}" -ne 1 ]; then
+            echo "::error::dist/ must contain exactly one file: HACS installs only the release asset."
+            printf '%s\n' "${FILES[@]}"
+            exit 1
+          fi
+
+          EXPECTED="$(node -p "require('./hacs.json').filename")"
+          ACTUAL="$(basename "${FILES[0]}")"
+          if [ "$EXPECTED" != "$ACTUAL" ]; then
+            echo "::error::hacs.json filename is '$EXPECTED' but the built asset is '$ACTUAL'."
+            exit 1
+          fi
+          echo "Asset name '$ACTUAL' matches hacs.json, dist/ holds a single file."
+
+      - name: Extract release notes from CHANGELOG.md
+        id: changelog
+        env:
+          BASE_VERSION: ${{ steps.version.outputs.base_version }}
+        run: |
+          # Everything between "## [BASE_VERSION]" and the next "## [" heading
+          # or the block of link definitions at the end of the file,
+          # whichever comes first, minus the heading line itself.
+          NOTES="$(awk -v ver="$BASE_VERSION" '
+            $0 ~ "^## \\[" ver "\\]" { found=1; next }
+            found && /^## \[/      { exit }
+            found && /^\[[^]]+\]:/ { exit }
+            found { print }
+          ' CHANGELOG.md)"
+
+          if [ -z "$NOTES" ]; then
+            echo "::warning::No CHANGELOG.md entry found for version $BASE_VERSION, falling back to auto-generated notes."
+            echo "found=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "found=true" >> "$GITHUB_OUTPUT"
+            {
+              echo "notes<<EOF"
+              echo "$NOTES"
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
-          name: ${{ github.ref_name }}
-          body_path: release_notes.md
+          name: "Lektri.co Charger Card ${{ github.ref_name }}"
+          draft: false
+          # Tags carrying a pre-release suffix (v1.6.0-beta.1) are published as
+          # pre-releases, so HACS only offers them to users who enabled
+          # "Show beta versions".
+          prerelease: ${{ contains(github.ref_name, '-') }}
           files: dist/lektrico-charger-card.js
+          body: ${{ steps.changelog.outputs.notes }}
+          # Only fall back to GitHub's auto-generated notes when no matching
+          # CHANGELOG.md section was found.
+          generate_release_notes: ${{ steps.changelog.outputs.found != 'true' }}
