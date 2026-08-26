@@ -5,6 +5,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.6.0] - 2026-08-26
+
+### Changed
+- The card is now built with esbuild instead of Rollup. Nothing changes on
+  your side: same file, same name, same install path. The bundle is a few
+  hundred bytes smaller and the build chain drops four dependencies.
+- Lit is pinned to an exact version (3.3.3) rather than a range, so a given
+  release always ships the byte-for-byte bundle it was tested with.
+
+### Fixed
+- Lit's BSD-3-Clause copyright notice is back at the end of the bundle. The
+  previous build stripped every comment, including the license notice that
+  redistributing Lit requires us to carry.
+
 ## [1.5.3] - 2026-07-05
 
 ### Fixed
@@ -151,7 +165,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   from the diagnostic sensors, quick actions, custom action chips,
   en/it localization, jsdom smoke test and standalone demo page.
 
-[Unreleased]: https://github.com/naked-head/lektrico-charger-card/compare/v1.5.3...HEAD
+[Unreleased]: https://github.com/naked-head/lektrico-charger-card/compare/v1.6.0...HEAD
+[1.6.0]: https://github.com/naked-head/lektrico-charger-card/compare/v1.5.3...v1.6.0
 [1.5.3]: https://github.com/naked-head/lektrico-charger-card/compare/v1.5.2...v1.5.3
 [1.5.2]: https://github.com/naked-head/lektrico-charger-card/compare/v1.5.1...v1.5.2
 [1.5.1]: https://github.com/naked-head/lektrico-charger-card/compare/v1.5.0...v1.5.1
