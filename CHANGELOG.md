@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Changed
+- The card is now listed in the HACS default catalogue: it can be installed
+  by searching for it in HACS, with no need to add this repository as a
+  custom repository first.
 - The licence declaration moves from GPL-3.0-only to GPL-3.0-or-later. Same
   licence text: you may now also use the card under any later GPL version.
 - The card version is now injected at build time, so a pre-release build
