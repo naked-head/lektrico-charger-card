@@ -20,7 +20,7 @@
     "lektrico",
     "ev-charger"
   ],
-  "license": "GPL-3.0-only",
+  "license": "GPL-3.0-later",
   "engines": {
     "node": ">=20"
   },
