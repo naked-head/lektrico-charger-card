@@ -293,7 +293,7 @@ See [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 
-[GPL-3.0](LICENSE)
+GPL-3.0-or-later — see [LICENSE](LICENSE)
 
 ## Disclaimer
 
