@@ -1,4 +1,4 @@
-export const CARD_VERSION = '1.6.0';
+export const CARD_VERSION = __VERSION__;
 
 export const CARD_NAME = 'lektrico-charger-card';
 

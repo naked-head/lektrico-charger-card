@@ -64,7 +64,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build
+      # Builds with the full tag as the version string, so a pre-release build
+      # reports 1.6.1-beta.1 rather than package.json's 1.6.1. The result is
+      # not committed: it only matters in the asset attached to the release.
+      - name: Build with the tag version
+        env:
+          LEKTRICO_VERSION: ${{ steps.version.outputs.version }}
         run: npm run build
 
       - name: Smoke test
