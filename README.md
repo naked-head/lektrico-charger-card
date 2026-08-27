@@ -1,10 +1,10 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/naked-head/lektrico-charger-card/main/docs/images/logo.png" width="140" alt="Lektri.co Charger Card" />
+  <img src="docs/images/logo.png" width="140" alt="Lektri.co Charger Card" />
 </p>
 
 # Lektri.co Charger Card
 
-[![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
+[![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/hacs/default)
 [![GitHub Release](https://img.shields.io/github/release/naked-head/lektrico-charger-card.svg)](https://github.com/naked-head/lektrico-charger-card/releases)
 [![Validate](https://github.com/naked-head/lektrico-charger-card/actions/workflows/validate.yml/badge.svg)](https://github.com/naked-head/lektrico-charger-card/actions/workflows/validate.yml)
 [![License](https://img.shields.io/github/license/naked-head/lektrico-charger-card.svg)](https://github.com/naked-head/lektrico-charger-card/blob/main/LICENSE)
@@ -75,19 +75,19 @@ hardware in mind.
 
 <table>
   <tr>
-    <td align="center"><img src="https://raw.githubusercontent.com/naked-head/lektrico-charger-card/main/docs/images/charging.png" width="320" alt="Charging"><br>Charging (dark)</td>
-    <td align="center"><img src="https://raw.githubusercontent.com/naked-head/lektrico-charger-card/main/docs/images/parameters.png" width="320" alt="Parameters"><br>Parameters</td>
+    <td align="center"><img src="docs/images/charging.png" width="320" alt="Charging"><br>Charging (dark)</td>
+    <td align="center"><img src="docs/images/parameters.png" width="320" alt="Parameters"><br>Parameters</td>
   </tr>
   <tr>
-    <td align="center"><img src="https://raw.githubusercontent.com/naked-head/lektrico-charger-card/main/docs/images/error.png" width="320" alt="Error"><br>Error state</td>
-    <td align="center"><img src="https://raw.githubusercontent.com/naked-head/lektrico-charger-card/main/docs/images/light.png" width="320" alt="Actions"><br>Actions (light)</td>
+    <td align="center"><img src="docs/images/error.png" width="320" alt="Error"><br>Error state</td>
+    <td align="center"><img src="docs/images/light.png" width="320" alt="Actions"><br>Actions (light)</td>
   </tr>
   <tr>
-    <td align="center"><img src="https://raw.githubusercontent.com/naked-head/lektrico-charger-card/main/docs/images/compact.png" width="320" alt="Compact"><br>Compact</td>
-    <td align="center"><img src="https://raw.githubusercontent.com/naked-head/lektrico-charger-card/main/docs/images/compact-actions.png" width="320" alt="Compact actions"><br>Compact — actions open</td>
+    <td align="center"><img src="docs/images/compact.png" width="320" alt="Compact"><br>Compact</td>
+    <td align="center"><img src="docs/images/compact-actions.png" width="320" alt="Compact actions"><br>Compact — actions open</td>
   </tr>
   <tr>
-    <td align="center" colspan="2"><img src="https://raw.githubusercontent.com/naked-head/lektrico-charger-card/main/docs/images/ultra-compact.png" width="320" alt="Ultra compact"><br>Ultra compact</td>
+    <td align="center" colspan="2"><img src="docs/images/ultra-compact.png" width="320" alt="Ultra compact"><br>Ultra compact</td>
   </tr>
 </table>
 
@@ -95,12 +95,11 @@ hardware in mind.
 
 ### Via HACS (recommended)
 
-1. HACS → three-dot menu → **Custom repositories**
-2. Add `https://github.com/naked-head/lektrico-charger-card` with type
-   **Dashboard**
-3. Install **Lektri.co Charger Card** and reload
+The card is in the HACS default catalogue: open **HACS**, search for
+**Lektri.co Charger Card**, download it and reload when asked. No custom
+repository to add.
 
-Or click the badge above to open the repository directly in HACS.
+Or click the badge above to open the card directly in HACS.
 
 ### Manual
 
