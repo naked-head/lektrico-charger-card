@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+- The licence declaration moves from GPL-3.0-only to GPL-3.0-or-later. Same
+  licence text: you may now also use the card under any later GPL version.
+
 ## [1.6.0] - 2026-08-26
 
 ### Changed
