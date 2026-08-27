@@ -8,9 +8,9 @@
  *
  * Version resolution:
  *   LEKTRICO_VERSION env var (set from the git tag by the release workflow),
- *   falling back to "version" in package.json for local and CI builds. This
- *   only feeds the banner: the version the card reports at runtime is
- *   CARD_VERSION in src/const.js and is still bumped by hand.
+ *   falling back to "version" in package.json for local and CI builds. The
+ *   value is substituted for __VERSION__ in src/const.js, so CARD_VERSION can
+ *   never drift from the tag the way a hand-edited constant could.
  *
  * Usage: node scripts/build.mjs
  */
@@ -46,13 +46,15 @@ await esbuild.build({
   // the translations greppable in dist/ and shaves a few hundred bytes.
   charset: "utf8",
   // Keeps Lit's BSD-3 license banner at the end of the bundle, as required
-  // when redistributing it. The previous rollup chain stripped it
-  // (terser with comments: false).
+  // when redistributing it.
   legalComments: "eof",
   // The card is a single file by design: dist/ must never contain anything
   // else, because with a release asset attached HACS switches to single-file
   // installs and would stop downloading companion files.
   sourcemap: false,
+  define: {
+    __VERSION__: JSON.stringify(version),
+  },
   banner: {
     js:
       `/*! Lektri.co Charger Card v${version} | GPL-3.0-or-later | https://github.com/naked-head/lektrico-charger-card\n` +
