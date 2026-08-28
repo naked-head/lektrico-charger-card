@@ -5,6 +5,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.6.2] - 2026-08-28
+
+### Fixed
+- Screenshots and the header logo now render inside HACS. They were relative
+  paths, and the sanitiser Home Assistant applies to rendered markdown blanks
+  any image source that is not an absolute http(s) URL. The URLs point at
+  `HEAD` rather than a branch name, so renaming the default branch will not
+  break them.
+- The SPDX licence identifier in `package.json` was `GPL-3.0-later`, which is
+  not a valid identifier. It is now `GPL-3.0-or-later`, matching LICENSE and
+  the README.
+
+### Changed
+- Screenshots moved from `docs/images/` to `images/`, matching the other
+  repositories.
+
 ## [1.6.1] - 2026-08-28
 
 ### Changed
@@ -176,7 +192,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   from the diagnostic sensors, quick actions, custom action chips,
   en/it localization, jsdom smoke test and standalone demo page.
 
-[Unreleased]: https://github.com/naked-head/lektrico-charger-card/compare/v1.6.1...HEAD
+[Unreleased]: https://github.com/naked-head/lektrico-charger-card/compare/v1.6.2...HEAD
+[1.6.2]: https://github.com/naked-head/lektrico-charger-card/compare/v1.6.1...v1.6.2
 [1.6.1]: https://github.com/naked-head/lektrico-charger-card/compare/v1.6.0...v1.6.1
 [1.6.0]: https://github.com/naked-head/lektrico-charger-card/compare/v1.5.3...v1.6.0
 [1.5.3]: https://github.com/naked-head/lektrico-charger-card/compare/v1.5.2...v1.5.3
