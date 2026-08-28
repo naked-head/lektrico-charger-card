@@ -1,6 +1,6 @@
 {
   "name": "lektrico-charger-card",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "description": "Home Assistant Lovelace card for Lektri.co EV chargers (1P7K / One / 3P22K / Tri)",
   "type": "module",
   "private": true,
@@ -21,7 +21,7 @@
     "lektrico",
     "ev-charger"
   ],
-  "license": "GPL-3.0-later",
+  "license": "GPL-3.0-or-later",
   "engines": {
     "node": ">=20"
   },
