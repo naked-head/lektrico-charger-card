@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.6.1] - 2026-08-28
+
 ### Changed
 - The card is now listed in the HACS default catalogue: it can be installed
   by searching for it in HACS, with no need to add this repository as a
@@ -174,7 +176,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   from the diagnostic sensors, quick actions, custom action chips,
   en/it localization, jsdom smoke test and standalone demo page.
 
-[Unreleased]: https://github.com/naked-head/lektrico-charger-card/compare/v1.6.0...HEAD
+[Unreleased]: https://github.com/naked-head/lektrico-charger-card/compare/v1.6.1...HEAD
+[1.6.1]: https://github.com/naked-head/lektrico-charger-card/compare/v1.6.0...v1.6.1
 [1.6.0]: https://github.com/naked-head/lektrico-charger-card/compare/v1.5.3...v1.6.0
 [1.5.3]: https://github.com/naked-head/lektrico-charger-card/compare/v1.5.2...v1.5.3
 [1.5.2]: https://github.com/naked-head/lektrico-charger-card/compare/v1.5.1...v1.5.2
