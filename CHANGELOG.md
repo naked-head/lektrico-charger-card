@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+- The release workflow now checks that README screenshots are pinned to the
+  tag being released, so the README shown in HACS matches the installed
+  version. The logo stays on `HEAD`.
+
 ## [1.6.2] - 2026-08-28
 
 ### Fixed
